@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\IntroRequest;
+use App\services\Intro\IntroHelperFunctionService;
+
+class IntroController extends Controller
+{
+    private IntroHelperFunctionService $introService;
+    public function __construct(IntroHelperFunctionService $introService)
+    {
+        $this->introService = $introService;
+    }
+    public function index()
+    {
+        $data = $this->introService->getIntroData();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro Data Featch successfully',
+            'data' => $data
+        ])->setStatusCode(200);
+    }
+
+    public function store(IntroRequest $request)
+    {
+        $this->introService->createIntro($request->validated());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro created successfully'
+        ]);
+    }
+    public function show($id)
+    {
+        $data = $this->introService->getIntroData($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro show successfully',
+            'data' => $data
+        ])->setStatusCode(200);
+    }
+    public function edit($id)
+    {
+        $data = $this->introService->getIntroData($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro edit successfully',
+            'data' => $data
+        ])->setStatusCode(200);
+    }
+    public function update(IntroRequest $request, $id)
+    {
+        $this->introService->updateIntroData($request->validated(), $id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro Updated successfully'
+        ]);
+    }
+    public function destroy($id)
+    {
+        $this->introService->deleteIntro($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Intro Deleted successfully'
+        ]);
+    }
+
+}
