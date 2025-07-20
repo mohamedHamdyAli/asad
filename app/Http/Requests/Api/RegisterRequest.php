@@ -30,7 +30,7 @@ class RegisterRequest extends BaseApiRequest
     {
         return [
             'name' => 'required|string|min:2|max:50',
-            'email' => 'required|email|unique:users,email|email:filter|email:dns',
+            'email' => 'required|email|unique:users,email|email:filter',
             'phone' => 'required|unique:users,phone|regex:/^[0-9+\-\s]{7,15}$/',
             'country_code' => 'required|regex:/^\+\d{1,4}$/',
             'country_name' => 'required|string|max:50',

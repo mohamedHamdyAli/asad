@@ -7,7 +7,6 @@ use App\Models\Language;
 use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 
 class UserService
 {

@@ -21,7 +21,7 @@ class RegisterResource extends JsonResource
             'phone' => $this->phone,
             'country_code' => $this->country_code,
             'country_name' => $this->country_name,
-            'role' => $this->role,
+            'role' => $this->getRoleNames()->first(),
             'gender' => $this->gender,
             'profile_image' => getImageassetUrl($this->profile_image),
             'token' => $this->token,
