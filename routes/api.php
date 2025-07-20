@@ -4,17 +4,19 @@ use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Middleware\CheckVendorAuthentication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 //  user api routes
-Route::prefix('uaer')->group(function () {
+Route::prefix('user')->group(function () {
     // Public Apis Routes
     Route::get('get-languages', [ApiLanguageController::class, 'getLanguages']);
     Route::get('get-language-labels', [ApiLanguageController::class, 'getLanguageLabels']);
     Route::get('get-intro', [ApiIntroController::class, 'getIntro']);
+    Route::post('register', [UserController::class, 'register']);
 
     // Protected routes with middleware
     Route::middleware([CheckUserAuthentication::class])->group(function () {

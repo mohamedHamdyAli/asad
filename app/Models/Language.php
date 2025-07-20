@@ -24,12 +24,12 @@ class Language extends Model
     }
 
     public function getLanguageCode(){
-        return self::pluck('code')->whereIsEnabled(1)->toArray();
+        return self::pluck('code')->where('is_enabled',1)->toArray();
     }
     public function getDefaultLanguage(){
-        return self::select('code')->whereIsEnabled(1)->first()->code;
+        return self::select('code')->where('is_enabled',1)->first()->code;
     }
     public function getLanguageList(){
-        return self::whereIsEnabled(1)->get();
+        return self::where('is_enabled',1)->get();
     }
 }
