@@ -17,11 +17,9 @@ class LanguageSeeder extends Seeder
             [
                 'name' => 'العربية',
                 'name_en' => 'Arabic',
-                'app_file' => 'ar.json',
+                'app_file' => 'ar_app.json',
                 'panel_file' => 'ar_panel.json',
-                'car_type_file' => 'ar_car_type.json',
-                'car_model_file' => 'ar_car_model.json',
-                'car_color_file' => 'ar_car_color.json',
+                'vendor_file' => 'ar_vendor.json',
                 'is_rtl' => 'true',
                 'icon' => 'staticImage/language/arabic.png',
                 'country_code' => '+966',
@@ -30,11 +28,9 @@ class LanguageSeeder extends Seeder
             [
                 'name' => 'English',
                 'name_en' => 'English',
-                'app_file' => 'en.json',
+                'app_file' => 'en_app.json',
                 'panel_file' => 'en_panel.json',
-                'car_type_file' => 'en_car_type.json',
-                'car_model_file' => 'en_car_model.json',
-                'car_color_file' => 'en_car_color.json',
+                'vendor_file' => 'en_vendor.json',
                 'is_rtl' => 'false',
                 'icon' => 'staticImage/language/english.png',
                 'country_code' => '+966',
@@ -43,11 +39,9 @@ class LanguageSeeder extends Seeder
         ];
         foreach ($Languages as $lang) {
             Language::create($lang);
-            FileService::generateJsonLanguageFile($lang['code']);
             FileService::generateJsonLanguageFile("{$lang['code']}_app");
-            FileService::generateJsonCarTypeFile("{$lang['code']}_car_type");
-            FileService::generateJsonCarModelFile("{$lang['code']}_car_model");
-            FileService::generateJsonColorFile("{$lang['code']}_car_color");
+            FileService::generateJsonLanguageFile("{$lang['code']}_panel");
+            FileService::generateJsonLanguageFile("{$lang['code']}_vendor");
         }
     }
 }

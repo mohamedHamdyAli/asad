@@ -11,7 +11,6 @@ class Intro extends Model
         'description',
         'image',
         'order',
-        'type',
         'is_enabled',
     ];
 
@@ -32,16 +31,5 @@ class Intro extends Model
     {
         // Fetch all active intros
         return Intro::whereIsEnabled(1)->orderBy('order')->get();
-    }
-    public static function allUserActive()
-    {
-        // Fetch all active Users intros
-        return Intro::whereIsEnabled(1)->whereType('user')->orderBy('order')->get();
-    }
-
-    public static function allVendorActive()
-    {
-        // Fetch all active Users intros
-        return Intro::whereIsEnabled(1)->whereType('vendor')->orderBy('order')->get();
     }
 }

@@ -21,13 +21,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'country_code',
+        'country_name',
         'role',
         'profile_image',
         'otp',
         'otp_expiry',
-        'qr_code',
         'gender',
-        'agree_with_terms',
         'is_enabled',
     ];
 

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image', 512)->nullable();
             $table->integer('order')->nullable();
-            $table->enum('type', ['vendor', 'user'])->default('user');
             $table->boolean('is_enabled')->default(true);
             $table->timestamps();
         });
