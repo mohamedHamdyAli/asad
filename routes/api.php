@@ -23,19 +23,6 @@ Route::prefix('uaer')->group(function () {
     });
 });
 
-//  Vendor api routes
-Route::prefix('vendor')->group(function () {
-    // Public Apis Routes
-    Route::get('get-languages', [ApiLanguageController::class, 'getLanguages']);
-    Route::get('get-language-labels', [ApiLanguageController::class, 'getLanguageLabels']);
-    Route::get('get-intro', [ApiIntroController::class, 'getIntro']);
-
-    // Protected routes with middleware
-    Route::middleware([CheckVendorAuthentication::class])->group(function () {
-        // user Profile
-
-    });
-});
 
 Route::group(['prefix' => 'language'], static function () {
     Route::post('/create', [AdminLanguageController::class, 'store'])->name('language.store');
