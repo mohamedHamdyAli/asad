@@ -48,8 +48,15 @@ class AppServiceProvider extends ServiceProvider
                     return failServerReturnMsg(
                         'Unexpected server error.',
                         app()->isLocal()
-                        ? $e->getMessage() . ' in file: ' . $e->getFile() . ' (line ' . $e->getLine() . ')'
-                        : null,
+                            ? [
+                                'message' => $e->getMessage(),
+                                'exception' => get_class($e),
+                                'file' => $e->getFile(),
+                                'line' => $e->getLine(),
+                                'trace' => $e->getTrace(),
+                                'request' => $request->all(),
+                            ]
+                            : null,
                         500
                     );
                 }
