@@ -17,13 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['superadmin', 'admin', 'spc_admin', 'employee', 'client']);
+            $table->string('phone')->nullable()->unique();
+            $table->string('country_code')->nullable();
+            $table->string('country_name')->nullable();
             $table->string('profile_image')->nullable();
+            $table->enum('role', ['admin', 'user', 'vendor', 'guest'])->default('guest');
             $table->string('otp')->nullable();
             $table->dateTime('otp_expiry')->nullable();
-            $table->string('qr_code')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
-            $table->boolean('agree_with_terms')->default(false);
             $table->boolean('is_enabled')->default(true);
             $table->rememberToken();
             $table->timestamps();

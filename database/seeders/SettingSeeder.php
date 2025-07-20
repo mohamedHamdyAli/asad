@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -17,7 +16,7 @@ class SettingSeeder extends Seeder
         $loream = 'It is in fact part of the Latin gibberish that printers use to fill in space in a layout temporarily whilst awaiting the arrival of the
         final text, so that the client can have an idea in advance of what the finished page will look like!';
 
-        $this->create_new_config('APP_NAME', 'App name');
+        $this->create_new_config('APP_NAME', 'ASAD');
 
         $this->create_new_config('APP_DESC', $loream);
 

@@ -24,7 +24,6 @@ class IntroSeeder extends Seeder
                 ], JSON_UNESCAPED_UNICODE),
                 "image" => "staticImage/intro/first.png",
                 "order" => 1,
-                "type" => 'user',
             ],
             [
                 "name" => json_encode([
@@ -37,7 +36,6 @@ class IntroSeeder extends Seeder
                 ], JSON_UNESCAPED_UNICODE),
                 "image" => "staticImage/intro/second.png",
                 "order" => 2,
-                "type" => 'user',
 
             ],
             [
@@ -51,7 +49,6 @@ class IntroSeeder extends Seeder
                 ], JSON_UNESCAPED_UNICODE),
                 "image" => "staticImage/intro/third.png",
                 "order" => 3,
-                "type" => 'user',
 
             ],
         ];

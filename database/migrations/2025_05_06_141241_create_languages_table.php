@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('icon', 512)->nullable();
             $table->string('app_file');
             $table->string('panel_file');
+            $table->string('vendor_file');
             $table->boolean('is_enabled')->default(true);
             $table->timestamps();
         });
