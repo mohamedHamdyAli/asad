@@ -54,4 +54,3 @@ function failServerReturnMsg(string $message, $error = null, int $code = 500)
         'code' => $code,
     ], $code);
 }
-

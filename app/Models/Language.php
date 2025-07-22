@@ -19,7 +19,8 @@ class Language extends Model
         'is_enabled',
     ];
 
-    public function getRtlAttribute($rtl) {
+    public function getRtlAttribute($rtl)
+    {
         return $rtl != 0;
     }
 
