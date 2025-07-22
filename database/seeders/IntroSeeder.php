@@ -54,7 +54,7 @@ class IntroSeeder extends Seeder
         ];
 
         foreach ($data as $row) {
-            Intro::create($row);
+            Intro::firstOrCreate(['order' => $row['order']], $row);
         }
     }
 }
