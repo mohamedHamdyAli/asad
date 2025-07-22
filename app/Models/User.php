@@ -31,6 +31,7 @@ class User extends Authenticatable
         'otp_expiry',
         'gender',
         'is_enabled',
+        'created_by',
     ];
 
     /**
