@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
-use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
-use App\Http\Controllers\Api\IntroController as ApiIntroController;
-use App\Http\Controllers\Admin\IntroController as AdminIntroController;
-use App\Http\Middleware\CheckUserAuthentication;
-use App\Http\Middleware\CheckVendorAuthentication;
+use App\Http\Controllers\Admin\BannerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Middleware\CheckVendorAuthentication;
+use App\Http\Controllers\Api\IntroController as ApiIntroController;
+use App\Http\Controllers\Admin\IntroController as AdminIntroController;
+use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
+use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 
 //  user api routes
 Route::prefix('uaer')->group(function () {
@@ -42,4 +44,23 @@ Route::group(['prefix' => 'intro'], static function () {
     Route::get('/edit/{id}', [AdminIntroController::class, 'edit'])->name('intro.edit');
     Route::post('/update/{id}', [AdminIntroController::class, 'update'])->name('intro.update');
     Route::delete('/delete/{id}', [AdminIntroController::class, 'destroy'])->name('intro.delete');
+});
+
+
+Route::group(['prefix' => 'users'], static function () {
+    Route::get('/', [UserController::class, 'index'])->name('users.index');
+    Route::post('/create', [UserController::class, 'store'])->name('users.store');
+    Route::get('/show/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+    Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('users.delete');
+});
+
+Route::group(['prefix' => 'banners'], static function () {
+    Route::get('/', [BannerController::class, 'index'])->name('banners.index');
+    Route::post('/create', [BannerController::class, 'store'])->name('banners.store');
+    Route::get('/show/{id}', [BannerController::class, 'show'])->name('banners.show');
+    Route::get('/edit/{id}', [BannerController::class, 'edit'])->name('banners.edit');
+    Route::post('/update/{id}', [BannerController::class, 'update'])->name('banners.update');
+    Route::delete('/delete/{id}', [BannerController::class, 'destroy'])->name('banners.delete');
 });

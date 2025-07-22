@@ -19,17 +19,21 @@ class Language extends Model
         'is_enabled',
     ];
 
-    public function getRtlAttribute($rtl) {
+    public function getRtlAttribute($rtl)
+    {
         return $rtl != 0;
     }
 
-    public function getLanguageCode(){
-        return self::pluck('code')->whereIsEnabled(1)->toArray();
+    public function getLanguageCode()
+    {
+        return self::pluck('code')->where('is_enabled', 1)->toArray();
     }
-    public function getDefaultLanguage(){
-        return self::select('code')->whereIsEnabled(1)->first()->code;
+    public function getDefaultLanguage()
+    {
+        return self::select('code')->where('is_enabled', 1)->first()->code;
     }
-    public function getLanguageList(){
-        return self::whereIsEnabled(1)->get();
+    public function getLanguageList()
+    {
+        return self::where('is_enabled', 1)->get();
     }
 }
