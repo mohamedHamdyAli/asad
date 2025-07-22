@@ -1,17 +1,16 @@
 <?php
 
 
-use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Middleware\CheckUserAuthentication;
-use App\Http\Middleware\CheckVendorAuthentication;
-use App\Http\Controllers\Api\IntroController as ApiIntroController;
-use App\Http\Controllers\Admin\IntroController as AdminIntroController;
-use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
+use App\Http\Controllers\Admin\IntroController as AdminIntroController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
+use App\Http\Controllers\Api\IntroController as ApiIntroController;
+
+use App\Http\Middleware\CheckUserAuthentication;
+use Illuminate\Support\Facades\Route;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -51,19 +50,19 @@ Route::group(['prefix' => 'intro'], static function () {
 
 
 Route::group(['prefix' => 'users'], static function () {
-    Route::get('/', [UserController::class, 'index'])->name('users.index');
-    Route::post('/create', [UserController::class, 'store'])->name('users.store');
-    Route::get('/show/{id}', [UserController::class, 'show'])->name('users.show');
-    Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
-    Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('users.delete');
+    Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
+    Route::post('/create', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/show/{id}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/delete/{id}', [AdminUserController::class, 'destroy'])->name('users.delete');
 });
 
 Route::group(['prefix' => 'banners'], static function () {
-    Route::get('/', [BannerController::class, 'index'])->name('banners.index');
-    Route::post('/create', [BannerController::class, 'store'])->name('banners.store');
-    Route::get('/show/{id}', [BannerController::class, 'show'])->name('banners.show');
-    Route::get('/edit/{id}', [BannerController::class, 'edit'])->name('banners.edit');
-    Route::post('/update/{id}', [BannerController::class, 'update'])->name('banners.update');
-    Route::delete('/delete/{id}', [BannerController::class, 'destroy'])->name('banners.delete');
+    Route::get('/', [AdminBannerController::class, 'index'])->name('banners.index');
+    Route::post('/create', [AdminBannerController::class, 'store'])->name('banners.store');
+    Route::get('/show/{id}', [AdminBannerController::class, 'show'])->name('banners.show');
+    Route::get('/edit/{id}', [AdminBannerController::class, 'edit'])->name('banners.edit');
+    Route::post('/update/{id}', [AdminBannerController::class, 'update'])->name('banners.update');
+    Route::delete('/delete/{id}', [AdminBannerController::class, 'destroy'])->name('banners.delete');
 });
