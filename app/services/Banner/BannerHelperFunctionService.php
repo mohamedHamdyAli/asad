@@ -17,7 +17,12 @@ class BannerHelperFunctionService
 
     public function getAllBanners()
     {
-        return Banner::all();
+        return Banner::allActive();
+    }
+
+    public function getAllActiveBanners()
+    {
+        return Banner::allActive(true);
     }
 
     public function getBannerById(int $id)

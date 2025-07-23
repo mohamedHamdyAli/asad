@@ -2,9 +2,11 @@
 
 namespace App\Services\Intro;
 
+use App\Http\Resources\IntroResource;
 use App\Models\Intro;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
+use function successReturnData;
 
 class IntroHelperFunctionService
 {
@@ -23,9 +25,9 @@ class IntroHelperFunctionService
         return $id ? Intro::findOrFail($id) : Intro::all();
     }
 
-    public function getIntro($type)
+    public function getIntro()
     {
-        return $type === 'user' ? Intro::allUserActive() : Intro::allVendorActive();
+        return Intro::allActive();
     }
 
     /**

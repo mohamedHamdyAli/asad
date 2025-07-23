@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
+use App\Http\Controllers\Api\BannerController as ApiBannerController;
 
 use App\Http\Middleware\CheckUserAuthentication;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,7 @@ Route::prefix('user')->group(function () {
     Route::get('get-languages', [ApiLanguageController::class, 'getLanguages']);
     Route::get('get-language-labels', [ApiLanguageController::class, 'getLanguageLabels']);
     Route::get('get-intro', [ApiIntroController::class, 'getIntro']);
+    Route::get('get-banner', [ApiBannerController::class, 'getBanner']);
     Route::post('register', [UserController::class, 'register']);
 
     // Protected routes with middleware

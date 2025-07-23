@@ -49,7 +49,7 @@ class BannerSeeder extends Seeder
         ];
 
         foreach ($data as $row) {
-            Banner::create($row);
+            Banner::firstOrCreate(['name' => $row['name']], $row);
         }
     }
 }

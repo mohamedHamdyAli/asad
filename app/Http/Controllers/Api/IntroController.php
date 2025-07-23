@@ -14,10 +14,10 @@ class IntroController extends Controller
     {
         $this->introService = $introService;
     }
-    public function getIntro(IntroRequest $request)
+    public function getIntro()
     {
-        $data = $this->introService->getIntro($request['type']);
-        return successReturnData( IntroResource::collection($data),  'Data Fetched Successfully');
+        $data = $this->introService->getIntro();
+        return successReturnData(IntroResource::collection($data), 'Data Fetched Successfully');
 
     }
 }
