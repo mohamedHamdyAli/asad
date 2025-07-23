@@ -27,17 +27,15 @@ class IntroRequest extends FormRequest
             'description.*' => 'required|string',
             'image'         => 'required|mimes:jpeg,png,jpg,svg|max:6144',
             'order'         => 'required|integer',
-            'status'        => 'required|in:active,inactive',
         ];
 
-        if ($this->isMethod('POST')) {
+        if ($this->isMethod('PUT')) {
             $rules['name']          = 'nullable|array';
             $rules['name.*']        = 'nullable|string';
             $rules['description']   = 'nullable|array';
             $rules['description.*'] = 'nullable|string';
             $rules['image']         = 'nullable|mimes:jpeg,png,jpg,svg|max:6144';
             $rules['order']         = 'nullable|integer';
-            $rules['status']        = 'required|in:active,inactive';
         }
 
         return $rules;

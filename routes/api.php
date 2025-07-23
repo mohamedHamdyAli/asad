@@ -41,7 +41,6 @@ Route::group(['prefix' => 'language'], static function () {
     Route::get('/languageedit/{id}/{type}', [AdminLanguageController::class, 'editLanguage'])->name('languageedit');
     Route::post('/updatelanguageValues/{id}/{type}', [AdminLanguageController::class, 'updatelanguageValues'])->name('updatelanguageValues');
     Route::delete('/delete/{id}', [AdminLanguageController::class, 'destroy'])->name('language.delete');
-
 });
 
 Route::group(['prefix' => 'intro'], static function () {
@@ -49,17 +48,16 @@ Route::group(['prefix' => 'intro'], static function () {
     Route::post('/create', [AdminIntroController::class, 'store'])->name('intro.store');
     Route::get('/show/{id}', [AdminIntroController::class, 'show'])->name('intro.show');
     Route::get('/edit/{id}', [AdminIntroController::class, 'edit'])->name('intro.edit');
-    Route::post('/update/{id}', [AdminIntroController::class, 'update'])->name('intro.update');
+    Route::put('/update/{id}', [AdminIntroController::class, 'update'])->name('intro.update');
     Route::delete('/delete/{id}', [AdminIntroController::class, 'destroy'])->name('intro.delete');
 });
-
 
 Route::group(['prefix' => 'users'], static function () {
     Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/create', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('/show/{id}', [AdminUserController::class, 'show'])->name('users.show');
     Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
-    Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::put('/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/delete/{id}', [AdminUserController::class, 'destroy'])->name('users.delete');
 });
 

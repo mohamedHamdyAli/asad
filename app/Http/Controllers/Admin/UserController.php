@@ -57,6 +57,12 @@ class UserController extends Controller
     public function edit($id)
     {
         $data = $this->userService->getUserData($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
         return response()->json([
             'status' => 'success',
             'message' => 'User data for editing fetched successfully',

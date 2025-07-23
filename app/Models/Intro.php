@@ -27,9 +27,11 @@ class Intro extends Model
         return json_decode($value);
     }
 
-    public static function allActive()
+    public static function allActive($isEnable = false)
     {
-        // Fetch all active intros
-        return Intro::whereIsEnabled(1)->orderBy('order')->get();
+        if ($isEnable === true) {
+            return self::where('is_enabled', 1)->get();
+        }
+        return self::get();
     }
 }

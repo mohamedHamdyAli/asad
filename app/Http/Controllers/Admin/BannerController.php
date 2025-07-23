@@ -40,7 +40,7 @@ class BannerController extends Controller
     public function show($id)
     {
         $banner = $this->bannerService->getBannerById($id);
-        
+
         if (!$banner) {
             return response()->json([
                 'status' => 'error',

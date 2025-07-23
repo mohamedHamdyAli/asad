@@ -21,19 +21,13 @@ class BannerRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => 'required|array',
-            'name.*' => 'required|string',
-            'description' => 'required|array',
-            'description.*' => 'required|string',
+
             'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
             'is_enabled'    => 'required|boolean',
         ];
 
-        if ($this->isMethod('POST')) {
-            $rules['name'] = 'nullable|array';
-            $rules['name.*'] = 'nullable|string';
-            $rules['description'] = 'nullable|array';
-            $rules['description.*'] = 'nullable|string';
+        if ($this->isMethod('PUT')) {
+
             $rules['image'] = 'nullable|mimes:jpeg,png,jpg,svg|max:6144';
             $rules['is_enabled']    = 'nullable|boolean';
         }

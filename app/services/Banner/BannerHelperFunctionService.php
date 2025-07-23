@@ -38,14 +38,6 @@ class BannerHelperFunctionService
             if (isset($bannerData['image'])) {
                 $bannerData['image'] = FileService::upload($bannerData['image'], $this->uploadFolder);
             }
-
-            if (isset($bannerData['name']) && is_array($bannerData['name'])) {
-                $bannerData['name'] = json_encode($bannerData['name'], JSON_UNESCAPED_UNICODE);
-            }
-            if (isset($bannerData['description']) && is_array($bannerData['description'])) {
-                $bannerData['description'] = json_encode($bannerData['description'], JSON_UNESCAPED_UNICODE);
-            }
-
             return Banner::create($bannerData);
         });
     }
@@ -62,12 +54,6 @@ class BannerHelperFunctionService
                     $this->uploadFolder,
                     $banner->getRawOriginal('image')
                 );
-            }
-            if (isset($bannerData['name']) && is_array($bannerData['name'])) {
-                $bannerData['name'] = json_encode($bannerData['name'], JSON_UNESCAPED_UNICODE);
-            }
-            if (isset($bannerData['description']) && is_array($bannerData['description'])) {
-                $bannerData['description'] = json_encode($bannerData['description'], JSON_UNESCAPED_UNICODE);
             }
 
             $banner->update($bannerData);

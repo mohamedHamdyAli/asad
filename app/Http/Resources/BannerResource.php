@@ -16,8 +16,6 @@ class BannerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => getLocalizedValue($this,'name'),
-            'description' => getLocalizedValue($this,'description'),
             'image' => getImageassetUrl($this->image),
         ];
     }

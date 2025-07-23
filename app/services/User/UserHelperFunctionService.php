@@ -20,10 +20,10 @@ class UserHelperFunctionService
     public function getUserData($id = null)
     {
 
-        return $id ? User::findOrFail($id) : User::all();
+        return $id ? User::find($id) : User::all();
     }
 
-       public function getUserById(int $id)
+    public function getUserById(int $id)
     {
         return User::find($id);
     }
@@ -33,10 +33,10 @@ class UserHelperFunctionService
             if (!empty($request['profile_image'])) {
                 $request['profile_image'] = FileService::upload($request['profile_image'], $this->uploadFolder);
             }
+            $user =  User::create($request);
+            $user->assignRole('user');
 
-            $request['password'] = Hash::make($request['password']);
 
-            User::create($request);
             return true;
         });
     }

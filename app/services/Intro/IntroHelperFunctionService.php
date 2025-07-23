@@ -22,12 +22,12 @@ class IntroHelperFunctionService
      */
     public function getIntroData($id = null)
     {
-        return $id ? Intro::findOrFail($id) : Intro::all();
+        return $id ? Intro::findOrFail($id) : Intro::allActive();
     }
 
     public function getIntro()
     {
-        return Intro::allActive();
+        return Intro::allActive(true);
     }
 
     /**
