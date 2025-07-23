@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             LanguageSeeder::class,
             IntroSeeder::class,
             SettingSeeder::class,
-            BannerSeeder::class
+            BannerSeeder::class,
             RoleSeeder::class,
         ]);
     }
