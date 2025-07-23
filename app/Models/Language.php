@@ -24,7 +24,7 @@ class Language extends Model
         return $rtl != 0;
     }
 
-    public function getLanguageCode()
+    public static function getLanguageCode()
     {
         $languages = self::pluck('code')->where('is_enabled', 1)->toArray();
         if ($languages) {
@@ -32,7 +32,7 @@ class Language extends Model
         }
         return null;
     }
-    public function getDefaultLanguage()
+    public static function getDefaultLanguage()
     {
         $language = self::select('code')->where('is_enabled', 1)->first();
         if ($language) {
@@ -40,7 +40,7 @@ class Language extends Model
         }
         return null;
     }
-    public function getLanguageList()
+    public static function getLanguageList()
     {
         $languages = self::where('is_enabled', 1)->get();
         if ($languages) {

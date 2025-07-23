@@ -62,7 +62,7 @@ if (!function_exists('getLocalizedValue')) {
             return __('siteTrans.no_data_found');
         }
 
-        $locale = app()->getLocale();
+        $locale = request()->header('lang') ?? app()->getLocale();
 
         return $model->{$attribute}->{$locale} ?? $model->{$attribute}->ar;
     }
