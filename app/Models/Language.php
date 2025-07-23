@@ -24,14 +24,11 @@ class Language extends Model
         return $rtl != 0;
     }
 
-    public static function getLanguageCode()
+    public static function getLanguageCode(): array
     {
-        $languages = self::pluck('code')->where('is_enabled', 1)->toArray();
-        if ($languages) {
-            return $languages;
-        }
-        return null;
+        return self::where('is_enabled', 1)->pluck('code')->toArray();
     }
+
     public static function getDefaultLanguage()
     {
         $language = self::select('code')->where('is_enabled', 1)->first();
