@@ -16,7 +16,7 @@ class SetLocale
      */
     public function handle($request, Closure $next)
     {
-        $defaultLang = (new Language())->getDefaultLanguage();
+        $defaultLang = (new Language())->getDefaultLanguage() ?? 'ar';
         $supportedLangs = (new Language())->getLanguageCode();
         // Check if the 'lang' header is set and is one of the supported languages
         $lang = $request->header('lang');

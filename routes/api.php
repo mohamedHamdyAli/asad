@@ -21,6 +21,9 @@ Route::prefix('user')->group(function () {
     Route::get('get-intro', [ApiIntroController::class, 'getIntro']);
     Route::get('get-banner', [ApiBannerController::class, 'getBanner']);
     Route::post('register', [UserController::class, 'register']);
+    Route::post('login', [UserController::class, 'login']);
+    Route::post('sendResetLinkEmail', [UserController::class, 'sendResetLinkEmail']);
+    Route::post('resetPassword', [UserController::class, 'resetPassword']);
 
     // Protected routes with middleware
     Route::middleware([CheckUserAuthentication::class])->group(function () {

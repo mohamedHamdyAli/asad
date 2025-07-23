@@ -24,13 +24,28 @@ class Language extends Model
         return $rtl != 0;
     }
 
-    public static function getLanguageCode(){
-        return self::pluck('code')->where('is_enabled',1)->toArray();
+    public static function getLanguageCode()
+    {
+        $languages = self::pluck('code')->where('is_enabled', 1)->toArray();
+        if ($languages) {
+            return $languages;
+        }
+        return null;
     }
-    public static function getDefaultLanguage(){
-        return self::select('code')->where('is_enabled',1)->first()->code;
+    public static function getDefaultLanguage()
+    {
+        $language = self::select('code')->where('is_enabled', 1)->first();
+        if ($language) {
+            return $language->code;
+        }
+        return null;
     }
-    public static function getLanguageList(){
-        return self::where('is_enabled',1)->get();
+    public static function getLanguageList()
+    {
+        $languages = self::where('is_enabled', 1)->get();
+        if ($languages) {
+            return $languages;
+        }
+        return null;
     }
 }
