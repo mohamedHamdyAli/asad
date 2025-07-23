@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Banner;
+namespace App\services\Banner;
 
 use App\Models\Banner;
-use App\Services\FileService;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class BannerHelperFunctionService

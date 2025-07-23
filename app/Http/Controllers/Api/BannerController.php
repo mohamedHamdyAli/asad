@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BannerResource;
-use App\Services\Banner\BannerHelperFunctionService;
+use App\services\Banner\BannerHelperFunctionService;
 use function successReturnData;
 
 class BannerController extends Controller

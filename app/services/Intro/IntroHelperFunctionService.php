@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Services\Intro;
+namespace App\services\Intro;
 
-use App\Http\Resources\IntroResource;
 use App\Models\Intro;
-use App\Services\FileService;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
-use function successReturnData;
 
 class IntroHelperFunctionService
 {

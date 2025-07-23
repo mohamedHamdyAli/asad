@@ -3,7 +3,7 @@
 namespace App\services\Language;
 
 use App\Models\Language;
-use App\Services\FileService;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 

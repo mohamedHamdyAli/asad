@@ -8,7 +8,6 @@ use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Requests\Api\ResetPasswordRequest;
 use App\services\User\UserService;
-use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
