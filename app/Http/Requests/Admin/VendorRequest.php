@@ -6,17 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
-
-class UserRequest extends FormRequest
+class VendorRequest extends FormRequest
 {
+
     public function __construct(Request $request)
     {
-
-        $request->merge([
+       $request->merge([
             'is_enabled' => 1,
-            'role' => 'user',
+            'role' => 'vendor',
         ]);
     }
+
     public function authorize(): bool
     {
         return true;
@@ -24,7 +24,9 @@ class UserRequest extends FormRequest
 
     public function rules(): array
     {
-    if ($this->route()->getName() === 'users.store') {
+
+
+        if ($this->route()->getName() === 'vendors.store') {
             $rules = [
                 'name'          => 'required|string|max:255',
                 'email'         => 'required|email|unique:users,email',
@@ -32,8 +34,8 @@ class UserRequest extends FormRequest
                 'password'      => 'required|string|min:8',
                 'country_code'  => 'required|string|max:10',
                 'country_name'  => 'required|string|max:255',
-                'role'          => 'required|string|in:user',
-                'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'role'          => 'required|string|in:vendor',
+                'profile_image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
                 'gender'        => 'required|string|in:male,female,other',
                 'is_enabled'    => 'required|boolean',
             ];
@@ -45,8 +47,8 @@ class UserRequest extends FormRequest
                 'password'      => 'nullable|string|min:8',
                 'country_code'  => 'nullable|string|max:10',
                 'country_name'  => 'nullable|string|max:255',
-                'role'          => 'nullable|string|in:user',
-                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'role'          => 'nullable|string|in:vendor',
+                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
                 'gender'        => 'nullable|string|in:male,female,other',
                 'is_enabled'    => 'nullable|boolean',
             ];

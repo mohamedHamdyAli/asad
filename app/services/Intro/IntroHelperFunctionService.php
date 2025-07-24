@@ -2,11 +2,9 @@
 
 namespace App\Services\Intro;
 
-use App\Http\Resources\IntroResource;
 use App\Models\Intro;
 use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
-use function successReturnData;
 
 class IntroHelperFunctionService
 {
@@ -22,7 +20,7 @@ class IntroHelperFunctionService
      */
     public function getIntroData($id = null)
     {
-        return $id ? Intro::findOrFail($id) : Intro::allActive();
+        return $id ? Intro::find($id) : Intro::allActive();
     }
 
     public function getIntro()
@@ -54,7 +52,10 @@ class IntroHelperFunctionService
     public function updateIntroData($request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
-            $intro = Intro::findOrFail($id);
+            $intro = Intro::find($id);
+            if (!$intro) {
+                return false;
+            }
 
             if (!empty($request['image'])) {
                 $request['image'] = FileService::replace(
@@ -82,9 +83,10 @@ class IntroHelperFunctionService
     public function deleteIntro($id)
     {
         return DB::transaction(function () use ($id) {
-            $intro = Intro::findOrFail($id);
-
-            // Delete the intro record and its associated image
+            $intro = Intro::find($id);
+            if (!$intro) {
+                return false;
+            }
             FileService::delete($intro->getRawOriginal('image'));
             $intro->delete();
 

@@ -33,6 +33,7 @@ class BannerController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Banner created successfully',
+            'data' => $banner
         ], 200);
     }
 
@@ -45,7 +46,7 @@ class BannerController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Banner not found'
-            ]);
+            ],404);
         }
 
         return response()->json([
@@ -58,7 +59,7 @@ class BannerController extends Controller
 
     public function edit($id)
     {
-        $banner = $this->bannerService->getBannerById($id);
+        $banner = $this->bannerService->getBannerData($id);
 
         return response()->json([
             'status' => 'success',
@@ -76,13 +77,14 @@ class BannerController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Banner not found'
-            ], 200);
+            ]);
         }
 
         $updatedBanner = $this->bannerService->updateBanner($banner, $request->validated());
         return response()->json([
             'status' => 'success',
             'message' => 'Banner Updated successfully',
+            'data' => $updatedBanner
         ], 200);
     }
 

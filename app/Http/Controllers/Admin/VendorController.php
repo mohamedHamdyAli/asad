@@ -3,104 +3,99 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserRequest;
-use App\Services\User\UserHelperFunctionService;
+use App\Http\Requests\Admin\VendorRequest;
+use App\Services\Vendor\VendorHelperFunctionService;
 
-class UserController extends Controller
+class VendorController extends Controller
 {
-    private UserHelperFunctionService $userService;
+    private VendorHelperFunctionService $vendorService;
 
-    public function __construct(UserHelperFunctionService $userService)
+    public function __construct(VendorHelperFunctionService $vendorService)
     {
-        $this->userService = $userService;
+        $this->vendorService = $vendorService;
     }
-
 
     public function index()
     {
-        $data = $this->userService->getUserData();
+        $data = $this->vendorService->getVendorData();
         return response()->json([
             'status' => 'success',
-            'message' => 'Users Data Fetched successfully',
+            'message' => 'Vendors Data Fetched successfully',
             'data' => $data
         ], 200);
     }
 
-
-    public function store(UserRequest $request)
+    public function store(VendorRequest $request)
     {
-       $data = $this->userService->createUser($request->validated());
+        $data = $this->vendorService->createVendor($request->validated());
         return response()->json([
             'status' => 'success',
-            'message' => 'User created successfully',
+            'message' => 'Vendor created successfully',
             'data' => $data
-
         ]);
     }
 
     public function show($id)
     {
-        $data = $this->userService->getUserData($id);
+        $data = $this->vendorService->getVendorData($id);
         if (!$data) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Vendor not found'
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'User data fetched successfully',
+            'message' => 'Vendor data fetched successfully',
             'data' => $data
         ], 200);
     }
 
     public function edit($id)
     {
-        $data = $this->userService->getUserData($id);
+        $data = $this->vendorService->getVendorData($id);
         if (!$data) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Vendor not found'
             ], 404);
         }
         return response()->json([
             'status' => 'success',
-            'message' => 'User data for editing fetched successfully',
+            'message' => 'Vendor data for editing fetched successfully',
             'data' => $data
         ], 200);
     }
 
-
-    public function update(UserRequest $request, $id)
+    public function update(VendorRequest $request, $id)
     {
-        $data =  $this->userService->updateUserData($request->validated(), $id);
+        $data = $this->vendorService->updateVendorData($request->validated(), $id);
         if (!$data) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Vendor not found'
             ], 404);
         }
         return response()->json([
             'status' => 'success',
-            'message' => 'User updated successfully',
+            'message' => 'Vendor updated successfully',
             'data' => $data
         ], 200);
     }
-
 
     public function destroy($id)
     {
-       $data = $this->userService->deleteUser($id);
+        $data = $this->vendorService->deleteVendor($id);
         if (!$data) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User not found'
+                'message' => 'Vendor not found'
             ], 404);
         }
         return response()->json([
             'status' => 'success',
-            'message' => 'User deleted successfully'
+            'message' => 'Vendor deleted successfully'
         ], 200);
     }
 }

@@ -20,24 +20,21 @@ class BannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-
-            'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
-            'is_enabled'    => 'required|boolean',
-        ];
-
-        if ($this->isMethod('PUT')) {
-
-            $rules['image'] = 'nullable|mimes:jpeg,png,jpg,svg|max:6144';
-            $rules['is_enabled']    = 'nullable|boolean';
+        if ($this->route()->getName() === 'banners.store') {
+            $rules = [
+                'is_enabled'    => 'required|boolean',
+                'image'         => 'required|mimes:jpeg,png,jpg,svg|max:6144',
+            ];
+        } else {
+            $rules = [
+                'image'         => 'sometimes|mimes:jpeg,png,jpg,svg|max:6144',
+                'is_enabled'    => 'sometimes|boolean',
+            ];
         }
 
         return $rules;
     }
 
-    /**
-     * Handle failed validation.
-     */
     protected function failedValidation(Validator $validator)
     {
         failedValidation($validator);
