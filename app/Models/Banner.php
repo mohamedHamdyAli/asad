@@ -14,6 +14,7 @@ class Banner extends Model
         'is_enabled',
     ];
 
+
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);

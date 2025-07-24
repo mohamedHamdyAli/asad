@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Intro extends Model
 {
     protected $fillable = [
@@ -13,7 +14,6 @@ class Intro extends Model
         'order',
         'is_enabled',
     ];
-
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);

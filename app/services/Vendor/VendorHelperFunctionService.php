@@ -1,48 +1,45 @@
 <?php
 
-namespace App\services\User;
+namespace App\Services\Vendor;
 
 use App\Models\User;
-use App\services\FileService;
+use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UserHelperFunctionService
+
+class VendorHelperFunctionService
 {
     private string $uploadFolder;
 
     public function __construct()
     {
-        $this->uploadFolder = "users";
+        $this->uploadFolder = "vendors";
     }
-
-
-    public function getUserData($id = null)
+    public function getVendorData($id = null)
     {
-
-        return $id ? User::where(['id' => $id, 'role' => 'user'])->first() : User::where('role', 'user')->get();
+        return $id ? User::where(['id' => $id, 'role' => 'vendor'])->first() : User::where('role', 'vendor')->get();
     }
 
-    public function createUser($request): bool
+    public function createVendor(array $request): bool
     {
         return DB::transaction(function () use ($request) {
             if (!empty($request['profile_image'])) {
                 $request['profile_image'] = FileService::upload($request['profile_image'], $this->uploadFolder);
             }
-            $user =  User::create($request);
-            $user->assignRole('user');
 
+            $vendor = User::create($request);
+            $vendor->assignRole('vendor');
 
             return true;
         });
     }
 
-    public function updateUserData(array $request, int $id): bool
+    public function updateVendorData(array $request, int $id): bool
     {
         return DB::transaction(function () use ($request, $id) {
-            $user = User::where(['id' => $id, 'role' => 'user'])->first();
-
-            if (!$user) {
+            $vendor = User::where(['id' => $id, 'role' => 'vendor'])->first();
+            if (!$vendor) {
                 return false;
             }
 
@@ -50,31 +47,34 @@ class UserHelperFunctionService
                 $request['profile_image'] = FileService::replace(
                     $request['profile_image'],
                     $this->uploadFolder,
-                    $user->getRawOriginal('profile_image')
+                    $vendor->getRawOriginal('profile_image')
                 );
             }
 
             if (!empty($request['password'])) {
                 $request['password'] = Hash::make($request['password']);
+            } else {
+                unset($request['password']);
             }
 
-            $user->update($request);
+            $vendor->update($request);
             return true;
         });
     }
 
-    public function deleteUser(int $id): bool
+    public function deleteVendor(int $id): bool
     {
         return DB::transaction(function () use ($id) {
-            $user = User::where(['id' => $id, 'role' => 'user'])->first();
-            if (!$user) {
+            $vendor = User::where(['id' => $id, 'role' => 'vendor'])->first();
+            if (!$vendor) {
                 return false;
             }
-            if ($user->profile_image) {
-                FileService::delete($user->getRawOriginal('profile_image'));
+
+            if ($vendor->profile_image) {
+                FileService::delete($vendor->getRawOriginal('profile_image'));
             }
 
-            $user->delete();
+            $vendor->delete();
             return true;
         });
     }

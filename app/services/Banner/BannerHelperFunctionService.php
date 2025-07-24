@@ -29,7 +29,10 @@ class BannerHelperFunctionService
     {
         return Banner::find($id);
     }
-
+    public function getBannerData($id = null)
+    {
+        return $id ? Banner::find($id) : Banner::allActive();
+    }
     public function createBanner(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -57,6 +60,7 @@ class BannerHelperFunctionService
             }
 
             $banner->update($bannerData);
+
             return $banner;
         });
     }

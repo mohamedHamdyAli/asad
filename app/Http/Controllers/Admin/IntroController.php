@@ -25,15 +25,23 @@ class IntroController extends Controller
 
     public function store(IntroRequest $request)
     {
-        $this->introService->createIntro($request->validated());
+        $data = $this->introService->createIntro($request->validated());
         return response()->json([
             'status' => 'success',
-            'message' => 'Intro created successfully'
+            'message' => 'Intro created successfully',
+            'data' => $data
+
         ]);
     }
     public function show($id)
     {
         $data = $this->introService->getIntroData($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Intro not found'
+            ], 404);
+        }
         return response()->json([
             'status' => 'success',
             'message' => 'Intro show successfully',
@@ -43,15 +51,29 @@ class IntroController extends Controller
     public function edit($id)
     {
         $data = $this->introService->getIntroData($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Intro not found'
+            ], 404);
+        }
         return response()->json([
             'status' => 'success',
             'message' => 'Intro edit successfully',
             'data' => $data
         ])->setStatusCode(200);
     }
+
     public function update(IntroRequest $request, $id)
     {
-        $this->introService->updateIntroData($request->validated(), $id);
+        $intro = $this->introService->updateIntroData($request->validated(), $id);
+        if (!$intro) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Intro not found'
+            ], 404);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Intro Updated successfully'
@@ -59,11 +81,17 @@ class IntroController extends Controller
     }
     public function destroy($id)
     {
-        $this->introService->deleteIntro($id);
+        $data = $this->introService->deleteIntro($id);
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Intro not found'
+            ], 404);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Intro Deleted successfully'
         ]);
     }
-
 }

@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
@@ -48,17 +50,8 @@ Route::group(['prefix' => 'intro'], static function () {
     Route::post('/create', [AdminIntroController::class, 'store'])->name('intro.store');
     Route::get('/show/{id}', [AdminIntroController::class, 'show'])->name('intro.show');
     Route::get('/edit/{id}', [AdminIntroController::class, 'edit'])->name('intro.edit');
-    Route::put('/update/{id}', [AdminIntroController::class, 'update'])->name('intro.update');
+    Route::post('/update/{id}', [AdminIntroController::class, 'update'])->name('intro.update');
     Route::delete('/delete/{id}', [AdminIntroController::class, 'destroy'])->name('intro.delete');
-});
-
-Route::group(['prefix' => 'users'], static function () {
-    Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
-    Route::post('/create', [AdminUserController::class, 'store'])->name('users.store');
-    Route::get('/show/{id}', [AdminUserController::class, 'show'])->name('users.show');
-    Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
-    Route::put('/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
-    Route::delete('/delete/{id}', [AdminUserController::class, 'destroy'])->name('users.delete');
 });
 
 Route::group(['prefix' => 'banners'], static function () {
@@ -69,3 +62,24 @@ Route::group(['prefix' => 'banners'], static function () {
     Route::post('/update/{id}', [AdminBannerController::class, 'update'])->name('banners.update');
     Route::delete('/delete/{id}', [AdminBannerController::class, 'destroy'])->name('banners.delete');
 });
+
+
+Route::group(['prefix' => 'users'], static function () {
+    Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
+    Route::post('/create', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/show/{id}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/delete/{id}', [AdminUserController::class, 'destroy'])->name('users.delete');
+});
+
+
+Route::group(['prefix' => 'vendors'], static function () {
+    Route::get('/', [AdminVendorController::class, 'index'])->name('vendors.index');
+    Route::post('/create', [AdminVendorController::class, 'store'])->name('vendors.store');
+    Route::get('/show/{id}', [AdminVendorController::class, 'show'])->name('vendors.show');
+    Route::get('/edit/{id}', [AdminVendorController::class, 'edit'])->name('vendors.edit');
+    Route::post('/update/{id}', [AdminVendorController::class, 'update'])->name('vendors.update');
+    Route::delete('/delete/{id}', [AdminVendorController::class, 'destroy'])->name('vendors.delete');
+});
+
