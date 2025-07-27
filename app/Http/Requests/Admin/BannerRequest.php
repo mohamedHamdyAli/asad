@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Route;
 
 class BannerRequest extends FormRequest
 {
@@ -20,17 +21,13 @@ class BannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        if ($this->route()->getName() === 'banners.store') {
-            $rules = [
-                'is_enabled'    => 'required|boolean',
-                'image'         => 'required|mimes:jpeg,png,jpg,svg|max:6144',
-            ];
-        } else {
-            $rules = [
-                'image'         => 'sometimes|mimes:jpeg,png,jpg,svg|max:6144',
-                'is_enabled'    => 'sometimes|boolean',
-            ];
-        }
+        $rules = (Route::is('banners.store')) ? [
+            'is_enabled' => 'required|boolean',
+            'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
+        ] : [
+            'image' => 'sometimes|mimes:jpeg,png,jpg,svg|max:6144',
+            'is_enabled' => 'sometimes|boolean',
+        ];
 
         return $rules;
     }

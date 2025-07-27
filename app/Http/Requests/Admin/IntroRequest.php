@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Route;
 
 class IntroRequest extends FormRequest
 {
@@ -20,27 +21,22 @@ class IntroRequest extends FormRequest
      */
     public function rules(): array
     {
-    if ($this->route()->getName() === 'intro.store') {
+        $rules = (Route::is('intro.store')) ? [
+            'name' => 'required|array',
+            'name.*' => 'required|string',
+            'description' => 'required|array',
+            'description.*' => 'required|string',
+            'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
+            'order' => 'required|integer',
+        ] : [
 
-            $rules = [
-                'name'          => 'required|array',
-                'name.*'        => 'required|string',
-                'description'   => 'required|array',
-                'description.*' => 'required|string',
-                'image'         => 'required|mimes:jpeg,png,jpg,svg|max:6144',
-                'order'         => 'required|integer',
-            ];
-        } else {
-            $rules = [
-
-                'name'          => 'nullable|array',
-                'name.*'        => 'nullable|string',
-                'description'   => 'nullable|array',
-                'description.*' => 'nullable|string',
-                'image'         => 'nullable|mimes:jpeg,png,jpg,svg|max:6144',
-                'order'         => 'nullable|integer',
-            ];
-        }
+            'name' => 'nullable|array',
+            'name.*' => 'nullable|string',
+            'description' => 'nullable|array',
+            'description.*' => 'nullable|string',
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:6144',
+            'order' => 'nullable|integer',
+        ];
 
         return $rules;
     }
