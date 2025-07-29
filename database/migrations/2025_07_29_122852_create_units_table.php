@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
-            $table->string('location');
+            $table->string('location')->nullable();
             $table->string('lat')->nullable();
             $table->string('long')->nullable();
             $table->dateTime('start_date');

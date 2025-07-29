@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('folder_id')->constrained('folders')->onDelete('cascade');
             $table->date('date');
             $table->string('title');
-            $table->string('image')->nullable();
+            $table->string('image');
             $table->timestamps();
         });
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('home_unit_galleries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
-            $table->string('image')->nullable();
+            $table->string('image');
             $table->timestamps();
         });
     }

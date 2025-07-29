@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
             $table->string('title');
-            $table->string('file')->nullable();
+            $table->string('file');
             $table->timestamps();
         });
     }

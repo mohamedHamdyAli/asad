@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
             $table->foreignId('folder_id')->constrained('folders')->onDelete('cascade');
             $table->string('title');
-            $table->string('file')->nullable();
+            $table->string('file');
             $table->timestamps();
         });
     }
