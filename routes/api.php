@@ -85,8 +85,8 @@ Route::group(['prefix' => 'vendors'], static function () {
 
 Route::group(['prefix' => 'units'], static function () {
     Route::get('/', [AdminUnitController::class, 'index'])->name('units.index');
-    Route::get('/{userId}', [AdminUnitController::class, 'userUnits'])->name('units.user');
-    Route::get('/{vendorId}', [AdminUnitController::class, 'vendorUnits'])->name('units.vendor');
+    Route::get('/user/{userId}', [AdminUnitController::class, 'userUnits'])->name('units.user');
+    Route::get('/vendor/{vendorId}', [AdminUnitController::class, 'vendorUnits'])->name('units.vendor');
     Route::post('/create', [AdminUnitController::class, 'store'])->name('units.store');
     Route::get('/show/{id}', [AdminUnitController::class, 'show'])->name('units.show');
     Route::post('/update/{id}', [AdminUnitController::class, 'update'])->name('units.update');

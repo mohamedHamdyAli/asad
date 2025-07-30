@@ -33,7 +33,7 @@ class Unit extends Model
     }
     public static function allVendorUnit($vendorId, $status = null)
     {
-        $query = self::where('user_id', $vendorId);
+        $query = self::where('vendor_id', $vendorId);
         if ($status !== null) {
             $query->where('status', $status);
         }
