@@ -36,7 +36,15 @@ class UnitCrudService
                 $request['cover_image'] = FileService::upload($request['cover_image'], $this->uploadFolder);
             }
 
-            return Unit::create($request);
+            $unit = Unit::create($request);
+            if (!empty($request['gallery']) && is_array($request['gallery'])) {
+                foreach ($request['gallery'] as $image) {
+                    $unit->homeUnitGallery()->create([
+                        'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
+                    ]);
+                }
+            }
+            return $unit;
         });
     }
 
@@ -44,7 +52,8 @@ class UnitCrudService
     {
         return DB::transaction(function () use ($request, $id) {
             $unit = Unit::find($id);
-            if (!$unit) return false;
+            if (!$unit)
+                return false;
 
             if (!empty($request['cover_image'])) {
                 $request['cover_image'] = FileService::replace(
@@ -63,7 +72,8 @@ class UnitCrudService
     {
         return DB::transaction(function () use ($id) {
             $unit = Unit::find($id);
-            if (!$unit) return false;
+            if (!$unit)
+                return false;
 
             FileService::delete($unit->getRawOriginal('cover_image'));
             $unit->delete();

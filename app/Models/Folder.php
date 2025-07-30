@@ -7,11 +7,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Folder extends Model
 {
-        use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'file_type',
         'name',
         'folder_image',
     ];
+
+    public function unitDocument()
+    {
+        return $this->hasMany(UnitDocument::class, 'folder_id');
+    }
+    public function unitDrawing()
+    {
+        return $this->hasMany(UnitDrawing::class, 'folder_id');
+    }
+    public function unitGallery()
+    {
+        return $this->hasMany(UnitGallery::class, 'folder_id');
+    }
 }
