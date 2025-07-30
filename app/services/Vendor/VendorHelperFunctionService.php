@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Vendor;
+namespace App\services\Vendor;
 
 use App\Models\User;
 use App\Services\FileService;
