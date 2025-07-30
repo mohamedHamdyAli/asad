@@ -20,5 +20,23 @@ class Unit extends Model
         'description',
         'user_id',
         'vendor_id',
+        'status',
     ];
+
+    public static function allUserUnit($userId, $status = null)
+    {
+        $query = self::where('user_id', $userId);
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+        return $query->get();
+    }
+    public static function allVendorUnit($vendorId, $status = null)
+    {
+        $query = self::where('user_id', $vendorId);
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+        return $query->get();
+    }
 }
