@@ -56,4 +56,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function unitsUser()
+    {
+        return $this->hasMany(Unit::class, 'user_id');
+    }
+    public function unitsVendor()
+    {
+        return $this->hasMany(Unit::class, 'vendor_id');
+    }
+    public function unitIssue()
+    {
+        return $this->hasMany(UnitIssue::class, 'user_id');
+    }
 }
