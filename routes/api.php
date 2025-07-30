@@ -1,19 +1,18 @@
 <?php
 
 
-use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
-use App\Http\Controllers\Admin\IntroController as AdminIntroController;
-use App\Http\Controllers\Admin\BannerController as AdminBannerController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\VendorController as AdminVendorController;
-
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
-use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
-
-use App\Http\Middleware\CheckUserAuthentication;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\IntroController as AdminIntroController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -83,3 +82,13 @@ Route::group(['prefix' => 'vendors'], static function () {
     Route::delete('/delete/{id}', [AdminVendorController::class, 'destroy'])->name('vendors.delete');
 });
 
+
+Route::group(['prefix' => 'units'], static function () {
+    Route::get('/', [AdminUnitController::class, 'index'])->name('units.index');
+    Route::get('/{userId}', [AdminUnitController::class, 'userUnits'])->name('units.user');
+    Route::get('/{vendorId}', [AdminUnitController::class, 'vendorUnits'])->name('units.vendor');
+    Route::post('/create', [AdminUnitController::class, 'store'])->name('units.store');
+    Route::get('/show/{id}', [AdminUnitController::class, 'show'])->name('units.show');
+    Route::post('/update/{id}', [AdminUnitController::class, 'update'])->name('units.update');
+    Route::delete('/delete/{id}', [AdminUnitController::class, 'destroy'])->name('units.delete');
+});

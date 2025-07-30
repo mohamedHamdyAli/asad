@@ -1,10 +1,9 @@
 <?php
 
-namespace App\services\Intro;
+namespace App\Services\Unit;
 
-use App\Models\Intro;
 use App\Models\Unit;
-use App\services\FileService;
+use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class UnitCrudService
@@ -13,80 +12,62 @@ class UnitCrudService
 
     public function __construct()
     {
-        $this->uploadFolder = "unit";
+        $this->uploadFolder = "units";
     }
 
-    /**
-     * Get intro data by ID or all intros.
-     */
-    // public function getUnitData($id = null)
-    // {
-    //     return $id ? Unit::find($id) : Unit::all();
-    // }
+    public function getUnitData($id = null)
+    {
+        return $id ? Unit::find($id) : Unit::all();
+    }
+    public function getUserUnits($userId, $status = null)
+    {
+        return Unit::allUserUnit($userId, $status);
+    }
 
-    // /**
-    //  * Create a new intro.
-    //  */
-    // public function createIntro($request)
-    // {
-    //     return DB::transaction(function () use ($request) {
-    //         if (!empty($request['image'])) {
-    //             $request['image'] = FileService::upload($request['image'], $this->uploadFolder);
-    //         }
+    public function getVendorUnits($vendorId, $status = null)
+    {
+        return Unit::allVendorUnit($vendorId, $status);
+    }
 
-    //         $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
-    //         $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+    public function createUnit($request)
+    {
+        return DB::transaction(function () use ($request) {
+            if (!empty($request['cover_image'])) {
+                $request['cover_image'] = FileService::upload($request['cover_image'], $this->uploadFolder);
+            }
 
-    //         Intro::create($request);
-    //         return true;
-    //     });
-    // }
+            return Unit::create($request);
+        });
+    }
 
-    // /**
-    //  * Update an existing intro.
-    //  */
-    // public function updateIntroData($request, $id)
-    // {
-    //     return DB::transaction(function () use ($request, $id) {
-    //         $intro = Intro::find($id);
-    //         if (!$intro) {
-    //             return false;
-    //         }
+    public function updateUnitData($request, $id)
+    {
+        return DB::transaction(function () use ($request, $id) {
+            $unit = Unit::find($id);
+            if (!$unit) return false;
 
-    //         if (!empty($request['image'])) {
-    //             $request['image'] = FileService::replace(
-    //                 $request['image'],
-    //                 $this->uploadFolder,
-    //                 $intro->getRawOriginal('image')
-    //             );
-    //         }
+            if (!empty($request['cover_image'])) {
+                $request['cover_image'] = FileService::replace(
+                    $request['cover_image'],
+                    $this->uploadFolder,
+                    $unit->getRawOriginal('cover_image')
+                );
+            }
 
-    //         if (!empty($request['name'])) {
-    //             $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
-    //         }
-    //         if (!empty($request['description'])) {
-    //             $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
-    //         }
+            $unit->update($request);
+            return true;
+        });
+    }
 
-    //         $intro->update($request);
-    //         return true;
-    //     });
-    // }
+    public function deleteUnit($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $unit = Unit::find($id);
+            if (!$unit) return false;
 
-    // /**
-    //  * Delete an intro.
-    //  */
-    // public function deleteIntro($id)
-    // {
-    //     return DB::transaction(function () use ($id) {
-    //         $intro = Intro::find($id);
-    //         if (!$intro) {
-    //             return false;
-    //         }
-    //         FileService::delete($intro->getRawOriginal('image'));
-    //         $intro->delete();
-
-    //         return true;
-    //     });
-    // }
+            FileService::delete($unit->getRawOriginal('cover_image'));
+            $unit->delete();
+            return true;
+        });
+    }
 }
