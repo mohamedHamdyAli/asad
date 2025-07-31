@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         Schema::defaultStringLength(191);
         Model::preventLazyLoading(!app()->isProduction());
-        Model::preventSilentlyDiscardingAttributes(true);
+        // Model::preventSilentlyDiscardingAttributes(true);
 
         app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn($app) => new class ($app) extends \Illuminate\Foundation\Exceptions\Handler {
             public function render($request, \Throwable $e)

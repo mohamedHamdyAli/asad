@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Folder;
 use App\Models\Setting;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Storage;
@@ -191,5 +192,12 @@ if (!function_exists('calculateDistance')) {
             'distance' => round($distance, 2),
             'duration' => $duration,
         ];
+    }
+}
+
+if (!function_exists('getFolderName')) {
+    function getFolderName($id)
+    {
+        return Folder::where('id',$id)->first()->name ?? null;
     }
 }

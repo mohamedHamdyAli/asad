@@ -35,12 +35,9 @@ class UnitCrudService
             if (!empty($request['cover_image'])) {
                 $request['cover_image'] = FileService::upload($request['cover_image'], $this->uploadFolder);
             }
-            $gallery = $request['gallery'] ?? [];
-            unset($request['gallery']);
-
             $unit = Unit::create($request);
-            if (!empty($gallery) && is_array($gallery)) {
-                foreach ($gallery as $image) {
+            if (!empty($request['gallery']) && is_array($request['gallery'])) {
+                foreach ($request['gallery'] as $image) {
                     $unit->homeUnitGallery()->create([
                         'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
                     ]);
@@ -63,14 +60,11 @@ class UnitCrudService
                     $unit->getRawOriginal('cover_image')
                 );
             }
-            
-            $gallery = $request['gallery'] ?? [];
-            unset($request['gallery']);
 
             $unit->update($request);
 
-            if (!empty($gallery) && is_array($gallery)) {
-                foreach ($gallery as $image) {
+            if (!empty($request['gallery']) && is_array($request['gallery'])) {
+                foreach ($request['gallery'] as $image) {
                     $unit->homeUnitGallery()->create([
                         'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
                     ]);

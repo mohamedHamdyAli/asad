@@ -27,4 +27,7 @@ class Folder extends Model
     {
         return $this->hasMany(UnitGallery::class, 'folder_id');
     }
+    public static function getFolderByType($type) {
+        return self::select('id', 'name')->where('file_type',$type)->get();
+    }
 }

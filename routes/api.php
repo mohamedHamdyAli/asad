@@ -7,7 +7,10 @@ use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
-use App\Http\Controllers\Admin\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\Unit\UnitController as AdminUnitController;
+use App\Http\Controllers\Admin\Unit\DocsController as AdminDocsController;
+use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
+use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
@@ -92,3 +95,26 @@ Route::group(['prefix' => 'units'], static function () {
     Route::post('/update/{id}', [AdminUnitController::class, 'update'])->name('units.update');
     Route::delete('/delete/{id}', [AdminUnitController::class, 'destroy'])->name('units.delete');
 });
+
+Route::group(['prefix' => 'folder'], static function () {
+    Route::get('/{type}', [AdminFolderController::class, 'index'])->name('folder.index');
+    Route::post('/create', [AdminFolderController::class, 'store'])->name('folder.store');
+    Route::post('/update/{id}', [AdminFolderController::class, 'update'])->name('folder.update');
+    Route::delete('/delete/{id}', [AdminFolderController::class, 'destroy'])->name('folder.delete');
+});
+
+Route::group(['prefix' => 'unit-docs'], static function () {
+    Route::get('/{unitId}', [AdminDocsController::class, 'index'])->name('docs.index');
+    Route::post('/create', [AdminDocsController::class, 'store'])->name('docs.store');
+    Route::post('/update', [AdminDocsController::class, 'update'])->name('docs.update');
+    Route::delete('/delete/{id}', [AdminDocsController::class, 'destroy'])->name('docs.delete');
+});
+
+Route::group(['prefix' => 'unit-gallery'], static function () {
+    Route::get('/{unitId}', [AdminGalleryController::class, 'index'])->name('gallery.index');
+    Route::post('/create', [AdminGalleryController::class, 'store'])->name('gallery.store');
+    Route::post('/update', [AdminGalleryController::class, 'update'])->name('gallery.update');
+    Route::delete('/delete/{id}', [AdminGalleryController::class, 'destroy'])->name('gallery.delete');
+});
+
+
