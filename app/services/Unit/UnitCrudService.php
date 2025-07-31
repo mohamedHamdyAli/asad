@@ -35,10 +35,12 @@ class UnitCrudService
             if (!empty($request['cover_image'])) {
                 $request['cover_image'] = FileService::upload($request['cover_image'], $this->uploadFolder);
             }
+            $gallery = $request['gallery'] ?? [];
+            unset($request['gallery']);
 
             $unit = Unit::create($request);
-            if (!empty($request['gallery']) && is_array($request['gallery'])) {
-                foreach ($request['gallery'] as $image) {
+            if (!empty($gallery) && is_array($gallery)) {
+                foreach ($gallery as $image) {
                     $unit->homeUnitGallery()->create([
                         'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
                     ]);
@@ -52,8 +54,7 @@ class UnitCrudService
     {
         return DB::transaction(function () use ($request, $id) {
             $unit = Unit::find($id);
-            if (!$unit)
-                return false;
+            if (!$unit) return false;
 
             if (!empty($request['cover_image'])) {
                 $request['cover_image'] = FileService::replace(
@@ -62,11 +63,24 @@ class UnitCrudService
                     $unit->getRawOriginal('cover_image')
                 );
             }
+            
+            $gallery = $request['gallery'] ?? [];
+            unset($request['gallery']);
 
             $unit->update($request);
+
+            if (!empty($gallery) && is_array($gallery)) {
+                foreach ($gallery as $image) {
+                    $unit->homeUnitGallery()->create([
+                        'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
+                    ]);
+                }
+            }
+
             return true;
         });
     }
+
 
     public function deleteUnit($id)
     {
