@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
+use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
+
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -118,3 +120,9 @@ Route::group(['prefix' => 'unit-gallery'], static function () {
 });
 
 
+Route::group(['prefix' => 'unit-drawing'], static function () {
+    Route::get('/{unitId}', [AdminDrawingsController::class, 'index'])->name('drawing.index');
+    Route::post('/create', [AdminDrawingsController::class, 'store'])->name('drawing.store');
+    Route::post('/update', [AdminDrawingsController::class, 'update'])->name('drawing.update');
+    Route::delete('/delete/{id}', [AdminDrawingsController::class, 'destroy'])->name('drawing.delete');
+});
