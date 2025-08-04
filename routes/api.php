@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
+use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Admin\Unit\UnitController as AdminUnitController;
 use App\Http\Controllers\Admin\Unit\DocsController as AdminDocsController;
 use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
@@ -33,7 +34,11 @@ Route::prefix('user')->group(function () {
 
     // Protected routes with middleware
     Route::middleware([CheckUserAuthentication::class])->group(function () {
-        // user Profile
+                // Unit
+        Route::get('get-user-unit', [ApiUnitController::class, 'getUserUnit']);
+        Route::get('get-unit-docs', [ApiUnitController::class, 'getUnitDocs']);
+        Route::get('get-unit-gallery', [ApiUnitController::class, 'getUnitGallery']);
+
 
     });
 });
