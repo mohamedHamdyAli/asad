@@ -3,7 +3,7 @@
 namespace App\services\Vendor;
 
 use App\Models\User;
-use App\Services\FileService;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 

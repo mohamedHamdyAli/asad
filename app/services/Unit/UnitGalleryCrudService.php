@@ -3,7 +3,7 @@
 namespace App\services\Unit;
 
 use App\Models\UnitGallery;
-use App\Services\FileService;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class UnitGalleryCrudService
