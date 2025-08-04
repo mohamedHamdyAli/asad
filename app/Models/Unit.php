@@ -22,6 +22,19 @@ class Unit extends Model
         'vendor_id',
         'status',
     ];
+
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+    public function getNameAttribute($value)
+    {
+        return json_decode($value);
+    }
+    public function getDescriptionAttribute($value)
+    {
+        return json_decode($value);
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -86,7 +99,7 @@ class Unit extends Model
         if ($status !== null) {
             $query->where('status', $status);
         }
-        return $query->get();
+        return $query->with('homeUnitGallery')->get();
     }
     public static function allVendorUnit($vendorId, $status = null)
     {

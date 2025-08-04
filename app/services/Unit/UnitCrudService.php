@@ -35,6 +35,14 @@ class UnitCrudService
             if (!empty($request['cover_image'])) {
                 $request['cover_image'] = FileService::upload($request['cover_image'], $this->uploadFolder);
             }
+
+            if (!empty($request['name'])) {
+                $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
+            }
+            if (!empty($request['description'])) {
+                $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+            }
+
             $unit = Unit::create($request);
             if (!empty($request['gallery']) && is_array($request['gallery'])) {
                 foreach ($request['gallery'] as $image) {

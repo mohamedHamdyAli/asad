@@ -18,7 +18,10 @@ class UnitRequest extends FormRequest
     public function rules(): array
     {
         $rules = (Route::is('units.store')) ? [
-            'name'        => 'required|string',
+            'name' => 'required|array',
+            'name.*' => 'required|string',
+            'description' => 'required|array',
+            'description.*' => 'required|string',
             'location'    => 'required|string',
             'lat'         => 'required|numeric|between:-90,90',
             'long'        => 'required|numeric|between:-180,180',
@@ -27,11 +30,13 @@ class UnitRequest extends FormRequest
             'cover_image' => 'required|mimes:jpeg,png,jpg,svg,webp|max:6144',
             'gallery'       => 'required|array',
             'gallery.*'     => 'required|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
-            'description' => 'required|string',
             'user_id'     => 'required|exists:users,id',
             'vendor_id'   => 'required|exists:users,id',
         ] : [
-            'name'        => 'nullable|string',
+            'name' => 'nullable|array',
+            'name.*' => 'nullable|string',
+            'description' => 'nullable|array',
+            'description.*' => 'nullable|string',
             'location'    => 'nullable|string',
             'lat'         => 'nullable|numeric|between:-90,90',
             'long'        => 'nullable|numeric|between:-180,180',
@@ -40,7 +45,6 @@ class UnitRequest extends FormRequest
             'cover_image' => 'nullable|mimes:jpeg,png,jpg,svg,webp|max:6144',
             'gallery'     => 'nullable|array',
             'gallery.*'   => 'nullable|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
-            'description' => 'nullable|string',
             'user_id'     => 'nullable|exists:users,id',
             'vendor_id'   => 'nullable|exists:users,id',
             'status'      => 'nullable|in:under_construction,completed',
