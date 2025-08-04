@@ -76,7 +76,7 @@ if (!function_exists('userAuth')) {
         if ($user != null && $user->role === 'user') {
             return $user;
         }
-        return null;
+        return 'this user is not authenticated or not a user role';
     }
 }
 
