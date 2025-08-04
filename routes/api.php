@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
+use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
+
 
 
 //  user api routes
@@ -131,4 +133,12 @@ Route::group(['prefix' => 'unit-drawing'], static function () {
     Route::post('/create', [AdminDrawingsController::class, 'store'])->name('drawing.store');
     Route::post('/update', [AdminDrawingsController::class, 'update'])->name('drawing.update');
     Route::delete('/delete/{id}', [AdminDrawingsController::class, 'destroy'])->name('drawing.delete');
+});
+
+
+Route::group(['prefix' => 'unit-report'], static function () {
+    Route::get('/{unitId}', [AdminReportController::class, 'index'])->name('report.index');
+    Route::post('/create', [AdminReportController::class, 'store'])->name('report.store');
+    Route::post('/update', [AdminReportController::class, 'update'])->name('report.update');
+    Route::delete('/delete/{id}', [AdminReportController::class, 'destroy'])->name('report.delete');
 });
