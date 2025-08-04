@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Unit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UnitGalleryRequest;
-use App\Services\Unit\UnitGalleryCrudService;
+use App\services\Unit\UnitGalleryCrudService;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller

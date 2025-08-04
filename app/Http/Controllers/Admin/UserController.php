@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
-use App\Services\User\UserHelperFunctionService;
+use App\services\User\UserHelperFunctionService;
 
 class UserController extends Controller
 {

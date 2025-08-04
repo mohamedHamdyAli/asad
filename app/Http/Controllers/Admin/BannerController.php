@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BannerRequest;
-use App\Services\Banner\BannerHelperFunctionService;
+use App\services\Banner\BannerHelperFunctionService;
 use App\Models\Banner;
 
 class BannerController extends Controller
