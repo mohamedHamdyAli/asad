@@ -22,7 +22,7 @@ class CheckUserAuthentication
             }
             $user = userAuth();
             if($user === 'this user is not authenticated or not a user role') {
-                return failReturnMsg('You are not authenticated', 401);
+                return failReturnMsg('this user is not authenticated or not a user role', 401);
             }
             if ($user && $user->is_enabled === 0) {
                 Auth::logout();
