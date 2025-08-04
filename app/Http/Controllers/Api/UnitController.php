@@ -19,7 +19,7 @@ class UnitController extends Controller
     public function getUserUnit(UserIdRequest $request)
     {
         $data = $this->unitService->getUserUnit($request->validated());
-        return successReturnData(UnitDetailsResource::collection($data), 'Data Fetched Successfully');
+        return successReturnData(UnitDetailsResource::collection($data ?? collect()), 'Data Fetched Successfully');
     }
 
     public function getUnitDocs(UnitIdRequest $request)
