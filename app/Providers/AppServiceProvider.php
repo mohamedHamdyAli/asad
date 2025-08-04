@@ -30,37 +30,37 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(!app()->isProduction());
         // Model::preventSilentlyDiscardingAttributes(true);
 
-        app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn($app) => new class ($app) extends \Illuminate\Foundation\Exceptions\Handler {
-            public function render($request, \Throwable $e)
-                {
-                    logger()->error($e->getMessage(), [
-                        'exception' => get_class($e),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        'url' => $request->fullUrl(),
-                        'method' => $request->method(),
-                    ]);
+        // app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn($app) => new class ($app) extends \Illuminate\Foundation\Exceptions\Handler {
+        //     public function render($request, \Throwable $e)
+        //         {
+        //             logger()->error($e->getMessage(), [
+        //                 'exception' => get_class($e),
+        //                 'file' => $e->getFile(),
+        //                 'line' => $e->getLine(),
+        //                 'url' => $request->fullUrl(),
+        //                 'method' => $request->method(),
+        //             ]);
 
-                    if ($e instanceof MethodNotAllowedHttpException) {
-                        return failReturnMsg('The method used is not supported for this path.', 405);
-                    }
+        //             if ($e instanceof MethodNotAllowedHttpException) {
+        //                 return failReturnMsg('The method used is not supported for this path.', 405);
+        //             }
 
-                    return failServerReturnMsg(
-                        'Unexpected server error.',
-                        app()->isLocal()
-                            ? [
-                                'message' => $e->getMessage(),
-                                'exception' => get_class($e),
-                                'file' => $e->getFile(),
-                                'line' => $e->getLine(),
-                                'trace' => $e->getTrace(),
-                                'request' => $request->all(),
-                            ]
-                            : null,
-                        500
-                    );
-                }
-            });
-        ;
+        //             return failServerReturnMsg(
+        //                 'Unexpected server error.',
+        //                 app()->isLocal()
+        //                     ? [
+        //                         'message' => $e->getMessage(),
+        //                         'exception' => get_class($e),
+        //                         'file' => $e->getFile(),
+        //                         'line' => $e->getLine(),
+        //                         'trace' => $e->getTrace(),
+        //                         'request' => $request->all(),
+        //                     ]
+        //                     : null,
+        //                 500
+        //             );
+        //         }
+        //     });
+        // ;
     }
 }

@@ -28,25 +28,24 @@ class UnitDocsRequest extends FormRequest
             'data' => 'required|array',
             'data.*.folder_id' => [
                 'required',
-                Rule::exists('folders', 'id')->where(function ($query) {
-                    $query->where('file_type', 'document');
-                }),
+                Rule::exists('folders', 'id')->where(fn($q) => $q->where('file_type', 'document')),
             ],
             'data.*.file' => 'required|file|mimes:jpeg,png,jpg,svg,webp,pdf|max:6144',
-            'data.*.title' => 'required|string',
+            'data.*.title' => 'required|array',
+            'data.*.title.*' => 'required|string',
         ] : [
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',
             'data.*.id' => 'required|exists:unit_documents,id',
             'data.*.folder_id' => [
                 'required',
-                Rule::exists('folders', 'id')->where(function ($query) {
-                    $query->where('file_type', 'document');
-                }),
+                Rule::exists('folders', 'id')->where(fn($q) => $q->where('file_type', 'document')),
             ],
             'data.*.file' => 'nullable|file|mimes:jpeg,png,jpg,svg,webp,pdf|max:6144',
-            'data.*.title' => 'nullable|string',
+            'data.*.title' => 'nullable|array',
+            'data.*.title.*' => 'required_with:data.*.title|string',
         ];
+
         return $rules;
     }
 }

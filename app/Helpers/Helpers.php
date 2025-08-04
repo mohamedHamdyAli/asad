@@ -198,6 +198,6 @@ if (!function_exists('calculateDistance')) {
 if (!function_exists('getFolderName')) {
     function getFolderName($id)
     {
-        return Folder::where('id',$id)->first()->name ?? null;
+        return Folder::where('id',$id)->first()->name->en ?? null;
     }
 }

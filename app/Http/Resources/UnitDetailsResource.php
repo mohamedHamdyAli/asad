@@ -16,8 +16,9 @@ class UnitDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' => getLocalizedValue($this,'name'),
-            'description' => getLocalizedValue($this,'description'),
+            "id" => $this->id,
+            'name' => getLocalizedValue($this, 'name'),
+            'description' => getLocalizedValue($this, 'description'),
             'cover_image' => getImageassetUrl($this->cover_image),
             "location" => $this->location,
             "lat" => $this->lat,

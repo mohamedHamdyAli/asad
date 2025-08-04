@@ -16,7 +16,7 @@ class UnitDocumentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'title' => getLocalizedValue($this,'title'),
             'file' => getImageassetUrl($this->file ?: $this->image),
         ];
     }

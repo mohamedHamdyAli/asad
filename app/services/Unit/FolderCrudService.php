@@ -13,10 +13,11 @@ class FolderCrudService
 
     public function __construct()
     {
-        $this->uploadFolder = "unit/folder";
+        $this->uploadFolder = "units/folder";
     }
 
-    public function getData($type){
+    public function getData($type)
+    {
         return Folder::getFolderByType($type);
     }
 
@@ -25,6 +26,9 @@ class FolderCrudService
         return DB::transaction(function () use ($request) {
             if (!empty($request['folder_image'])) {
                 $request['folder_image'] = FileService::upload($request['folder_image'], $this->uploadFolder);
+            }
+            if (!empty($request['name'])) {
+                $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
             }
             return Folder::create($request);
         });
@@ -41,6 +45,9 @@ class FolderCrudService
                     $this->uploadFolder,
                     $Folder->getRawOriginal('folder_image')
                 );
+            }
+            if (!empty($request['name'])) {
+                $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
             }
             $Folder->update($request);
             return $Folder;

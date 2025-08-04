@@ -24,11 +24,13 @@ class FolderRequest extends FormRequest
     {
         $rules = (Route::is('folder.store')) ? [
             'file_type' => 'required|string|in:gallery,document,drawing',
-            'name' => 'required|string|max:255',
+            'name' => 'required|array',
+            'name.*' => 'required|string',
             'folder_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
         ] : [
             'file_type' => 'nullable|string|in:gallery,document,drawing',
-            'name' => 'nullable|string|max:255',
+            'name' => 'nullable|array',
+            'name.*' => 'nullable|string',
             'folder_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
         ];
 

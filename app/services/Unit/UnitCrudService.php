@@ -68,6 +68,12 @@ class UnitCrudService
                     $unit->getRawOriginal('cover_image')
                 );
             }
+            if (!empty($request['name'])) {
+                $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
+            }
+            if (!empty($request['description'])) {
+                $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+            }
 
             $unit->update($request);
 

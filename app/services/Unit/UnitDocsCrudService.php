@@ -25,17 +25,24 @@ class UnitDocsCrudService
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
-                $uploaded = FileService::upload($item['file'], $this->uploadFolder . '/' . getFolderName($item['folder_id']));
+                $folderName = getFolderName($item['folder_id']);
+
+                $uploaded = FileService::upload($item['file'], "{$this->uploadFolder}/$folderName");
+
+                $title = !empty($item['title'])
+                    ? json_encode($item['title'], JSON_UNESCAPED_UNICODE)
+                    : null;
+
                 UnitDocument::create([
                     'unit_id' => $request['unit_id'],
                     'folder_id' => $item['folder_id'],
                     'file' => $uploaded,
-                    'title' => $item['title'],
+                    'title' => $title,
                 ]);
             }
-
         });
     }
+
 
     public function updateUnitDocsData($request)
     {
@@ -46,8 +53,8 @@ class UnitDocsCrudService
                     'unit_id' => $request['unit_id'],
                 ];
 
-                if (array_key_exists('title', $item)) {
-                    $updateData['title'] = $item['title'];
+                if (array_key_exists('title', $item) && is_array($item['title'])) {
+                    $updateData['title'] = json_encode($item['title'], JSON_UNESCAPED_UNICODE);
                 }
 
                 $folderId = array_key_exists('folder_id', $item) ? $item['folder_id'] : $doc->folder_id;

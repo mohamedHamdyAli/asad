@@ -25,11 +25,14 @@ class UnitGalleryCrudService
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
                 $uploaded = FileService::upload($item['image'], $this->uploadFolder . '/' . getFolderName($item['folder_id']));
+                $title = !empty($item['title'])
+                    ? json_encode($item['title'], JSON_UNESCAPED_UNICODE)
+                    : null;
                 UnitGallery::create([
                     'unit_id' => $request['unit_id'],
                     'folder_id' => $item['folder_id'],
                     'image' => $uploaded,
-                    'title' => $item['title'],
+                    'title' => $title,
                     'date' => $item['date'],
                 ]);
             }
@@ -46,8 +49,8 @@ class UnitGalleryCrudService
                     'unit_id' => $request['unit_id'],
                 ];
 
-                if (array_key_exists('title', $item)) {
-                    $updateData['title'] = $item['title'];
+                if (array_key_exists('title', $item) && is_array($item['title'])) {
+                    $updateData['title'] = json_encode($item['title'], JSON_UNESCAPED_UNICODE);
                 }
 
                 if (array_key_exists('date', $item)) {

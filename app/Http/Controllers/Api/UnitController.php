@@ -31,4 +31,9 @@ class UnitController extends Controller
     {
         return $this->unitService->getUnitGallery($request->validated());
     }
+
+    public function getUnitDrawing(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitDrawing($request->validated());
+    }
 }

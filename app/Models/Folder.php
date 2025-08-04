@@ -15,6 +15,15 @@ class Folder extends Model
         'folder_image',
     ];
 
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+    public function getNameAttribute($value)
+    {
+        return json_decode($value);
+    }
+
     public function unitDocument()
     {
         return $this->hasMany(UnitDocument::class, 'folder_id');

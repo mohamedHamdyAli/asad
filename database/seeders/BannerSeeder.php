@@ -28,7 +28,7 @@ class BannerSeeder extends Seeder
         ];
 
         foreach ($data as $row) {
-            Banner::firstOrCreate(['image' => $row['image']], $row);
+            Banner::updateOrCreate(['image' => $row['image']], $row);
         }
     }
 }

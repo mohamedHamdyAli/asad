@@ -38,7 +38,7 @@ class LanguageSeeder extends Seeder
             ],
         ];
         foreach ($Languages as $lang) {
-            Language::firstOrCreate(['code' => $lang['code']], $lang);
+            Language::updateOrCreate(['code' => $lang['code']], $lang);
             FileService::generateJsonLanguageFile("{$lang['code']}_app");
             FileService::generateJsonLanguageFile("{$lang['code']}_panel");
             FileService::generateJsonLanguageFile("{$lang['code']}_vendor");

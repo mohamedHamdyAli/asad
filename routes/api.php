@@ -38,6 +38,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-user-unit', [ApiUnitController::class, 'getUserUnit']);
         Route::get('get-unit-docs', [ApiUnitController::class, 'getUnitDocs']);
         Route::get('get-unit-gallery', [ApiUnitController::class, 'getUnitGallery']);
+        Route::get('get-unit-drawing', [ApiUnitController::class, 'getUnitDrawing']);
 
 
     });

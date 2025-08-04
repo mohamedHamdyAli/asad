@@ -22,7 +22,7 @@ class UnitApiService
             return failReturnMsg('No documents found for this unit', 404);
         }
 
-        $data = $docs->groupBy(fn($doc) => optional($doc->folder)->name)->map(fn($items, $folderName) => [
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
             'foldername' => $folderName,
             'files' => $items,
         ])->values();
@@ -37,7 +37,7 @@ class UnitApiService
             return failReturnMsg('No Gallery found for this unit', 404);
         }
 
-        $data = $docs->groupBy(fn($doc) => optional($doc->folder)->name)->map(fn($items, $folderName) => [
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
             'foldername' => $folderName,
             'files' => $items,
         ])->values();
@@ -45,5 +45,20 @@ class UnitApiService
         return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
     }
 
+    public function getUnitDrawing($request)
+    {
+        $docs = Unit::find($request['unit_id'])->unitDrawing()->with('folder')->get();
+
+        if ($docs->isEmpty()) {
+            return failReturnMsg('No Drawing found for this unit', 404);
+        }
+
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
+            'foldername' => $folderName,
+            'files' => $items,
+        ])->values();
+
+        return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
+    }
 
 }

@@ -33,7 +33,8 @@ class UnitGalleryRequest extends FormRequest
                 }),
             ],
             'data.*.image' => 'required|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
-            'data.*.title' => 'required|string',
+            'data.*.title' => 'required|array',
+            'data.*.title.*' => 'required|string',
             'data.*.date' => 'required|date',
         ] : [
             'unit_id' => 'required|exists:units,id',
@@ -46,7 +47,8 @@ class UnitGalleryRequest extends FormRequest
                 }),
             ],
             'data.*.image' => 'nullable|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
-            'data.*.title' => 'nullable|string',
+            'data.*.title' => 'nullable|array',
+            'data.*.title.*' => 'required_with:data.*.title|string',
             'data.*.date' => 'nullable|date',
 
         ];
