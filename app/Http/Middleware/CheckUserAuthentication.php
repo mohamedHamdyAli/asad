@@ -18,9 +18,12 @@ class CheckUserAuthentication
     {
         if ($request->hasHeader('Authorization')) {
             if (!auth('api')->check()) {
-                return failReturnMsg('Authorization');
+                return failReturnMsg('You are not authenticated', 401);
             }
             $user = userAuth();
+            if($user === 'this user is not authenticated or not a user role') {
+                return failReturnMsg('You are not authenticated', 401);
+            }
             if ($user && $user->is_enabled === 0) {
                 Auth::logout();
                 return failReturnMsg('account is disabled');
