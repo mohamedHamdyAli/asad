@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+
 
 
 
@@ -142,3 +144,13 @@ Route::group(['prefix' => 'unit-report'], static function () {
     Route::post('/update', [AdminReportController::class, 'update'])->name('report.update');
     Route::delete('/delete/{id}', [AdminReportController::class, 'destroy'])->name('report.delete');
 });
+
+
+
+Route::group(['prefix' => 'unit-timeline'], static function () {
+    Route::get('/{unitId}', [AdminTimeLineController::class, 'index'])->name('timeline.index');
+    Route::post('/create', [AdminTimeLineController::class, 'store'])->name('timeline.store');
+    Route::post('/update', [AdminTimeLineController::class, 'update'])->name('timeline.update');
+    Route::delete('/delete/{id}', [AdminTimeLineController::class, 'destroy'])->name('timeline.delete');
+});
+
