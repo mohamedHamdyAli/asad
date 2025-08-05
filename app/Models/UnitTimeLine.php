@@ -14,7 +14,15 @@ class UnitTimeLine extends Model
         'title',
         'file',
     ];
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
 
+    public function getTitleAttribute($value)
+    {
+        return json_decode($value);
+    }
     public function unit()
     {
         return $this->belongsTo(Unit::class);
