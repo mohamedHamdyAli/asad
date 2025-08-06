@@ -3,15 +3,18 @@
 namespace App\services\Unit;
 
 use App\Http\Resources\FolderWithDocumentsResource;
+use App\Http\Resources\UnitDetailsResource;
 use App\Models\Unit;
-use App\services\FileService;
-use Illuminate\Support\Facades\DB;
 
 class UnitApiService
 {
     public function getUserUnit($request)
     {
         return Unit::allUserUnit($request['user_id']);
+    }
+    public function getUnitDetails($request)
+    {
+        return Unit::find($request['unit_id']);
     }
 
     public function getUnitDocs($request)

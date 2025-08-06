@@ -38,13 +38,12 @@ Route::prefix('user')->group(function () {
 
     // Protected routes with middleware
     Route::middleware([CheckUserAuthentication::class])->group(function () {
-                // Unit
+        // Unit
         Route::get('get-user-unit', [ApiUnitController::class, 'getUserUnit']);
+        Route::get('get-unit-details', [ApiUnitController::class, 'getUnitDetails']);
         Route::get('get-unit-docs', [ApiUnitController::class, 'getUnitDocs']);
         Route::get('get-unit-gallery', [ApiUnitController::class, 'getUnitGallery']);
         Route::get('get-unit-drawing', [ApiUnitController::class, 'getUnitDrawing']);
-
-
     });
 });
 
