@@ -16,8 +16,11 @@ class UnitDocumentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => getLocalizedValue($this,'title'),
+            'title' => getLocalizedValue($this, 'title'),
             'file' => getImageassetUrl($this->file ?: $this->image),
+            $this->mergeWhen($this->date !== null, [
+                'date' => $this->date,
+            ]),
         ];
     }
 }
