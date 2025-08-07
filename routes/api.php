@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Admin\Unit\PhaseController as AdminPhaseController;
+
 
 
 
@@ -153,3 +155,9 @@ Route::group(['prefix' => 'unit-timeline'], static function () {
     Route::delete('/delete/{id}', [AdminTimeLineController::class, 'destroy'])->name('timeline.delete');
 });
 
+Route::group(['prefix' => 'unit-phase'], static function () {
+    Route::get('/{unitId}', [AdminPhaseController::class, 'index'])->name('phases.index');
+    Route::post('/create', [AdminPhaseController::class, 'store'])->name('phases.store');
+    Route::post('/update', [AdminPhaseController::class, 'update'])->name('phases.update');
+    Route::delete('/delete/{id}', [AdminPhaseController::class, 'destroy'])->name('phases.delete');
+});
