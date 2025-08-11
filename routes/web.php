@@ -27,7 +27,7 @@ Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('MainSDashboard');
+    return Inertia::render('MainDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
