@@ -25,6 +25,7 @@ Route::get('/language-editor', fn() => inertia('LanguageEditor'))->name('languag
 Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('finance-management');
 Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-management');
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
+Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
 
 Route::get('/dashboard', function () {
     return Inertia::render('MainDashboard');
