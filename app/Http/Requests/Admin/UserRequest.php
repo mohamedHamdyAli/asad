@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
         $rules = (Route::is('users.store')) ? [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|unique:users,phone',
+            'password' => 'required|string|min:6|regex:/^(?=.*\d).+$/',
             'password' => 'required|string|min:8',
             'country_code' => 'required|string|max:10',
             'country_name' => 'required|string|max:255',
@@ -40,7 +40,7 @@ class UserRequest extends FormRequest
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email',
             'phone' => 'nullable|string|unique:users,phone',
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:6|regex:/^(?=.*\d).+$/',
             'country_code' => 'nullable|string|max:10',
             'country_name' => 'nullable|string|max:255',
             'role' => 'nullable|string|in:user',
