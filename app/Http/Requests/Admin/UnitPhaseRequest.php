@@ -20,20 +20,20 @@ class UnitPhaseRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return Route::is('phases.store') ? [
-            'unit_id' => 'required|exists:units,id',
-            'data' => 'required|array',
-            'data.*.status' => 'required|in:site_handover,fondation,finishing,handover',
-            'data.*.description' => 'required|string',
-        ] : [
-            'unit_id' => 'required|exists:units,id',
-            'data' => 'required|array',
-            'data.*.id' => 'required|exists:unit_phases,id',
-            'data.*.status' => 'nullable|in:site_handover,fondation,finishing,handover',
-            'data.*.description' => 'nullable|string',
-        ];
-        return $rules;
-    }
+  public function rules(): array
+{
+    return Route::is('phases.store') ? [
+        'unit_id' => 'required|exists:units,id',
+        'data' => 'required|array',
+        'data.*.status' => 'required|in:site_handover,fondation,finishing,handover',
+        'data.*.description' => 'required|array',
+    ] : [
+        'unit_id' => 'required|exists:units,id',
+        'data' => 'required|array',
+        'data.*.id' => 'required|exists:unit_phases,id',
+        'data.*.status' => 'nullable|in:site_handover,fondation,finishing,handover',
+        'data.*.description' => 'nullable|array',
+    ];
+}
+
 }
