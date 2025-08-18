@@ -42,4 +42,12 @@ class UnitController extends Controller
     {
         return $this->unitService->getUnitDrawing($request->validated());
     }
+    public function getUnitReport(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitReport($request->validated());
+    }
+    public function getUnitPhase(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitPhase($request->validated());
+    }
 }
