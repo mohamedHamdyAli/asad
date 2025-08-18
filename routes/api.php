@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsControlle
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
 use App\Http\Controllers\Admin\Unit\PhaseController as AdminPhaseController;
+use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
+
 
 
 
@@ -160,4 +162,12 @@ Route::group(['prefix' => 'unit-phase'], static function () {
     Route::post('/create', [AdminPhaseController::class, 'store'])->name('phases.store');
     Route::post('/update', [AdminPhaseController::class, 'update'])->name('phases.update');
     Route::delete('/delete/{id}', [AdminPhaseController::class, 'destroy'])->name('phases.delete');
+});
+
+Route::group(['prefix' => 'contractors'], static function () {
+    Route::get('/', [AdminContractorController::class, 'index'])->name('contractors.index');
+    Route::post('/create', [AdminContractorController::class, 'store'])->name('contractors.store');
+    Route::get('/show/{id}', [AdminContractorController::class, 'show'])->name('contractors.show');
+    Route::post('/update', [AdminContractorController::class, 'update'])->name('contractors.update');
+    Route::delete('/delete/{id}', [AdminContractorController::class, 'destroy'])->name('contractors.delete');
 });
