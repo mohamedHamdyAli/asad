@@ -16,22 +16,20 @@ if (!function_exists('getImageDashboardUrl')) {
         return "<a href='$imageUrl'><img class='rounded-circle' style='height: 80px; width: 80px; border-radius: 10%;' src='$imageUrl'></a>";
     }
 }
-
 if (!function_exists('getImageassetUrl')) {
     function getImageassetUrl($urls)
     {
-        $getUrl = function ($url) {
-            $filePath = "public/$url";
-            if (!empty($url) && Storage::exists($filePath)) {
-                return asset("storage/$url");
+        $buildUrl = function ($url) {
+            if (empty($url)) {
+                return asset('storage/default.png');
             }
-            if (!empty($url) && file_exists(public_path($url))) {
+            if (str_starts_with($url, 'staticImage/')) {
                 return asset($url);
             }
-            return asset('storage/default.png');
+            return asset("storage/$url");
         };
 
-        return is_array($urls) ? array_map($getUrl, $urls) : $getUrl($urls);
+        return is_array($urls) ? array_map($buildUrl, (array) $urls) : $buildUrl($urls);
     }
 }
 
@@ -198,6 +196,6 @@ if (!function_exists('calculateDistance')) {
 if (!function_exists('getFolderName')) {
     function getFolderName($id)
     {
-        return Folder::where('id',$id)->first()->name->en ?? null;
+        return Folder::where('id', $id)->first()->name->en ?? null;
     }
 }

@@ -4,6 +4,8 @@ namespace App\services\Unit;
 
 use App\Http\Resources\FolderWithDocumentsResource;
 use App\Http\Resources\UnitDetailsResource;
+use App\Http\Resources\UnitDocumentResource;
+use App\Http\Resources\UnitPhaseResource;
 use App\Models\Unit;
 
 class UnitApiService
@@ -63,5 +65,40 @@ class UnitApiService
 
         return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
     }
+
+    public function getUnitReport($request)
+    {
+        $report = Unit::find($request['unit_id'])->unitReport()->get();
+
+        if ($report->isEmpty()) {
+            return failReturnMsg('No report found for this unit', 404);
+        }
+
+        return successReturnData(UnitDocumentResource::collection($report), 'Data Fetched Successfully');
+    }
+
+    public function getUnitPhase($request)
+{
+    $unit = Unit::find($request['unit_id']);
+
+    if (!$unit || $unit->unitPhase->isEmpty()) {
+        return failReturnMsg('No phase found for this unit', 404);
+    }
+
+    $phases = $unit->unitPhase;
+
+    $oldStatuses = $phases->pluck('status')->slice(0, -1)->implode(',');
+
+    $lastPhase = $phases->last();
+    $response = [
+        'old_status'    => $oldStatuses,
+        'active_status' => $lastPhase->status,
+        'desc'          => getLocalizedValue($lastPhase, 'description')
+    ];
+
+    return successReturnData($response, 'Data Fetched Successfully');
+}
+
+
 
 }
