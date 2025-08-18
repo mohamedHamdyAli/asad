@@ -50,4 +50,8 @@ class UnitController extends Controller
     {
         return $this->unitService->getUnitPhase($request->validated());
     }
+    public function getUnitTimeline(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitTimeline($request->validated());
+    }
 }

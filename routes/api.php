@@ -50,6 +50,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-drawing', [ApiUnitController::class, 'getUnitDrawing']);
         Route::get('get-unit-report', [ApiUnitController::class, 'getUnitReport']);
         Route::get('get-unit-phase', [ApiUnitController::class, 'getUnitPhase']);
+        Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
     });
 });
 

@@ -89,6 +89,12 @@ class UserService
         $status = Password::reset(
             $data,
             function ($user, $password) {
+                // ✅ Check if the new password is the same as the old one
+                if (Hash::check($password, $user->password)) {
+                    // لو نفس الباسورد القديم نوقف العملية
+                    failReturnMsg('The new password cannot be the same as the old password.');
+                }
+
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
@@ -103,9 +109,14 @@ class UserService
             Password::PASSWORD_RESET => returnSuccessMsg('Password reset successful'),
             Password::INVALID_TOKEN => failReturnMsg('This password reset token is invalid or has expired.'),
             Password::INVALID_USER => failReturnMsg('We can\'t find a user with that email address.'),
-            default => failReturnMsg('Failed to reset password.'),
+            default => failReturnMsg(
+                $status instanceof \Exception
+                ? $status->getMessage()
+                : 'Failed to reset password.'
+            ),
         };
     }
+
 
 
 

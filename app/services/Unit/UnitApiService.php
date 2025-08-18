@@ -77,28 +77,39 @@ class UnitApiService
         return successReturnData(UnitDocumentResource::collection($report), 'Data Fetched Successfully');
     }
 
-    public function getUnitPhase($request)
-{
-    $unit = Unit::find($request['unit_id']);
 
-    if (!$unit || $unit->unitPhase->isEmpty()) {
-        return failReturnMsg('No phase found for this unit', 404);
+    public function getUnitPhase($request)
+    {
+        $unit = Unit::find($request['unit_id']);
+
+        if (!$unit || $unit->unitPhase->isEmpty()) {
+            return failReturnMsg('No phase found for this unit', 404);
+        }
+
+        $phases = $unit->unitPhase;
+
+        $oldStatuses = $phases->pluck('status')->slice(0, -1)->implode(',');
+
+        $lastPhase = $phases->last();
+        $response = [
+            'old_status' => $oldStatuses,
+            'active_status' => $lastPhase->status,
+            'desc' => getLocalizedValue($lastPhase, 'description')
+        ];
+
+        return successReturnData($response, 'Data Fetched Successfully');
     }
 
-    $phases = $unit->unitPhase;
+    public function getUnitTimeline($request)
+    {
+        $timeline = Unit::find($request['unit_id'])->unitTimeLine()->get();
 
-    $oldStatuses = $phases->pluck('status')->slice(0, -1)->implode(',');
+        if ($timeline->isEmpty()) {
+            return failReturnMsg('No timeline found for this unit', 404);
+        }
 
-    $lastPhase = $phases->last();
-    $response = [
-        'old_status'    => $oldStatuses,
-        'active_status' => $lastPhase->status,
-        'desc'          => getLocalizedValue($lastPhase, 'description')
-    ];
-
-    return successReturnData($response, 'Data Fetched Successfully');
-}
-
+        return successReturnData(UnitDocumentResource::collection($timeline), 'Data Fetched Successfully');
+    }
 
 
 }
