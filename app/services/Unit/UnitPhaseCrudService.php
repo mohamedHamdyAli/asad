@@ -11,16 +11,23 @@ class UnitPhaseCrudService
     {
         return UnitPhase::where('unit_id', $unitId)->get();
     }
-
     public function createPhases($request)
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
-                UnitPhase::create([
-                    'unit_id' => $request['unit_id'],
-                    'status' => $item['status'],
-                    'description' => $item['description'],
-                ]);
+                $description = !empty($item['description']) && is_array($item['description'])
+                    ? json_encode($item['description'], JSON_UNESCAPED_UNICODE)
+                    : null;
+
+                UnitPhase::updateOrCreate(
+                    [
+                        'unit_id' => $request['unit_id'],
+                        'status' => $item['status'],
+                    ],
+                    [
+                        'description' => $description,
+                    ]
+                );
             }
         });
     }
@@ -30,14 +37,23 @@ class UnitPhaseCrudService
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
                 $phase = UnitPhase::findOrFail($item['id']);
-                $phase->update([
-                    'status' => $item['status'] ?? $phase->status,
-                    'description' => $item['description'] ?? $phase->description,
-                ]);
+
+                $updateData = [];
+
+                if (isset($item['status'])) {
+                    $updateData['status'] = $item['status'];
+                }
+
+                if (!empty($item['description']) && is_array($item['description'])) {
+                    $updateData['description'] = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
+                }
+
+                $phase->update($updateData);
             }
+
+            return true;
         });
     }
-
     public function deletePhase($id)
     {
         return DB::transaction(function () use ($id) {
