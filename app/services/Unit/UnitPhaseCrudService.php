@@ -15,9 +15,7 @@ class UnitPhaseCrudService
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
-                $description = !empty($item['description']) && is_array($item['description'])
-                    ? json_encode($item['description'], JSON_UNESCAPED_UNICODE)
-                    : null;
+                $description = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
 
                 UnitPhase::updateOrCreate(
                     [
@@ -44,7 +42,7 @@ class UnitPhaseCrudService
                     $updateData['status'] = $item['status'];
                 }
 
-                if (!empty($item['description']) && is_array($item['description'])) {
+                if (!empty($item['description'])) {
                     $updateData['description'] = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
                 }
 
