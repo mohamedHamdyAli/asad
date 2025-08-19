@@ -2,26 +2,27 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckUserAuthentication;
-use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
-use App\Http\Controllers\Api\BannerController as ApiBannerController;
+use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
-use App\Http\Controllers\Admin\Unit\UnitController as AdminUnitController;
-use App\Http\Controllers\Admin\Unit\DocsController as AdminDocsController;
-use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
-use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
+use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\BannerController as ApiBannerController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
-use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
-use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
-use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
-use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Api\LanguageController as ApiLanguageController;
+use App\Http\Controllers\Admin\Unit\DocsController as AdminDocsController;
+use App\Http\Controllers\Admin\Unit\UnitController as AdminUnitController;
 use App\Http\Controllers\Admin\Unit\PhaseController as AdminPhaseController;
+use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
+use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
+use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
+use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
+use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 
 
 
@@ -166,6 +167,14 @@ Route::group(['prefix' => 'unit-phase'], static function () {
     Route::post('/update', [AdminPhaseController::class, 'update'])->name('phases.update');
     Route::delete('/delete/{id}', [AdminPhaseController::class, 'destroy'])->name('phases.delete');
 });
+
+Route::group(['prefix' => 'unit-contractors'], static function () {
+    Route::get('/{unitId}', [AdminUnitContractorController::class, 'index'])->name('unit.contractors.index');
+    Route::post('/create', [AdminUnitContractorController::class, 'store'])->name('unit.contractors.store');
+    Route::post('/update', [AdminUnitContractorController::class, 'update'])->name('unit.contractors.update');
+    Route::delete('/delete/{id}', [AdminUnitContractorController::class, 'destroy'])->name('unit.contractors.delete');
+});
+
 
 Route::group(['prefix' => 'contractors'], static function () {
     Route::get('/', [AdminContractorController::class, 'index'])->name('contractors.index');
