@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Unit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UnitReportRequest;
-use App\Services\Unit\UnitReportCrudService;
+use App\services\Unit\UnitReportCrudService;
 
 class ReportController extends Controller
 {
