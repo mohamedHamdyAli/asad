@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\ContractorController as AdminContractorController
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
+use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
+
 
 
 
@@ -175,6 +177,12 @@ Route::group(['prefix' => 'unit-contractors'], static function () {
     Route::delete('/delete/{id}', [AdminUnitContractorController::class, 'destroy'])->name('unit.contractors.delete');
 });
 
+Route::group(['prefix' => 'unit-live-cameras'], static function () {
+    Route::get('/{unitId}', [AdminUnitLiveCameraController::class, 'index'])->name('unit.live_cameras.index');
+    Route::post('/create', [AdminUnitLiveCameraController::class, 'store'])->name('unit.live_cameras.store');
+    Route::post('/update', [AdminUnitLiveCameraController::class, 'update'])->name('unit.live_cameras.update');
+    Route::delete('/delete/{id}', [AdminUnitLiveCameraController::class, 'destroy'])->name('unit.live_cameras.delete');
+});
 
 Route::group(['prefix' => 'contractors'], static function () {
     Route::get('/', [AdminContractorController::class, 'index'])->name('contractors.index');
