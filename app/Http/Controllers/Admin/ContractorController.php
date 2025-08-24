@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Contractor;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ContractorRequest;
 use App\services\Contractor\ContractorService;
@@ -22,7 +20,7 @@ class ContractorController extends Controller
         $data = $this->contractorService->getContractorData();
         return response()->json([
             'status' => 'success',
-            'message' => 'Contractors Data Fetched successfully',
+            'message' => 'Contractors fetched successfully',
             'data' => $data
         ], 200);
     }
@@ -34,7 +32,7 @@ class ContractorController extends Controller
             'status' => 'success',
             'message' => 'Contractor created successfully',
             'data' => $data
-        ]);
+        ], 201);
     }
 
     public function show($id)
@@ -49,7 +47,7 @@ class ContractorController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Contractor data fetched successfully',
+            'message' => 'Contractor fetched successfully',
             'data' => $data
         ], 200);
     }
@@ -70,21 +68,26 @@ class ContractorController extends Controller
         ], 200);
     }
 
-    public function update(ContractorRequest $request)
+    public function update(ContractorRequest $request, $id)
     {
-        $data = $this->contractorService->updateContractorData($request->validated(), $request->id);
+        $updated = $this->contractorService->updateContractorData($request->validated(), (int)$id);
+        if (!$updated) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Contractor not found'
+            ], 404);
+        }
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Contractor updated successfully',
-            'data' => $data
+            'message' => 'Contractor updated successfully'
         ], 200);
     }
 
-
     public function destroy($id)
     {
-        $data = $this->contractorService->deleteContractor($id);
-        if (!$data) {
+        $deleted = $this->contractorService->deleteContractor((int)$id);
+        if (!$deleted) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Contractor not found'
