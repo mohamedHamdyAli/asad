@@ -188,6 +188,8 @@ Route::group(['prefix' => 'contractors'], static function () {
     Route::get('/', [AdminContractorController::class, 'index'])->name('contractors.index');
     Route::post('/create', [AdminContractorController::class, 'store'])->name('contractors.store');
     Route::get('/show/{id}', [AdminContractorController::class, 'show'])->name('contractors.show');
-    Route::post('/update', [AdminContractorController::class, 'update'])->name('contractors.update');
+    Route::get('/edit/{id}', [AdminContractorController::class, 'edit'])->name('contractors.edit');
+    Route::post('/update/{id}', [AdminContractorController::class, 'update'])->name('contractors.update');
     Route::delete('/delete/{id}', [AdminContractorController::class, 'destroy'])->name('contractors.delete');
 });
+

@@ -39,37 +39,39 @@ class ContractorService
         });
     }
 
+public function updateContractorData(array $request, int $id): bool
+{
+    return DB::transaction(function () use ($request, $id) {
+        if (isset($request['data']) && is_array($request['data'])) {
+            $request = $request['data'];
+        }
 
-    public function updateContractorData(array $request): bool
-    {
-        return DB::transaction(function () use ($request) {
-            foreach ($request['data'] as $item) {
-                $contractor = Contractor::find($item['id']);
+        $contractor = Contractor::find($id);
+        if (!$contractor) {
+            return false;
+        }
 
-                $updateData = [];
+        if (!empty($request['image'])) {
+            $request['image'] = FileService::replace(
+                $request['image'],
+                $this->uploadFolder,
+                $contractor->getRawOriginal('image')
+            );
+        }
 
-                if (!empty($item['title'])) {
-                    $updateData['title'] = json_encode($item['title'], JSON_UNESCAPED_UNICODE);
-                }
+        if (!empty($request['title']) && is_array($request['title'])) {
+            $request['title'] = json_encode($request['title'], JSON_UNESCAPED_UNICODE);
+        }
+        if (!empty($request['description']) && is_array($request['description'])) {
+            $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+        }
 
-                if (!empty($item['description'])) {
-                    $updateData['description'] = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
-                }
+        $contractor->update($request);
+        return true;
+    });
+}
 
-                if (!empty($item['image'])) {
-                    $updateData['image'] = FileService::replace(
-                        $item['image'],
-                        $this->uploadFolder,
-                        $contractor->getRawOriginal('image')
-                    );
-                }
 
-                $contractor->update($updateData);
-            }
-
-            return true;
-        });
-    }
 
     public function deleteContractor(int $id): bool
     {
