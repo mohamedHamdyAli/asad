@@ -11,6 +11,19 @@ class UnitPhase extends Model
 
     protected $fillable = ['unit_id', 'status', 'description'];
 
+    public const STATUS_CODE = [
+        'site_handover' => 1,
+        'fondation'     => 2,
+        'finishing'     => 3,
+        'handover'      => 4,
+    ];
+
+    public function getStatusCodeAttribute()
+    {
+        return self::STATUS_CODE[$this->status];
+    }
+
+
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
