@@ -88,12 +88,12 @@ class UnitApiService
 
         $phases = $unit->unitPhase;
 
-        $oldStatuses = $phases->pluck('status')->slice(0, -1)->implode(',');
+        // $oldStatuses = $phases->pluck('status')->slice(0, -1)->implode(',');
 
         $lastPhase = $phases->last();
         $response = [
-            'old_status' => $oldStatuses,
-            'active_status' => $lastPhase->status,
+            // 'old_status' => $oldStatuses,
+            'active_status' => $lastPhase->status_code,
             'desc' => getLocalizedValue($lastPhase, 'description')
         ];
 
