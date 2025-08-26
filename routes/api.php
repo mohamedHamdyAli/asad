@@ -25,12 +25,6 @@ use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineControlle
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 
-
-
-
-
-
-
 //  user api routes
 Route::prefix('user')->group(function () {
     // Public Apis Routes
@@ -53,6 +47,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-drawing', [ApiUnitController::class, 'getUnitDrawing']);
         Route::get('get-unit-report', [ApiUnitController::class, 'getUnitReport']);
         Route::get('get-unit-phase', [ApiUnitController::class, 'getUnitPhase']);
+        Route::post('store-unit-phase-note', [ApiUnitController::class, 'storeUnitPhaseNote']);
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
     });
 });
@@ -192,4 +187,3 @@ Route::group(['prefix' => 'contractors'], static function () {
     Route::post('/update/{id}', [AdminContractorController::class, 'update'])->name('contractors.update');
     Route::delete('/delete/{id}', [AdminContractorController::class, 'destroy'])->name('contractors.delete');
 });
-

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\services\Unit\UnitApiService;
 use App\Http\Requests\Api\UnitIdRequest;
 use App\Http\Requests\Api\UserIdRequest;
-use App\Http\Resources\FolderWithDocumentsResource;
+use App\Http\Requests\Api\PhaseNoteRequest;
 use App\Http\Resources\UnitDetailsResource;
-use App\services\Unit\UnitApiService;
+use App\Http\Resources\FolderWithDocumentsResource;
 
 class UnitController extends Controller
 {
@@ -49,6 +50,10 @@ class UnitController extends Controller
     public function getUnitPhase(UnitIdRequest $request)
     {
         return $this->unitService->getUnitPhase($request->validated());
+    }
+    public function storeUnitPhaseNote(PhaseNoteRequest $request)
+    {
+        return $this->unitService->storeUnitPhaseNote($request->validated());
     }
     public function getUnitTimeline(UnitIdRequest $request)
     {
