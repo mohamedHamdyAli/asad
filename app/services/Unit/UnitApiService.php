@@ -2,11 +2,13 @@
 
 namespace App\services\Unit;
 
-use App\Http\Resources\FolderWithDocumentsResource;
+use App\Models\Unit;
+use App\Models\UnitPhaseNote;
+use App\Http\Resources\UnitPhaseResource;
 use App\Http\Resources\UnitDetailsResource;
 use App\Http\Resources\UnitDocumentResource;
-use App\Http\Resources\UnitPhaseResource;
-use App\Models\Unit;
+use App\Http\Resources\UnitPhaseNoteResource;
+use App\Http\Resources\FolderWithDocumentsResource;
 
 class UnitApiService
 {
@@ -100,6 +102,35 @@ class UnitApiService
         return successReturnData($response, 'Data Fetched Successfully');
     }
 
+    public function storeUnitPhaseNote($request)
+    {
+        $user = userAuth();
+        $unit = Unit::find($request['unit_id']);
+        if (!$unit) {
+            return failReturnMsg('Unit not found');
+        }
+
+        $lastPhase = $unit->unitPhase()->latest('id')->first();
+
+        if (!$lastPhase) {
+            return failReturnMsg('No phase found for this unit', 404);
+        }
+
+        $note = UnitPhaseNote::create([
+            'unit_id' => $unit->id,
+            'user_id' => $user->id,
+            'note' => $request['note'],
+        ]);
+
+        $response = [
+            'user_id' => $user->id,
+            'unit_id' => $unit->id,
+            'note' => $note->note,
+        ];
+        return successReturnData($response, 'Note saved successfully');
+    }
+
+
     public function getUnitTimeline($request)
     {
         $timeline = Unit::find($request['unit_id'])->unitTimeLine()->get();
@@ -110,6 +141,4 @@ class UnitApiService
 
         return successReturnData(UnitDocumentResource::collection($timeline), 'Data Fetched Successfully');
     }
-
-
 }
