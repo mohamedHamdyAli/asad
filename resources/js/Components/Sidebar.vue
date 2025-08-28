@@ -12,7 +12,7 @@
                 <NavItem icon="mdi:table-large" label="Reports" :to="route('finance-management')" :href="route('finance-management')" />
                 <!-- <NavItem icon="mdi:file-document-edit-outline" label="Forms" /> -->
                 <NavItem icon="mdi:view-dashboard-outline" label="Bids" :to="route('bids-management')" :href="route('bids-management')" />
-                <NavItem icon="mdi:responsive" label="Vendors" :to="route('spc-management')" :href="route('spc-management')" />
+                <NavItem icon="mdi:responsive" label="Vendors management" :to="route('vendors-management')" :href="route('vendors-management')" />
                 <NavItem icon="mdi:file-document-edit-outline" label="App Intros" :to="route('intro-management')" :href="route('intro-management')" />             
                 <NavItem icon="mdi:file-document-edit-outline" label="App Banners" :to="route('banner-management')" :href="route('banner-management')" />             
                 <NavItem icon="mdi:world" label="Languages" :to="route('language-management')" :href="route('language-management')" />

@@ -18,7 +18,7 @@ Route::get('/', function () {
 
 Route::get('/settings', fn() => inertia('Settings'))->name('settings');
 Route::get('/messages', fn() => inertia('Messages'))->name('messages');
-Route::get('/spc-management', fn() => inertia('SPCsManagement'))->name('spc-management');
+Route::get('/Vendors-management', fn() => inertia('VendorsManagement'))->name('vendors-management');
 Route::get('/bids-management', fn() => inertia('BidsManagement'))->name('bids-management');
 Route::get('/languages', fn() => inertia('LanguageManagement'))->name('language-management');
 Route::get('/language-editor', fn() => inertia('LanguageEditor'))->name('language-editor');
