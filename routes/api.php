@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsControlle
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
+use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
+
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -187,4 +189,13 @@ Route::group(['prefix' => 'contractors'], static function () {
     Route::get('/edit/{id}', [AdminContractorController::class, 'edit'])->name('contractors.edit');
     Route::post('/update/{id}', [AdminContractorController::class, 'update'])->name('contractors.update');
     Route::delete('/delete/{id}', [AdminContractorController::class, 'destroy'])->name('contractors.delete');
+});
+
+Route::group(['prefix' => 'contact-infos'], static function () {
+    Route::get('/', [AdminContactUsController::class, 'index'])->name('contact-infos.index');
+    Route::post('/create', [AdminContactUsController::class, 'store'])->name('contact-infos.store');
+    Route::get('/show/{id}', [AdminContactUsController::class, 'show'])->name('contact-infos.show');
+    Route::get('/edit/{id}', [AdminContactUsController::class, 'edit'])->name('contact-infos.edit');
+    Route::post('/update/{id}', [AdminContactUsController::class, 'update'])->name('contact-infos.update');
+    Route::delete('/delete/{id}', [AdminContactUsController::class, 'destroy'])->name('contact-infos.delete');
 });
