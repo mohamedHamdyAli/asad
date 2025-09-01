@@ -27,6 +27,27 @@ Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
 Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
 
+// ** unit routes **
+Route::get('/units-management', fn() => inertia('Units/Index'))->name('unit-management');
+Route::get('/units-management/{unitId}/gallery', function ($unitId) {
+    return Inertia::render('Units/Gallery', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.gallery');
+
+Route::get('/units-management/{unitId}/docs', function ($unitId) {
+    return Inertia::render('Units/Docs', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.docs');
+
+Route::get('/units-management/{unitId}/drawing', function ($unitId) {
+    return Inertia::render('Units/Drawings', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.drawing');
+
+
 Route::get('/dashboard', function () {
     return Inertia::render('MainDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
