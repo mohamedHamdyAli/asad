@@ -37,25 +37,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::group(['prefix' => 'language'], static function () {
-//     Route::post('/create', [LanguageController::class, 'store'])->name('language.store');
-//     Route::post('/update/{id}', [LanguageController::class, 'update'])->name('language.update');
-//     Route::get('/show/{id}', [LanguageController::class, 'show'])->name('language.show');
-//     Route::get('/set-language/{lang}', [LanguageController::class, 'setLanguage'])->name('language.set-current');
-//     Route::get('/languageedit/{id}/{type}', [LanguageController::class, 'editLanguage'])->name('languageedit');
-//     Route::post('/updatelanguageValues/{id}/{type}', [LanguageController::class, 'updatelanguageValues'])->name('updatelanguageValues');
-//     Route::delete('/delete/{id}', [LanguageController::class, 'destroy'])->name('language.delete');
+Route::prefix('language')->group(function () {
+    Route::get('/editor/{id}/{type}', [LanguageController::class, 'editorPage'])
+        ->whereNumber('id')
+        ->name('language-editor');
 
-// });
+    Route::get('/languageedit/{id}/{type}', [LanguageController::class, 'editlanguage'])
+        ->whereNumber('id')
+        ->name('languages.file.get');
 
-// Route::group(['prefix' => 'intro'], static function () {
-//     Route::get('/', [IntroController::class, 'index'])->name('intro.index');
-//     Route::post('/create', [IntroController::class, 'store'])->name('intro.store');
-//     Route::get('/show/{id}', [IntroController::class, 'show'])->name('intro.show');
-//     Route::get('/edit/{id}', [IntroController::class, 'edit'])->name('intro.edit');
-//     Route::post('/update/{id}', [IntroController::class, 'update'])->name('intro.update');
-//     Route::delete('/delete/{id}', [IntroController::class, 'destroy'])->name('intro.delete');
-// });
+    Route::post('/updatelanguageValues/{id}/{type}', [LanguageController::class, 'updatelanguageValues'])
+        ->whereNumber('id')
+        ->name('languages.file.update');
+});
 
 Route::get('/get-csrf-token', fn() => response()->json([
     'csrf_token' => csrf_token()

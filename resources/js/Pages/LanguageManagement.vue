@@ -4,46 +4,78 @@
       <h2 class="text-2xl font-semibold text-gray-800 mb-6">Language Management</h2>
 
       <div class="flex flex-col lg:flex-row gap-6 items-start">
-        <!-- Left: Add Language Button -->
+        <!-- Add form -->
         <div class="w-full lg:w-1/4">
-          <div class="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 relative">
-        <h3 class="text-xl font-bold text-gray-800 mb-6">Add New Language</h3>
-  
-        <!-- Top Info -->
-        <div class="grid grid-cols-1 sm:grid-cols-1 gap-4 mb-6">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Add New Language</h3>
 
-          <input v-model="form.name" type="text" placeholder="Language Name" class="form-input" />
-          <input v-model="form.english_name" type="text" placeholder="Language Name (in English)" class="form-input" />
-          <input v-model="form.code" type="text" placeholder="Code" class="checkbox-form-input" />
-          <input v-model="form.code" type="text" placeholder="Country Code" class="checkbox-form-input" />
-          <input type="file" class="form-input" v-on:change="form.document = $event.target.files[0]" />
-          <select v-model="form.scope" class="form-input">
-            <option disabled value="">Select App</option>
-            <option value="user">User App</option>
-            <option value="worker">Worker App</option>
-          </select>
-          <span class="text-sm text-gray-600">
-          <input v-model="form.rtl" type="checkbox" placeholder="RTL" label="RTL" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            RTL (Right to Left direction)
-          </span>
+            <div class="grid gap-3 mb-4">
+              <!-- Name -->
+              <div>
+                <input v-model.trim="form.name" type="text" placeholder="Language Name" class="form-input" />
+                <p v-if="err('name')" class="text-xs text-red-600 mt-1">{{ err('name') }}</p>
+              </div>
 
-          <button
-            @click="addLanguage"
-            class="flex items-center rounded-md border border-transparent bg-gray-800 px-2 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 align-center">
-            + Add New Language
-          </button>
-        </div>
+              <!-- English name -->
+              <div>
+                <input v-model.trim="form.english_name" type="text" placeholder="Language Name (English)" class="form-input" />
+                <p v-if="err('english_name')" class="text-xs text-red-600 mt-1">{{ err('english_name') }}</p>
+              </div>
+
+              <!-- Code -->
+              <div>
+                <input v-model.trim="form.code" type="text" placeholder="Code (e.g., ar, en)" class="form-input" />
+                <p v-if="err('code')" class="text-xs text-red-600 mt-1">{{ err('code') }}</p>
+              </div>
+
+              <!-- Country code -->
+              <div>
+                <input v-model.trim="form.country_code" type="text" placeholder="Country Code (e.g., EG, US)" class="form-input" />
+                <p v-if="err('country_code')" class="text-xs text-red-600 mt-1">{{ err('country_code') }}</p>
+              </div>
+
+              <!-- Icon -->
+              <div>
+                <input type="file" accept="image/*" class="form-input" @change="onIconChange" />
+                <p v-if="err('icon')" class="text-xs text-red-600 mt-1">{{ err('icon') }}</p>
+              </div>
+
+              <!-- Scope -->
+              <div>
+                <select v-model="form.scope" class="form-input">
+                  <option disabled value="">Select Scope</option>
+                  <option value="user">User</option>
+                  <option value="vendor">Vendor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <p v-if="err('scope')" class="text-xs text-red-600 mt-1">{{ err('scope') }}</p>
+              </div>
+
+              <!-- RTL -->
+              <label class="flex items-center gap-2 text-sm text-gray-600">
+                <input v-model="form.rtl" type="checkbox" />
+                RTL (Right to Left)
+              </label>
+
+              <button
+                :disabled="saving"
+                @click="addLanguage"
+                class="bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
+              >
+                {{ saving ? 'Saving…' : '+ Add New Language' }}
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Language List -->
+        <!-- List -->
         <div class="w-full lg:w-3/4">
           <div class="bg-white shadow rounded-lg p-4 h-[600px] overflow-y-auto">
             <h3 class="text-lg font-semibold mb-4">Languages</h3>
 
             <div
               v-for="lang in languages"
-              :key="lang.code"
+              :key="lang.id"
               class="border-b py-3 px-2 flex justify-between items-center"
             >
               <div>
@@ -52,145 +84,181 @@
                 </div>
                 <div class="text-sm text-gray-500">Code: {{ lang.code }}</div>
               </div>
+
               <div class="Lang-image">
-              <img
-                :src="`/images/flags/${lang.code}.png`"
-                :alt="lang.name"
-                class="w-8 h-6 object-cover"
-                @error="useRandomInternetFlag($event)"
-              />
-            </div>
+                <img
+                  :src="lang.icon_url || `/images/flags/${lang.code}.png`"
+                  :alt="lang.name"
+                  class="w-8 h-6 object-cover"
+                  @error="useRandomInternetFlag"
+                />
+              </div>
 
               <div class="flex gap-3 items-center">
+                <!-- edit menu -->
                 <div class="relative">
-        <button @click="toggleSampleMenu(lang.code)" title="Edit" class="text-blue-600 hover:text-blue-800">
-          <Icon icon="mdi:pencil-outline" class="w-5 h-5" />
-        </button>
-        <div
-        v-if="openMenus[lang.code]"
-        class="absolute z-[100] mt-2 w-44 bg-white border rounded shadow left-1/2 transform -translate-x-1/2
-      "
-      >
-    <Link :href="route('language-editor', lang.code)" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-    <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <!-- <Icon icon="mdi:clock-outline" class="me-2 w-4 h-4" /> -->
-    Panel translation
-    </div>
-  </Link>
-    <div class="border-t my-1"></div>
-    <Link :href="route('language-editor', lang.code)" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-    <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <!-- <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" /> -->
-      Web translation
-    </div>
-    </Link>
-    <div class="border-t my-1"></div>
-    <Link :href="route('language-editor', lang.code)" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-    <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <!-- <Icon icon="mdi:selection" class="me-2 w-4 h-4" /> -->
-      App translation
-    </div>
-  </Link>
-  </div>
-</div>
+                  <button @click="toggleMenu(lang.id)" title="Edit" class="text-blue-600 hover:text-blue-800">
+                    <Icon icon="mdi:pencil-outline" class="w-5 h-5" />
+                  </button>
+                  <div
+                    v-if="openMenus[lang.id]"
+                    class="absolute z-[100] mt-2 w-48 bg-white border rounded shadow -left-24"
+                  >
+                    <!-- Use Inertia Link so the editor page opens correctly -->
+                    <Link
+                      class="block px-4 py-2 text-sm hover:bg-gray-100"
+                      :href="routeEditor(lang.id,'panel')"
+                      @click="closeMenu(lang.id)"
+                    >
+                      Panel translation
+                    </Link>
+                    <Link
+                      class="block px-4 py-2 text-sm hover:bg-gray-100"
+                      :href="routeEditor(lang.id,'vendor')"
+                      @click="closeMenu(lang.id)"
+                    >
+                      Vendor App translation
+                    </Link>
+                    <Link
+                      class="block px-4 py-2 text-sm hover:bg-gray-100"
+                      :href="routeEditor(lang.id,'app')"
+                      @click="closeMenu(lang.id)"
+                    >
+                     User App translation
+                    </Link>
+                    <!-- If you also support car_* files, keep these: -->
+                    <!--
+                    <Link class="block px-4 py-2 text-sm hover:bg-gray-100" :href="routeEditor(lang.id,'car_type')" @click="closeMenu(lang.id)">Car Types</Link>
+                    <Link class="block px-4 py-2 text-sm hover:bg-gray-100" :href="routeEditor(lang.id,'car_model')" @click="closeMenu(lang.id)">Car Models</Link>
+                    <Link class="block px-4 py-2 text-sm hover:bg-gray-100" :href="routeEditor(lang.id,'car_color')" @click="closeMenu(lang.id)">Car Colors</Link>
+                    -->
+                  </div>
+                </div>
 
-                <button
-                  @click="toggle(lang)"
-                  :title="lang.enabled ? 'Disable' : 'Enable'"
-                  :class="lang.enabled ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800'"
-                >
-                  <Icon
-                    :icon="lang.enabled ? 'mdi:block-helper' : 'mdi:check-circle-outline'"
-                    class="w-5 h-5"
-                  />
-                </button>
+                <!-- delete -->
                 <button @click="deleteLang(lang)" title="Delete" class="text-red-600 hover:text-red-800">
                   <Icon icon="mdi:trash-can-outline" class="w-5 h-5" />
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       </div>
-
-      <!-- Modal -->
-      <LanguageModal v-if="showModal" @close="showModal = false" />
     </div>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { Link } from '@inertiajs/vue3'
 import { onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import LanguageModal from '@/Components/LanguageModal.vue'
-import { Link } from '@inertiajs/vue3'
-import axios from 'axios'
+import { languagesApi } from '@/api/languages'
 
-const showModal = ref(false)
+const languages = ref([])
+const openMenus = ref({})
+const saving = ref(false)
 
 const form = ref({
+  name: '',
+  name_en: '',
+  code: '',
+  country_code: '',
+  scope: '',
+  rtl: false,
+  icon: null,
+})
+
+const errors = ref({})
+
+// helpers
+const err = (k) => (errors.value?.[k] ? errors.value[k] : '')
+
+function onIconChange(e) {
+  form.value.icon = e.target.files?.[0] || null
+}
+
+function validate() {
+  const e = {}
+  if (!form.value.name) e.name = 'Language name is required.'
+  if (!form.value.code) e.code = 'Code is required.'
+  else if (form.value.code.length > 10) e.code = 'Code must be ≤ 10 characters.'
+  if (!form.value.scope) e.scope = 'Scope is required.'
+  if (form.value.country_code && form.value.country_code.length > 5)
+    e.country_code = 'Country code must be ≤ 5 characters.'
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+async function fetchLanguages() {
+  const { data } = await languagesApi.list()
+  languages.value = data.data || []
+}
+onMounted(fetchLanguages)
+
+async function addLanguage() {
+  if (!validate()) return
+  saving.value = true
+  try {
+    const fd = new FormData()
+    fd.append('name', form.value.name)
+    fd.append('name_en', form.value.english_name || '')
+    fd.append('code', form.value.code)
+    fd.append('country_code', form.value.country_code || '')
+    fd.append('scope', form.value.scope || '')
+    fd.append('rtl', form.value.rtl ? 1 : 0)
+    if (form.value.icon) fd.append('icon', form.value.icon)
+
+    await languagesApi.create(fd)
+    resetForm()
+    await fetchLanguages()
+  } catch (err) {
+    // map server-side validation
+    const v = err?.response?.data?.errors
+    if (v && typeof v === 'object') {
+      const mapped = {}
+      Object.keys(v).forEach(k => { mapped[k] = Array.isArray(v[k]) ? v[k][0] : String(v[k]) })
+      errors.value = mapped
+    } else {
+      alert(err?.response?.data?.message || 'Create failed')
+    }
+  } finally {
+    saving.value = false
+  }
+}
+
+function resetForm() {
+  form.value = {
     name: '',
     english_name: '',
     code: '',
-    document: null,
     country_code: '',
     scope: '',
     rtl: false,
-  })
-
-const languages = ref([])
-
-const fetchLanguages = async () => {
-  try {
-    const res = await axios.get('/api/get-languages')
-    languages.value = res.data.data
-  } catch (err) {
-    console.error(err)
+    icon: null,
   }
+  errors.value = {}
 }
 
-onMounted(fetchLanguages)
-
-const addLanguage = async () => {
-  console.log('Add Language')
-  const payload = new FormData() 
-  FormData.append('name', form.value.name)
-  FormData.append('english_name', form.value.english_name)
-  FormData.append('code', form.value.code)
-  FormData.append('country_code', form.value.country_code)
-  FormData.append('document', form.value.document)
-  FormData.append('scope', form.value.scope)
-  FormData.append('rtl', form.value.rtl ? 1 : 0)
-  try {
-    const res = await axios.post('/language/create', payload)
-    alert(res.data.message)
-    fetchLanguages()
-  } catch (err) {
-    console.error(err)
-  }
+function toggleMenu(id) {
+  openMenus.value[id] = !openMenus.value[id]
 }
-const openMenus = ref({})
-
-const toggleSampleMenu = (langCode) => {
-  openMenus.value[langCode] = !openMenus.value[langCode]
+function closeMenu(id) {
+  openMenus.value[id] = false
+}
+function routeEditor(id, type) {
+  // Inertia route that serves the editor page
+  return `/language/editor/${id}/${type}`
 }
 
-const toggle = (lang) => {
-  lang.enabled = !lang.enabled
+async function deleteLang(lang) {
+  if (!confirm(`Delete ${lang.name}?`)) return
+  await languagesApi.remove(lang.id)
+  await fetchLanguages()
 }
 
-const deleteLang = async (lang) => {
-  if (!confirm(`Are you sure you want to delete ${lang.name}?`)) return
-  try {
-    const res = await axios.delete(`/language/delete/${lang.id}`)
-    alert(res.data.message)
-    fetchLanguages()
-  } catch (err) {
-    console.error('Delete failed:', err)
-  }
-}
-
+// fallback flag
 const randomFlagURLs = [
   'https://flagcdn.com/w320/us.png',
   'https://flagcdn.com/w320/fr.png',
@@ -198,21 +266,12 @@ const randomFlagURLs = [
   'https://flagcdn.com/w320/eg.png',
   'https://flagcdn.com/w320/jp.png'
 ]
-
-const useRandomInternetFlag = (e) => {
-  const index = Math.floor(Math.random() * randomFlagURLs.length)
-  e.target.src = randomFlagURLs[index]
+function useRandomInternetFlag(e) {
+  const i = Math.floor(Math.random() * randomFlagURLs.length)
+  e.target.src = randomFlagURLs[i]
 }
-
-
 </script>
+
 <style scoped>
-.form-input {
-  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
-}
-
-.checkbox-form-input {
-  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
-}
+.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
 </style>
-

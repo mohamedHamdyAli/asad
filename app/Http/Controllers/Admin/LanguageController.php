@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\Admin\LanguageRequest;
 use App\services\Language\LanguageHelperFunctionService;
 use Illuminate\Http\Request;
+use App\Models\Language;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class LanguageController extends Controller
 {
@@ -14,6 +17,31 @@ class LanguageController extends Controller
     {
         $this->languageService = $languageService;
     }
+        public function index(Request $request)
+    {
+        $scope = $request->query('scope');
+
+        $q = Language::query();
+        if ($scope !== null && $scope !== '') {
+            $q->where('app_scope', $scope);
+        }
+
+        $rows = $q->orderByDesc('id')->get()->map(function ($l) {
+            return [
+                'id'            => $l->id,
+                'name'          => $l->name,
+                'english_name'  => $l->name_en,
+                'code'          => $l->code,
+                'country_code'  => $l->country_code,
+                'scope'         => $l->app_scope,
+                'rtl'           => (bool) $l->is_rtl,
+                'icon_url'      => $l->getRawOriginal('icon') ? Storage::url($l->getRawOriginal('icon')) : null,
+            ];
+        });
+
+        return response()->json(['status' => 'success', 'data' => $rows]);
+    }
+
     public function store(LanguageRequest $request)
     {
         $this->languageService->createLanguage($request->validated());
@@ -56,6 +84,13 @@ class LanguageController extends Controller
             'data' => $data
         ])->setStatusCode(200);
         // return view('settings.languageedit', compact('data'));
+    }
+    public function editorPage($id, $type)
+    {
+        return Inertia::render('LanguageEditor', [
+            'id'   => (int) $id,
+            'type' => (string) $type,
+        ]);
     }
 
     public function updatelanguageValues(Request $request, $id, $type)

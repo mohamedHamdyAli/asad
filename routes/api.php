@@ -54,6 +54,7 @@ Route::prefix('user')->group(function () {
 
 
 Route::group(['prefix' => 'language'], static function () {
+    Route::get('/list', [AdminLanguageController::class, 'index'])->name('language.index');
     Route::post('/create', [AdminLanguageController::class, 'store'])->name('language.store');
     Route::post('/update/{id}', [AdminLanguageController::class, 'update'])->name('language.update');
     Route::get('/show/{id}', [AdminLanguageController::class, 'show'])->name('language.show');
