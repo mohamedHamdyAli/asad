@@ -53,12 +53,14 @@
                 <Link :href="drawingPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
                 Drawing
                 </Link>
-                <a :href="unitSection(u.id, 'reports')"
-                  class="px-2 py-1 border rounded text-center hover:bg-gray-100">Reports</a>
+<Link :href="reportsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
+  Reports
+</Link>
                 <a :href="unitSection(u.id, 'phases')"
                   class="px-2 py-1 border rounded text-center hover:bg-gray-100">Phases</a>
-                <a :href="unitSection(u.id, 'timeline')"
-                  class="px-2 py-1 border rounded text-center hover:bg-gray-100 col-span-3">TimeLine</a>
+            <Link :href="timelinePath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
+  TimeLine
+</Link>
               </div>
 
               <div class="flex gap-2 pt-2">
@@ -226,6 +228,8 @@ function unitSection(id, section) { return `/units/${id}/${section}` }
 function docsPath(id) { return `/units-management/${id}/docs` }
 function drawingPath(id) { return `/units-management/${id}/drawing` }
 function galleryPath(id) { return `/units-management/${id}/gallery` }
+function timelinePath(id) { return `/units-management/${id}/timeline` } 
+function reportsPath(id) { return `/units-management/${id}/reports` }
 
 function resetForm() {
   form.value = {

@@ -131,7 +131,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units') // adjust to your web route
+const backToUnits = computed(() => '/units-management') 
 
 /* Create (batch) */
 const createForm = ref({

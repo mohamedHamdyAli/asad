@@ -47,6 +47,18 @@ Route::get('/units-management/{unitId}/drawing', function ($unitId) {
     ]);
 })->name('units.drawing');
 
+Route::get('/units-management/{unitId}/reports', function ($unitId) {
+    return Inertia::render('Units/Reports', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.reports');
+
+Route::get('/units-management/{unitId}/timeline', function ($unitId) {
+    return Inertia::render('Units/Timeline', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.timeline');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('MainDashboard');
