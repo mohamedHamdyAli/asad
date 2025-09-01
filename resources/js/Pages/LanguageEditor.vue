@@ -38,7 +38,6 @@ import { ref, onMounted, computed, watch } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import http from '@/lib/http'
 
-// ✅ Inertia passes these via web route /language/editor/{id}/{type}
 const props = defineProps({
   id:   { type: [Number, String], required: true },
   type: { type: String, required: true },
@@ -49,7 +48,6 @@ const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
 
-// guard so fetch runs only once per mount (prevents loops in dev/HMR)
 const fetchedOnce = ref(false)
 
 const keys = computed(() => Object.keys(translations.value ?? {}))
@@ -61,11 +59,8 @@ async function fetchTranslations() {
   loading.value = true
   loadError.value = ''
   try {
-    // ✅ API endpoint (JSON), NOT the web Inertia route
-    const { data } = await http.get(`/api/language/languageedit/${props.id}/${props.type}`)
-    // Expecting { status, data: { row, enLabels, type } }
+    const { data } = await http.get(`/language/languageedit/${props.id}/${props.type}`)
     const payload = data?.data?.enLabels || {}
-    // keep same object reference so v-models remain stable
     translations.value = { ...payload }
   } catch (e) {
     console.error(e)
@@ -92,7 +87,6 @@ async function saveTranslations() {
 
 onMounted(fetchTranslations)
 
-// If you navigate between types within the same page instance (optional)
 watch(
   () => [props.id, props.type],
   () => {
