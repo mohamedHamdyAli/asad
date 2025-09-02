@@ -24,6 +24,9 @@ class ContactUsRequest extends FormRequest
             'iban'          => 'required|string|unique:contact_us,iban',
             'currency'      => 'required|string',
             'swift_code'    => 'required|string',
+            'lat'           => 'required|numeric|between:-90,90',
+            'long'          => 'required|numeric|between:-180,180',
+            'location'      => 'required|string',
         ] : [
             'country'       => 'nullable|in:Egypt,Kuwait',
             'telephone'     => 'nullable|string',
@@ -32,6 +35,9 @@ class ContactUsRequest extends FormRequest
             'iban'          => 'nullable|string|unique:contact_us,iban',
             'currency'      => 'nullable|string',
             'swift_code'    => 'nullable|string',
+            'lat'           => 'nullable|numeric|between:-90,90',
+            'long'          => 'nullable|numeric|between:-180,180',
+            'location'      => 'nullable|string',
         ];
 
         return $rules;
