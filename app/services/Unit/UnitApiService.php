@@ -4,7 +4,9 @@ namespace App\services\Unit;
 
 use App\Models\Unit;
 use App\Models\UnitPhaseNote;
+use App\Models\UnitContractor;
 use App\Http\Resources\UnitPhaseResource;
+use App\Http\Resources\ContractorResource;
 use App\Http\Resources\UnitDetailsResource;
 use App\Http\Resources\UnitDocumentResource;
 use App\Http\Resources\UnitPhaseNoteResource;
@@ -141,4 +143,24 @@ class UnitApiService
 
         return successReturnData(UnitDocumentResource::collection($timeline), 'Data Fetched Successfully');
     }
+
+public function getUnitContractors($request)
+{
+    $unit = Unit::find($request['unit_id']);
+
+    if (!$unit) {
+        return failReturnMsg('Unit not found', 404);
+    }
+
+    $unitContractors = $unit->unitContractor()->with('contractor')->get();
+
+    $contractors = $unitContractors->pluck('contractor')->filter();
+
+    if ($contractors->isEmpty()) {
+        return failReturnMsg('No contractors found for this unit', 404);
+    }
+
+    return successReturnData(ContractorResource::collection($contractors), 'Data Fetched Successfully');
+}
+
 }
