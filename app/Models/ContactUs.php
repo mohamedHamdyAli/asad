@@ -14,7 +14,9 @@ class ContactUs extends Model
         'iban',
         'currency',
         'swift_code',
+        'lat',
+        'long',
+        'location',
     ];
 
-    
 }
