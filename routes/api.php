@@ -51,6 +51,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-phase', [ApiUnitController::class, 'getUnitPhase']);
         Route::post('store-unit-phase-note', [ApiUnitController::class, 'storeUnitPhaseNote']);
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
+        Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
     });
 });
 
