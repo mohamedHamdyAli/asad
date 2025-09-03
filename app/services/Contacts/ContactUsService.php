@@ -1,6 +1,6 @@
 <?php
 
-namespace App\services\ContactUs;
+namespace App\services\Contacts;
 
 use App\Models\ContactUs;
 use Illuminate\Support\Facades\DB;

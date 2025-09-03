@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\services\ContactUs\ContactUsService;
+use App\services\Contacts\ContactUsService;
 use App\Http\Requests\Admin\ContactUsRequest;
 
 class ContactUsController extends Controller
