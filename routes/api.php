@@ -25,6 +25,10 @@ use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineControlle
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
+use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController;
+use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
+
+
 
 
 //  user api routes
@@ -199,4 +203,21 @@ Route::group(['prefix' => 'contact-infos'], static function () {
     Route::get('/edit/{id}', [AdminContactUsController::class, 'edit'])->name('contact-infos.edit');
     Route::post('/update/{id}', [AdminContactUsController::class, 'update'])->name('contact-infos.update');
     Route::delete('/delete/{id}', [AdminContactUsController::class, 'destroy'])->name('contact-infos.delete');
+});
+
+
+Route::group(['prefix' => 'consultants'], static function () {
+    Route::get('/', [AdminConsultantController::class, 'index'])->name('consultants.index');
+    Route::post('/create', [AdminConsultantController::class, 'store'])->name('consultants.store');
+    Route::get('/show/{id}', [AdminConsultantController::class, 'show'])->name('consultants.show');
+    Route::get('/edit/{id}', [AdminConsultantController::class, 'edit'])->name('consultants.edit');
+    Route::post('/update/{id}', [AdminConsultantController::class, 'update'])->name('consultants.update');
+    Route::delete('/delete/{id}', [AdminConsultantController::class, 'destroy'])->name('consultants.delete');
+});
+
+Route::group(['prefix' => 'unit-consultants'], static function () {
+    Route::get('/{unitId}', [AdminUnitConsultantController::class, 'index'])->name('unit.consultants.index');
+    Route::post('/create', [AdminUnitConsultantController::class, 'store'])->name('unit.consultants.store');
+    Route::post('/update', [AdminUnitConsultantController::class, 'update'])->name('unit.consultants.update');
+    Route::delete('/delete/{id}', [AdminUnitConsultantController::class, 'destroy'])->name('unit.consultants.delete');
 });
