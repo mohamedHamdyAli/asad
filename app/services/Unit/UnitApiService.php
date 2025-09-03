@@ -144,23 +144,41 @@ class UnitApiService
         return successReturnData(UnitDocumentResource::collection($timeline), 'Data Fetched Successfully');
     }
 
-public function getUnitContractors($request)
-{
-    $unit = Unit::find($request['unit_id']);
+    public function getUnitContractors($request)
+    {
+        $unit = Unit::find($request['unit_id']);
 
-    if (!$unit) {
-        return failReturnMsg('Unit not found', 404);
+        if (!$unit) {
+            return failReturnMsg('Unit not found', 404);
+        }
+
+        $unitContractors = $unit->unitContractor()->with('contractor')->get();
+
+        $contractors = $unitContractors->pluck('contractor')->filter();
+
+        if ($contractors->isEmpty()) {
+            return failReturnMsg('No contractors found for this unit', 404);
+        }
+
+        return successReturnData(ContractorResource::collection($contractors), 'Data Fetched Successfully');
     }
 
-    $unitContractors = $unit->unitContractor()->with('contractor')->get();
+    public function getUnitConsultants($request)
+    {
+        $unit = Unit::find($request['unit_id']);
 
-    $contractors = $unitContractors->pluck('contractor')->filter();
+        if (!$unit) {
+            return failReturnMsg('Unit not found', 404);
+        }
 
-    if ($contractors->isEmpty()) {
-        return failReturnMsg('No contractors found for this unit', 404);
+        $unitConsultants = $unit->unitConstulant()->with('consultant')->get();
+
+        $consultants = $unitConsultants->pluck('consultant')->filter();
+
+        if ($consultants->isEmpty()) {
+            return failReturnMsg('No consultants found for this unit', 404);
+        }
+
+        return successReturnData(ContractorResource::collection($consultants), 'Data Fetched Successfully');
     }
-
-    return successReturnData(ContractorResource::collection($contractors), 'Data Fetched Successfully');
-}
-
 }
