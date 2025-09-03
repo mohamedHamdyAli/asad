@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api;
 
 
-class PhaseNoteRequest extends BaseApiRequest
+class ContactsRequest extends BaseApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +21,7 @@ class PhaseNoteRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'unit_id' => 'required|exists:units,id',
-            'note' => 'required|string',
+            'country' => 'required|in:Egypt,Kuwait',
         ];
     }
 }

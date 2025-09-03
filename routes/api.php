@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
@@ -18,15 +19,15 @@ use App\Http\Controllers\Admin\Unit\PhaseController as AdminPhaseController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
 use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
+use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController;
 use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
-use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
-use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController;
-use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 
 
 
@@ -57,6 +58,9 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
+
+        // Contacts
+        Route::get('/contact-infos', [ContactsController::class, 'getByCountry'])->name('contact-infos.byCountry');
     });
 });
 
