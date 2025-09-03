@@ -1,34 +1,34 @@
 <?php
 
-namespace App\services\Unit;
+namespace App\Services\Unit;
 
-use App\Models\UnitContractor;
+use App\Models\UnitConstulant;
 use Illuminate\Support\Facades\DB;
 
-class UnitContractorCrudService
+class UnitConsultantCrudService
 {
-    public function getUnitContractors($unitId)
+    public function getUnitConsultants($unitId)
     {
-        return UnitContractor::with('contractor')->where('unit_id', $unitId)->get();
+        return UnitConstulant::with('consultant')->where('unit_id', $unitId)->get();
     }
 
-    public function createUnitContractors($request)
+    public function createUnitConsultants($request)
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
-                UnitContractor::create([
+                UnitConstulant::create([
                     'unit_id' => $request['unit_id'],
-                    'contractor_id' => $item['contractor_id'],
+                    'consultant_id' => $item['consultant_id'],
                 ]);
             }
         });
     }
 
-    public function updateUnitContractors($request)
+    public function updateUnitConsultants($request)
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
-                $record = UnitContractor::findOrFail($item['id']);
+                $record = UnitConstulant::findOrFail($item['id']);
 
                 $updateData = [];
 
@@ -36,8 +36,8 @@ class UnitContractorCrudService
                     $updateData['unit_id'] = $request['unit_id'];
                 }
 
-                if (isset($item['contractor_id'])) {
-                    $updateData['contractor_id'] = $item['contractor_id'];
+                if (isset($item['consultant_id'])) {
+                    $updateData['consultant_id'] = $item['consultant_id'];
                 }
 
                 if (!empty($updateData)) {
@@ -49,10 +49,10 @@ class UnitContractorCrudService
         });
     }
 
-    public function deleteUnitContractor($id)
+    public function deleteUnitConsultant($id)
     {
         return DB::transaction(function () use ($id) {
-            $record = UnitContractor::findOrFail($id);
+            $record = UnitConstulant::findOrFail($id);
             $record->delete();
             return true;
         });

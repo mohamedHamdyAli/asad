@@ -10,11 +10,16 @@ class UnitConstulant extends Model
     use HasFactory;
 
 
-    protected $fillable = ['unit_id', 'constulant_id'];
+    protected $fillable = ['unit_id', 'consultant_id'];
 
 
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function consultant()
+    {
+        return $this->belongsTo(Consultant::class, 'consultant_id');
     }
 }
