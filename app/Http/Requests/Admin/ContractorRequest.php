@@ -23,6 +23,8 @@ class ContractorRequest extends FormRequest
                 'data.*.description' => 'required|array',
                 'data.*.description.*' => 'required|string|max:255',
                 'data.*.image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'data.*.email' => 'required|email|max:255|unique:contractors,email',
+
             ];
         }
         return [
@@ -32,6 +34,7 @@ class ContractorRequest extends FormRequest
             'data.description' => 'nullable|array',
             'data.description.*' => 'nullable|string|max:255',
             'data.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'data.email' => 'nullable|email|max:255|unique:contractors,email,' . $this->route('id'),
         ];
     }
 
