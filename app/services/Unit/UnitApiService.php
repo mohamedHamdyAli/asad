@@ -6,6 +6,7 @@ use App\Models\Unit;
 use App\Models\UnitPhaseNote;
 use App\Models\UnitContractor;
 use App\Http\Resources\UnitPhaseResource;
+use App\Http\Resources\ConsultantResource;
 use App\Http\Resources\ContractorResource;
 use App\Http\Resources\UnitDetailsResource;
 use App\Http\Resources\UnitDocumentResource;
@@ -179,6 +180,6 @@ class UnitApiService
             return failReturnMsg('No consultants found for this unit', 404);
         }
 
-        return successReturnData(ContractorResource::collection($consultants), 'Data Fetched Successfully');
+        return successReturnData(ConsultantResource::collection($consultants), 'Data Fetched Successfully');
     }
 }

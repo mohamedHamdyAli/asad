@@ -32,6 +32,7 @@ class ConsultantService
                     'title' => $title,
                     'description' => $description,
                     'image' => $image,
+                    'email' => $item['email'] ?? null
                 ]);
             }
 
@@ -65,6 +66,9 @@ class ConsultantService
 
             if (!empty($request['description']) && is_array($request['description'])) {
                 $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+            }
+            if (isset($request['email'])) {
+                $consultant->email = $request['email'];
             }
 
             $consultant->update($request);
