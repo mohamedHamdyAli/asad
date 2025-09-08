@@ -11,6 +11,7 @@ class ContractorResource extends JsonResource
         return [
             'id'          => $this->id,
             'title' => getLocalizedValue($this, 'title'),
+            'email' => $this->email,
             'description' => getLocalizedValue($this, 'description'),
             'image' => getImageassetUrl($this->image),
         ];

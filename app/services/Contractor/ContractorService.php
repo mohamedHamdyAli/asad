@@ -32,6 +32,7 @@ class ContractorService
                     'title' => $title,
                     'description' => $description,
                     'image' => $image,
+                    'email' => $item['email'] ?? null
                 ]);
             }
 
@@ -39,37 +40,40 @@ class ContractorService
         });
     }
 
-public function updateContractorData(array $request, int $id): bool
-{
-    return DB::transaction(function () use ($request, $id) {
-        if (isset($request['data']) && is_array($request['data'])) {
-            $request = $request['data'];
-        }
+    public function updateContractorData(array $request, int $id): bool
+    {
+        return DB::transaction(function () use ($request, $id) {
+            if (isset($request['data']) && is_array($request['data'])) {
+                $request = $request['data'];
+            }
 
-        $contractor = Contractor::find($id);
-        if (!$contractor) {
-            return false;
-        }
+            $contractor = Contractor::find($id);
+            if (!$contractor) {
+                return false;
+            }
 
-        if (!empty($request['image'])) {
-            $request['image'] = FileService::replace(
-                $request['image'],
-                $this->uploadFolder,
-                $contractor->getRawOriginal('image')
-            );
-        }
+            if (!empty($request['image'])) {
+                $request['image'] = FileService::replace(
+                    $request['image'],
+                    $this->uploadFolder,
+                    $contractor->getRawOriginal('image')
+                );
+            }
 
-        if (!empty($request['title']) && is_array($request['title'])) {
-            $request['title'] = json_encode($request['title'], JSON_UNESCAPED_UNICODE);
-        }
-        if (!empty($request['description']) && is_array($request['description'])) {
-            $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
-        }
+            if (!empty($request['title']) && is_array($request['title'])) {
+                $request['title'] = json_encode($request['title'], JSON_UNESCAPED_UNICODE);
+            }
+            if (!empty($request['description']) && is_array($request['description'])) {
+                $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
+            }
 
-        $contractor->update($request);
-        return true;
-    });
-}
+            if (isset($request['email'])) {
+                $contractor->email = $request['email'];
+            }
+            $contractor->update($request);
+            return true;
+        });
+    }
 
 
 
