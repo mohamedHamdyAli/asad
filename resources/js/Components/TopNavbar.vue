@@ -3,9 +3,9 @@
       <div class="h-16 flex justify-between items-center">
         <!-- Left side: Search + title -->
         <div class="flex items-center space-x-6">
-          <div class="text-sm text-gray-500 hidden md:block">
+          <!-- <div class="text-sm text-gray-500 hidden md:block">
             <span class="text-gray-400">Search</span> <kbd class="text-xs bg-gray-100 px-1 py-0.5 rounded">ctrl+k</kbd>
-          </div>
+          </div> -->
   
    <!-- Sample Menu Dropdown -->
 <div class="relative" @click="toggleSampleMenu">
@@ -15,8 +15,8 @@
     <span>Sample menu</span>
     <Icon icon="mdi:chevron-down" class="w-4 h-4" />
   </button>
-
-  <div v-if="sampleMenuOpen" class="absolute left-0 mt-2 w-44 bg-white border rounded shadow z-50">
+<!-- tempo pause sample menu -->
+  <!-- <div v-if="sampleMenuOpen" class="absolute left-0 mt-2 w-44 bg-white border rounded shadow z-50">
     <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
       <Icon icon="mdi:clock-outline" class="me-2 w-4 text-subtitle-2" />
 <NavLink :href="route('dashboard')">Dashboard</NavLink>
@@ -45,12 +45,7 @@
       <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
 <NavLink :href="route('users-management')">User Management</NavLink>
     </div>
-    <!-- <div class="border-t my-1"></div> -->
-    <!-- <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:selection" class="me-2 w-4 h-4" />
-      Item Last
-    </div> -->
-  </div>
+  </div> -->
 </div>
   <!-- <NavItem icon="mdi:table-large" label="Reports" :to="route('finance-management')" :href="route('finance-management')" />
                 <NavItem icon="mdi:view-dashboard-outline" label="Bids" :to="route('bids-management')" :href="route('bids-management')" />
@@ -63,7 +58,6 @@
         <!-- Right side: Icons + profile -->
         <div class="flex items-center space-x-4">
           <Icon icon="mdi:bell-outline" class="w-5 h-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
-          <Icon icon="mdi:cog-outline" class="w-5 h-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
   
           <!-- Profile Dropdown -->
           <div class="relative" @click="toggleDropdown">
@@ -84,14 +78,6 @@
               <Link :href="route('profile.edit')" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100">
                 <Icon icon="mdi:account" class="me-2 w-4 h-4" />
                 My Profile
-              </Link>
-              <Link :href="route('settings')" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100">
-                <Icon icon="mdi:cog-outline" class="me-2 w-4 h-4" />
-                Settings
-              </Link>
-              <Link :href="route('messages')" class="flex items-center px-4 py-2 text-sm hover:bg-gray-100">
-                <Icon icon="mdi:email-outline" class="me-2 w-4 h-4" />
-                Messages
               </Link>
               <div class="border-t my-1"></div>
               <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
