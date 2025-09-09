@@ -41,8 +41,8 @@
 
               <!-- Section links (wire later) -->
               <div class="grid grid-cols-3 gap-2 pt-2 text-xs">
-                <a :href="unitSection(u.id, 'folders')"
-                  class="px-2 py-1 border rounded text-center hover:bg-gray-100">Folders</a>
+                <!-- <a :href="unitSection(u.id, 'folders')"
+                  class="px-2 py-1 border rounded text-center hover:bg-gray-100">Folders</a> -->
                 <Link :href="docsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
                 Docs
                 </Link>
