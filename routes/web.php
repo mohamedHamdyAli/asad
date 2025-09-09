@@ -26,6 +26,7 @@ Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('fi
 Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-management');
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
 Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
+Route::get('/contractors-management', fn() => inertia('Contractors/Index'))->name('contractors-management');
 
 // ** unit routes **
 Route::get('/units-management', fn() => inertia('Units/Index'))->name('unit-management');
@@ -58,6 +59,14 @@ Route::get('/units-management/{unitId}/timeline', function ($unitId) {
         'unitId' => (int) $unitId,
     ]);
 })->name('units.timeline');
+
+Route::get('/units-management/{unitId}/phases', function ($unitId) {
+    return Inertia::render('Units/Phases', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.phases');
+
+
 
 
 Route::get('/dashboard', function () {

@@ -53,14 +53,15 @@
                 <Link :href="drawingPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
                 Drawing
                 </Link>
-<Link :href="reportsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-  Reports
-</Link>
-                <a :href="unitSection(u.id, 'phases')"
-                  class="px-2 py-1 border rounded text-center hover:bg-gray-100">Phases</a>
-            <Link :href="timelinePath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-  TimeLine
-</Link>
+                <Link :href="reportsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
+                Reports
+                </Link>
+                <Link :href="phasesPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
+                Phases
+                </Link>
+                <Link :href="timelinePath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
+                TimeLine
+                </Link>
               </div>
 
               <div class="flex gap-2 pt-2">
@@ -228,8 +229,10 @@ function unitSection(id, section) { return `/units/${id}/${section}` }
 function docsPath(id) { return `/units-management/${id}/docs` }
 function drawingPath(id) { return `/units-management/${id}/drawing` }
 function galleryPath(id) { return `/units-management/${id}/gallery` }
-function timelinePath(id) { return `/units-management/${id}/timeline` } 
+function timelinePath(id) { return `/units-management/${id}/timeline` }
 function reportsPath(id) { return `/units-management/${id}/reports` }
+// const phasesPath = id => `/units-management/${id}/phases`
+function phasesPath(id) { return `/units-management/${id}/phases` }
 
 function resetForm() {
   form.value = {
