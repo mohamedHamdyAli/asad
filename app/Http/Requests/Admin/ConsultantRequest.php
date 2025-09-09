@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Route;
 
-class ContractorRequest extends FormRequest
+class ConsultantRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,7 +15,7 @@ class ContractorRequest extends FormRequest
 
     public function rules(): array
     {
-        if (Route::is('contractors.store')) {
+        if (Route::is('consultants.store')) {
             return [
                 'data' => 'required|array',
                 'data.*.title' => 'required|array',
@@ -23,10 +23,10 @@ class ContractorRequest extends FormRequest
                 'data.*.description' => 'required|array',
                 'data.*.description.*' => 'required|string|max:255',
                 'data.*.image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'data.*.email' => 'required|email|max:255|unique:contractors,email',
-
+                'data.*.email' => 'required|email|max:255|unique:consultants,email',
             ];
         }
+
         return [
             'data' => 'required|array',
             'data.title' => 'nullable|array',
@@ -34,7 +34,8 @@ class ContractorRequest extends FormRequest
             'data.description' => 'nullable|array',
             'data.description.*' => 'nullable|string|max:255',
             'data.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'data.email' => 'nullable|email|max:255|unique:contractors,email,' . $this->route('id'),
+            'data.email' => 'nullable|email|max:255|unique:consultants,email,' . $this->route('id'),
+
         ];
     }
 

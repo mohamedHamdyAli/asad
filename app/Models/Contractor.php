@@ -9,7 +9,7 @@ class Contractor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image'];
+    protected $fillable = ['title', 'description', 'image' ,'email'];
 
     protected function asJson($value)
     {

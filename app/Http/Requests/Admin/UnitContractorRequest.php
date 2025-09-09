@@ -21,10 +21,10 @@ class UnitContractorRequest extends FormRequest
             'data' => 'required|array',
             'data.*.contractor_id' => 'required|exists:contractors,id',
         ] : [
-            'unit_id' => 'required|exists:units,id',
+            'unit_id' => 'nullable|exists:units,id',
             'data' => 'required|array',
             'data.*.id' => 'required|exists:unit_contractors,id',
-            'data.*.contractor_id' => 'required|exists:contractors,id',
+            'data.*.contractor_id' => 'nullable|exists:contractors,id',
         ];
 
         return $rules;

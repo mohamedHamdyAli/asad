@@ -59,4 +59,13 @@ class UnitController extends Controller
     {
         return $this->unitService->getUnitTimeline($request->validated());
     }
+    public function getUnitContractors(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitContractors($request->validated());
+    }
+
+    public function getUnitConsultants(UnitIdRequest $request)
+    {
+        return $this->unitService->getUnitConsultants($request->validated());
+    }
 }

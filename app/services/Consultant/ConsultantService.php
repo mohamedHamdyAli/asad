@@ -1,26 +1,26 @@
 <?php
 
-namespace App\services\Contractor;
+namespace App\services\Consultant;
 
-use App\Models\Contractor;
+use App\Models\Consultant;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
-class ContractorService
+class ConsultantService
 {
     private string $uploadFolder;
 
     public function __construct()
     {
-        $this->uploadFolder = "contractors";
+        $this->uploadFolder = "consultants";
     }
 
-    public function getContractorData($id = null)
+    public function getConsultantData($id = null)
     {
-        return $id ? Contractor::where('id', $id)->first() : Contractor::all();
+        return $id ? Consultant::where('id', $id)->first() : Consultant::all();
     }
 
-    public function createContractor($request): bool
+    public function createConsultant($request): bool
     {
         return DB::transaction(function () use ($request) {
             foreach ($request['data'] as $item) {
@@ -28,7 +28,7 @@ class ContractorService
                 $description = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
                 $image = FileService::upload($item['image'], $this->uploadFolder);
 
-                Contractor::create([
+                Consultant::create([
                     'title' => $title,
                     'description' => $description,
                     'image' => $image,
@@ -40,15 +40,15 @@ class ContractorService
         });
     }
 
-    public function updateContractorData(array $request, int $id): bool
+    public function updateConsultantData(array $request, int $id): bool
     {
         return DB::transaction(function () use ($request, $id) {
             if (isset($request['data']) && is_array($request['data'])) {
                 $request = $request['data'];
             }
 
-            $contractor = Contractor::find($id);
-            if (!$contractor) {
+            $consultant = Consultant::find($id);
+            if (!$consultant) {
                 return false;
             }
 
@@ -56,39 +56,39 @@ class ContractorService
                 $request['image'] = FileService::replace(
                     $request['image'],
                     $this->uploadFolder,
-                    $contractor->getRawOriginal('image')
+                    $consultant->getRawOriginal('image')
                 );
             }
 
             if (!empty($request['title']) && is_array($request['title'])) {
                 $request['title'] = json_encode($request['title'], JSON_UNESCAPED_UNICODE);
             }
+
             if (!empty($request['description']) && is_array($request['description'])) {
                 $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
             }
-
             if (isset($request['email'])) {
-                $contractor->email = $request['email'];
+                $consultant->email = $request['email'];
             }
-            $contractor->update($request);
+
+            $consultant->update($request);
             return true;
         });
     }
 
-
-
-    public function deleteContractor(int $id): bool
+    public function deleteConsultant(int $id): bool
     {
         return DB::transaction(function () use ($id) {
-            $contractor = Contractor::where('id', $id)->first();
-            if (!$contractor) {
+            $consultant = Consultant::find($id);
+            if (!$consultant) {
                 return false;
             }
-            if ($contractor->image) {
-                FileService::delete($contractor->getRawOriginal('image'));
+
+            if ($consultant->image) {
+                FileService::delete($consultant->getRawOriginal('image'));
             }
 
-            $contractor->delete();
+            $consultant->delete();
             return true;
         });
     }

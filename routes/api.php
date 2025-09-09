@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
@@ -18,12 +19,18 @@ use App\Http\Controllers\Admin\Unit\PhaseController as AdminPhaseController;
 use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
 use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
+use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController;
 use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
+
+
+
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -49,6 +56,11 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-phase', [ApiUnitController::class, 'getUnitPhase']);
         Route::post('store-unit-phase-note', [ApiUnitController::class, 'storeUnitPhaseNote']);
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
+        Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
+        Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
+
+        // Contacts
+        Route::get('/contact-infos', [ContactsController::class, 'getByCountry'])->name('contact-infos.byCountry');
     });
 });
 
@@ -187,4 +199,30 @@ Route::group(['prefix' => 'contractors'], static function () {
     Route::get('/edit/{id}', [AdminContractorController::class, 'edit'])->name('contractors.edit');
     Route::post('/update/{id}', [AdminContractorController::class, 'update'])->name('contractors.update');
     Route::delete('/delete/{id}', [AdminContractorController::class, 'destroy'])->name('contractors.delete');
+});
+
+Route::group(['prefix' => 'contact-infos'], static function () {
+    Route::get('/', [AdminContactUsController::class, 'index'])->name('contact-infos.index');
+    Route::post('/create', [AdminContactUsController::class, 'store'])->name('contact-infos.store');
+    Route::get('/show/{id}', [AdminContactUsController::class, 'show'])->name('contact-infos.show');
+    Route::get('/edit/{id}', [AdminContactUsController::class, 'edit'])->name('contact-infos.edit');
+    Route::post('/update/{id}', [AdminContactUsController::class, 'update'])->name('contact-infos.update');
+    Route::delete('/delete/{id}', [AdminContactUsController::class, 'destroy'])->name('contact-infos.delete');
+});
+
+
+Route::group(['prefix' => 'consultants'], static function () {
+    Route::get('/', [AdminConsultantController::class, 'index'])->name('consultants.index');
+    Route::post('/create', [AdminConsultantController::class, 'store'])->name('consultants.store');
+    Route::get('/show/{id}', [AdminConsultantController::class, 'show'])->name('consultants.show');
+    Route::get('/edit/{id}', [AdminConsultantController::class, 'edit'])->name('consultants.edit');
+    Route::post('/update/{id}', [AdminConsultantController::class, 'update'])->name('consultants.update');
+    Route::delete('/delete/{id}', [AdminConsultantController::class, 'destroy'])->name('consultants.delete');
+});
+
+Route::group(['prefix' => 'unit-consultants'], static function () {
+    Route::get('/{unitId}', [AdminUnitConsultantController::class, 'index'])->name('unit.consultants.index');
+    Route::post('/create', [AdminUnitConsultantController::class, 'store'])->name('unit.consultants.store');
+    Route::post('/update', [AdminUnitConsultantController::class, 'update'])->name('unit.consultants.update');
+    Route::delete('/delete/{id}', [AdminUnitConsultantController::class, 'destroy'])->name('unit.consultants.delete');
 });
