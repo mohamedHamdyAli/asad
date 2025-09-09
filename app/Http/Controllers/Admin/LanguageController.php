@@ -17,7 +17,7 @@ class LanguageController extends Controller
     {
         $this->languageService = $languageService;
     }
-        public function index(Request $request)
+    public function index(Request $request)
     {
         $scope = $request->query('scope');
 
@@ -74,23 +74,14 @@ class LanguageController extends Controller
         $this->languageService->setLanguage($languageCode);
         return redirect()->back();
     }
-
     public function editlanguage($id, $type)
     {
         $data = $this->languageService->getLanguageData($id, $type);
         return response()->json([
             'status' => 'success',
-            'message' => 'Language created successfully',
+            'message' => 'Language fetched successfully',
             'data' => $data
-        ])->setStatusCode(200);
-        // return view('settings.languageedit', compact('data'));
-    }
-    public function editorPage($id, $type)
-    {
-        return Inertia::render('LanguageEditor', [
-            'id'   => (int) $id,
-            'type' => (string) $type,
-        ]);
+        ], 200);
     }
 
     public function updatelanguageValues(Request $request, $id, $type)
@@ -102,6 +93,15 @@ class LanguageController extends Controller
             'message' => 'Language updated successfully'
         ]);
     }
+
+    public function editorPage($id, $type)
+    {
+        return Inertia::render('LanguageEditor', [
+            'id'   => (int) $id,
+            'type' => (string) $type,
+        ]);
+    }
+
 
     public function destroy($id)
     {

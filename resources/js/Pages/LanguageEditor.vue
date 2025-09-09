@@ -38,10 +38,14 @@ import { ref, onMounted, computed, watch } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import http from '@/lib/http'
 
-const props = defineProps({
-  id:   { type: [Number, String], required: true },
-  type: { type: String, required: true },
-})
+const props = defineProps({ id: [Number, String], type: String })
+function parseFromUrl () {
+  const m = window.location.pathname.match(/\/language\/editor\/(\d+)\/([A-Za-z_]+)/)
+  return m ? { id: m[1], type: m[2] } : { id: null, type: 'all' }
+}
+const parsed = parseFromUrl()
+const id   = props.id   ?? parsed.id
+const type = 'all'
 
 const translations = ref({})
 const loading = ref(false)
@@ -53,17 +57,12 @@ const fetchedOnce = ref(false)
 const keys = computed(() => Object.keys(translations.value ?? {}))
 
 async function fetchTranslations() {
-  if (fetchedOnce.value) return
-  fetchedOnce.value = true
-
+  if (!id) { loadError.value = 'Missing language id.'; return }
   loading.value = true
-  loadError.value = ''
   try {
-    const { data } = await http.get(`/language/languageedit/${props.id}/${props.type}`)
-    const payload = data?.data?.enLabels || {}
-    translations.value = { ...payload }
+    const { data } = await http.get(`/language/languageedit/${id}/all`)
+    translations.value = data?.data?.enLabels || {}
   } catch (e) {
-    console.error(e)
     loadError.value = 'Failed to load language data.'
   } finally {
     loading.value = false
@@ -71,14 +70,14 @@ async function fetchTranslations() {
 }
 
 async function saveTranslations() {
+  if (!id) return
   saving.value = true
   try {
-    await http.post(`/api/language/updatelanguageValues/${props.id}/${props.type}`, {
-      values: Object.values(translations.value),
+    await http.post(`/language/updatelanguageValues/${id}/all`, {
+      values: translations.value,
     })
-    alert('Translations updated')
+    alert('Translations updated successfully.')
   } catch (e) {
-    console.error(e)
     alert('Save failed')
   } finally {
     saving.value = false

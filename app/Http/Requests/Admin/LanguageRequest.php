@@ -4,12 +4,18 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
 
 class LanguageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
+    public function __construct(Request $request)
+    {
+        $request->merge(['app_scope' => 'all']);
+    }
     public function authorize(): bool
     {
         return true;

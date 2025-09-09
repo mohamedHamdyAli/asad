@@ -11,10 +11,14 @@
         <h3 class="text-lg font-bold mb-3">Add Documents</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Folder ID *</label>
-            <input v-model.number="createForm.folder_id" class="form-input" type="number" min="1" required />
-          </div>
+  <FolderPicker
+    type="document"
+    label="Folder *"
+    v-model="createForm.folder_id"
+    :options="folders"
+    @created="folders.unshift($event)"
+    @refresh="fetchFolders"
+  />
           <div>
             <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
             <input v-model="createForm.title.en" class="form-input" type="text" required />
@@ -82,7 +86,14 @@
                 <input v-model="edit[d.id].title.ar" class="form-input" type="text" />
               </div>
 
-              <div>
+           <FolderPicker
+    type="document"
+    :label="'Folder *'"
+    v-model="edit[d.id].folder_id"
+    :options="folders"
+    @created="folders.unshift($event)"
+    @refresh="fetchFolders"
+  />     <div>
                 <label class="block text-[11px] text-gray-500">Folder ID *</label>
                 <input v-model.number="edit[d.id].folder_id" class="form-input" type="number" min="1" />
               </div>
@@ -115,6 +126,16 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitDocsApi, buildDocsCreateFD, buildDocsUpdateFD } from '@/Services/unitDocs'
+  import FolderPicker from '@/Components/FolderPicker.vue'
+  import { FolderApi } from '@/Services/folders'
+  const folders = ref([])
+  const folderLoading = ref(false)
+  async function fetchFolders() {
+    folderLoading.value = true
+    try { folders.value = await FolderApi.list('document') }
+    finally { folderLoading.value = false }
+  }
+
 
 const props = defineProps({
   unitId: { type: [Number, String], required: true },
@@ -166,7 +187,7 @@ async function createBatch() {
   }
 }
 
-/* List + per-card edit */
+/* List   per-card edit */
 const rows = ref([])
 const loading = ref(false)
 const edit = reactive({})
@@ -227,7 +248,8 @@ async function remove(id) {
   await fetchList()
 }
 
-onMounted(fetchList)
+onMounted(async () => { await fetchFolders(); await fetchList(); })
+
 </script>
 
 <style scoped>

@@ -18,7 +18,8 @@
 
               <!-- English name -->
               <div>
-                <input v-model.trim="form.english_name" type="text" placeholder="Language Name (English)" class="form-input" />
+                <input v-model.trim="form.english_name" type="text" placeholder="Language Name (English)"
+                  class="form-input" />
                 <p v-if="err('english_name')" class="text-xs text-red-600 mt-1">{{ err('english_name') }}</p>
               </div>
 
@@ -30,7 +31,8 @@
 
               <!-- Country code -->
               <div>
-                <input v-model.trim="form.country_code" type="text" placeholder="Country Code (e.g., EG, US)" class="form-input" />
+                <input v-model.trim="form.country_code" type="text" placeholder="Country Code (e.g., EG, US)"
+                  class="form-input" />
                 <p v-if="err('country_code')" class="text-xs text-red-600 mt-1">{{ err('country_code') }}</p>
               </div>
 
@@ -41,7 +43,7 @@
               </div>
 
               <!-- Scope -->
-              <div>
+              <!-- <div>
                 <select v-model="form.scope" class="form-input">
                   <option disabled value="">Select Scope</option>
                   <option value="user">User</option>
@@ -49,7 +51,7 @@
                   <option value="admin">Admin</option>
                 </select>
                 <p v-if="err('scope')" class="text-xs text-red-600 mt-1">{{ err('scope') }}</p>
-              </div>
+              </div> -->
 
               <!-- RTL -->
               <label class="flex items-center gap-2 text-sm text-gray-600">
@@ -57,11 +59,8 @@
                 RTL (Right to Left)
               </label>
 
-              <button
-                :disabled="saving"
-                @click="addLanguage"
-                class="bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
-              >
+              <button :disabled="saving" @click="addLanguage"
+                class="bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
                 {{ saving ? 'Saving…' : '+ Add New Language' }}
               </button>
             </div>
@@ -73,25 +72,18 @@
           <div class="bg-white shadow rounded-lg p-4 h-[600px] overflow-y-auto">
             <h3 class="text-lg font-semibold mb-4">Languages</h3>
 
-            <div
-              v-for="lang in languages"
-              :key="lang.id"
-              class="border-b py-3 px-2 flex justify-between items-center"
-            >
+            <div v-for="lang in languages" :key="lang.id" class="border-b py-3 px-2 flex justify-between items-center">
               <div>
                 <div class="font-bold text-gray-800">
-                  {{ lang.name }} <span class="text-sm text-gray-500">({{ lang.scope }})</span>
+                  {{ lang.name }}
+
                 </div>
                 <div class="text-sm text-gray-500">Code: {{ lang.code }}</div>
               </div>
 
               <div class="Lang-image">
-                <img
-                  :src="lang.icon_url || `/images/flags/${lang.code}.png`"
-                  :alt="lang.name"
-                  class="w-8 h-6 object-cover"
-                  @error="useRandomInternetFlag"
-                />
+                <img :src="lang.icon_url || `/images/flags/${lang.code}.png`" :alt="lang.name"
+                  class="w-8 h-6 object-cover" @error="useRandomInternetFlag" />
               </div>
 
               <div class="flex gap-3 items-center">
@@ -100,32 +92,14 @@
                   <button @click="toggleMenu(lang.id)" title="Edit" class="text-blue-600 hover:text-blue-800">
                     <Icon icon="mdi:pencil-outline" class="w-5 h-5" />
                   </button>
-                  <div
-                    v-if="openMenus[lang.id]"
-                    class="absolute z-[100] mt-2 w-48 bg-white border rounded shadow -left-24"
-                  >
+                  <div v-if="openMenus[lang.id]"
+                    class="absolute z-[100] mt-2 w-48 bg-white border rounded shadow -left-24">
                     <!-- Use Inertia Link so the editor page opens correctly -->
-                    <Link
-                      class="block px-4 py-2 text-sm hover:bg-gray-100"
-                      :href="routeEditor(lang.id,'panel')"
-                      @click="closeMenu(lang.id)"
-                    >
-                      Panel translation
+                    <Link class="block px-4 py-2 text-sm hover:bg-gray-100" :href="routeEditor(lang.id, 'all')"
+                      @click="closeMenu(lang.id)">
+                    Edit Language keywords
                     </Link>
-                    <Link
-                      class="block px-4 py-2 text-sm hover:bg-gray-100"
-                      :href="routeEditor(lang.id,'vendor')"
-                      @click="closeMenu(lang.id)"
-                    >
-                      Vendor App translation
-                    </Link>
-                    <Link
-                      class="block px-4 py-2 text-sm hover:bg-gray-100"
-                      :href="routeEditor(lang.id,'app')"
-                      @click="closeMenu(lang.id)"
-                    >
-                     User App translation
-                    </Link>
+
                     <!-- If you also support car_* files, keep these: -->
                     <!--
                     <Link class="block px-4 py-2 text-sm hover:bg-gray-100" :href="routeEditor(lang.id,'car_type')" @click="closeMenu(lang.id)">Car Types</Link>
@@ -165,7 +139,7 @@ const form = ref({
   name_en: '',
   code: '',
   country_code: '',
-  scope: '',
+  // scope: '',
   rtl: false,
   icon: null,
 })
@@ -184,7 +158,7 @@ function validate() {
   if (!form.value.name) e.name = 'Language name is required.'
   if (!form.value.code) e.code = 'Code is required.'
   else if (form.value.code.length > 10) e.code = 'Code must be ≤ 10 characters.'
-  if (!form.value.scope) e.scope = 'Scope is required.'
+  // if (!form.value.scope) e.scope = 'Scope is required.'
   if (form.value.country_code && form.value.country_code.length > 5)
     e.country_code = 'Country code must be ≤ 5 characters.'
   errors.value = e
@@ -206,7 +180,8 @@ async function addLanguage() {
     fd.append('name_en', form.value.english_name || '')
     fd.append('code', form.value.code)
     fd.append('country_code', form.value.country_code || '')
-    fd.append('scope', form.value.scope || '')
+    // fd.append('scope', form.value.scope || '')
+    fd.append('app_scope', 'all')
     fd.append('rtl', form.value.rtl ? 1 : 0)
     if (form.value.icon) fd.append('icon', form.value.icon)
 
@@ -247,10 +222,10 @@ function toggleMenu(id) {
 function closeMenu(id) {
   openMenus.value[id] = false
 }
-function routeEditor(id, type) {
-  // Inertia route that serves the editor page
+function routeEditor(id, type='all') {
   return `/language/editor/${id}/${type}`
 }
+
 
 async function deleteLang(lang) {
   if (!confirm(`Delete ${lang.name}?`)) return
@@ -273,5 +248,7 @@ function useRandomInternetFlag(e) {
 </script>
 
 <style scoped>
-.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
+.form-input {
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
 </style>
