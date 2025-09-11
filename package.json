@@ -19,6 +19,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@googlemaps/js-api-loader": "^1.16.10",
         "chart.js": "^4.4.9",
         "recharts": "^2.15.3",
         "vue-cal": "^4.10.2",

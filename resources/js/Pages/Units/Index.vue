@@ -77,123 +77,175 @@
         </div>
       </div>
 
-      <!-- Modal -->
-      <div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-lg w-full max-w-3xl p-5 relative">
-          <button @click="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">✕</button>
-          <h3 class="text-lg font-bold mb-4">{{ editingId ? 'Edit Unit' : 'Add Unit' }}</h3>
+<!-- Modal -->
+<div
+  v-if="showModal"
+  class="fixed inset-0 z-50"
+  @keydown.esc="closeModal"
+>
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-black/40"
+    @click="closeModal"
+    aria-hidden="true"
+  ></div>
 
-          <form @submit.prevent="submit">
-            <!-- names -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Name (EN)*</label>
-                <input v-model="form.name.en" class="form-input" type="text" :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Name (AR)*</label>
-                <input v-model="form.name.ar" class="form-input" type="text" :required="!editingId" />
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
-                <input v-model="form.description.en" class="form-input" type="text" :required="!editingId" />
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
-                <input v-model="form.description.ar" class="form-input" type="text" :required="!editingId" />
-              </div>
-            </div>
-
-            <!-- required meta -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Location*</label>
-                <input v-model="form.location" class="form-input" type="text" :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
-                <input v-model.number="form.lat" class="form-input" type="number" step="any" min="-90" max="90"
-                  :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
-                <input v-model.number="form.long" class="form-input" type="number" step="any" min="-180" max="180"
-                  :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
-                <input v-model="form.start_date" class="form-input" type="date" :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">End Date* (>= start)</label>
-                <input v-model="form.end_date" class="form-input" type="date" :required="!editingId" />
-              </div>
-            </div>
-
-            <!-- associations + status -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">User ID*</label>
-                <input v-model.number="form.user_id" class="form-input" type="number" min="1" :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Vendor ID*</label>
-                <input v-model.number="form.vendor_id" class="form-input" type="number" min="1"
-                  :required="!editingId" />
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Status</label>
-                <select v-model="form.status" class="form-input">
-                  <option value="">(none)</option>
-                  <option value="under_construction">under_construction</option>
-                  <option value="completed">completed</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- files -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Cover Image* {{ editingId ? '(optional to replace)' : ''
-                }}</label>
-                <input type="file" accept="image/*" @change="onCover" :required="!editingId" />
-                <div v-if="coverPreview" class="mt-2">
-                  <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
-                <input type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
-                <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
-                  <img v-for="(src, i) in galleryPreviews" :key="i" :src="src"
-                    class="w-24 h-16 object-cover rounded border" />
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-5 flex items-center gap-3">
-              <button :disabled="saving" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60">
-                {{ saving ? 'Saving…' : (editingId ? 'Update' : 'Create') }}
-              </button>
-              <button type="button" class="px-3 py-2 border rounded" @click="closeModal">Cancel</button>
-            </div>
-
-            <div v-if="errorMsg" class="text-sm text-red-600 mt-2">{{ errorMsg }}</div>
-            <ul v-if="Object.keys(fieldErrors).length" class="mt-2 text-sm text-red-600 list-disc pl-6">
-              <li v-for="(errs, key) in fieldErrors" :key="key">
-                <strong>{{ key }}:</strong> {{ errs.join(', ') }}
-              </li>
-            </ul>
-          </form>
+  <!-- Panel -->
+  <div
+    class="relative mx-auto w-full max-w-3xl p-4 sm:p-6 h-full flex items-center justify-center"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-lg w-full
+             max-h-[min(88vh,900px)] overflow-y-auto
+             focus:outline-none"
+      role="dialog"
+      aria-modal="true"
+    >
+      <!-- Sticky Header -->
+      <div class="sticky top-0 z-10 bg-white border-b rounded-t-2xl">
+        <div class="flex items-center justify-between px-5 py-3">
+          <h3 class="text-lg font-bold">
+            {{ editingId ? 'Edit Unit' : 'Add Unit' }}
+          </h3>
+          <button
+            @click="closeModal"
+            class="text-gray-400 hover:text-gray-600"
+            aria-label="Close"
+          >
+            ✕
+          </button>
         </div>
       </div>
+
+      <!-- Scrollable Body -->
+      <div class="px-5 py-4 space-y-4">
+        <form @submit.prevent="submit" class="space-y-4">
+          <!-- names -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Name (EN)*</label>
+              <input v-model="form.name.en" class="form-input" type="text" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Name (AR)*</label>
+              <input v-model="form.name.ar" class="form-input" type="text" :required="!editingId" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
+              <input v-model="form.description.en" class="form-input" type="text" :required="!editingId" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
+              <input v-model="form.description.ar" class="form-input" type="text" :required="!editingId" />
+            </div>
+          </div>
+
+          <!-- required meta -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Location*</label>
+              <input v-model="form.location" class="form-input" type="text" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
+              <input v-model.number="form.lat" class="form-input" type="number" step="any" min="-90" max="90" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
+              <input v-model.number="form.long" class="form-input" type="number" step="any" min="-180" max="180" :required="!editingId" />
+            </div>
+
+            <!-- Map (full width for comfort) -->
+            <div class="md:col-span-2">
+              <MapPicker
+                label="Pick on map"
+                v-model:lat="form.lat"
+                v-model:lng="form.long"
+                v-model:address="form.location"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
+              <input v-model="form.start_date" class="form-input" type="date" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">End Date* (>= start)</label>
+              <input v-model="form.end_date" class="form-input" type="date" :required="!editingId" />
+            </div>
+          </div>
+
+          <!-- associations + status -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">User ID*</label>
+              <input v-model.number="form.user_id" class="form-input" type="number" min="1" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Vendor ID*</label>
+              <input v-model.number="form.vendor_id" class="form-input" type="number" min="1" :required="!editingId" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Status</label>
+              <select v-model="form.status" class="form-input">
+                <option value="">(none)</option>
+                <option value="under_construction">under_construction</option>
+                <option value="completed">completed</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- files -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">
+                Cover Image* {{ editingId ? '(optional to replace)' : '' }}
+              </label>
+              <input type="file" accept="image/*" @change="onCover" :required="!editingId" />
+              <div v-if="coverPreview" class="mt-2">
+                <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
+              <input type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
+              <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
+                <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Errors -->
+          <div v-if="errorMsg" class="text-sm text-red-600">{{ errorMsg }}</div>
+          <ul v-if="Object.keys(fieldErrors).length" class="text-sm text-red-600 list-disc pl-6">
+            <li v-for="(errs, key) in fieldErrors" :key="key">
+              <strong>{{ key }}:</strong> {{ errs.join(', ') }}
+            </li>
+          </ul>
+        </form>
+      </div>
+
+      <!-- Sticky Footer -->
+      <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
+        <div class="px-5 py-3 flex items-center gap-3">
+          <button :disabled="saving" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60">
+            {{ saving ? 'Saving…' : (editingId ? 'Update' : 'Create') }}
+          </button>
+          <button type="button" class="px-3 py-2 border rounded" @click="closeModal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted , watch , nextTick} from 'vue'
+import MapPicker from '@/Components/MapPicker.vue'
 import { UnitsApi, buildUnitCreateFD, buildUnitUpdateFD } from '@/Services/units'
 import { Link } from '@inertiajs/vue3'
 
@@ -278,6 +330,19 @@ async function openEdit(u) {
   coverPreview.value = data.cover_image_url || null
   showModal.value = true
 }
+
+function onMapAddress(addr) {
+  form.value.location = addr || form.value.location
+}
+
+watch(() => showModal.value, async (open) => {
+  if (open) await nextTick()
+})
+
+watch(() => showModal.value, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+
 
 function closeModal() { showModal.value = false }
 
