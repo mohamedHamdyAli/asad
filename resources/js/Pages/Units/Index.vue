@@ -1,4 +1,5 @@
 <template>
+  <Head title="Units" />
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
@@ -175,25 +176,37 @@
             </div>
           </div>
 
-          <!-- associations + status -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">User ID*</label>
-              <input v-model.number="form.user_id" class="form-input" type="number" min="1" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Vendor ID*</label>
-              <input v-model.number="form.vendor_id" class="form-input" type="number" min="1" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Status</label>
-              <select v-model="form.status" class="form-input">
-                <option value="">(none)</option>
-                <option value="under_construction">under_construction</option>
-                <option value="completed">completed</option>
-              </select>
-            </div>
-          </div>
+         <!-- associations + status -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">User *</label>
+    <select v-model.number="form.user_id" class="form-input" :required="!editingId">
+      <option value="" disabled>Select a user</option>
+      <option v-for="u in userOptions" :key="u.id" :value="u.id">
+        {{ u.name }}
+      </option>
+    </select>
+  </div>
+
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Vendor *</label>
+    <select v-model.number="form.vendor_id" class="form-input" :required="!editingId">
+      <option value="" disabled>Select a vendor</option>
+      <option v-for="v in vendorOptions" :key="v.id" :value="v.id">
+        {{ v.name }}
+      </option>
+    </select>
+  </div>
+
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Status</label>
+    <select v-model="form.status" class="form-input">
+      <option value="under_construction">under_construction</option>
+      <option value="completed">completed</option>
+    </select>
+  </div>
+</div>
+
 
           <!-- files -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,7 +241,9 @@
       <!-- Sticky Footer -->
       <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
         <div class="px-5 py-3 flex items-center gap-3">
-          <button :disabled="saving" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60">
+          <button :disabled="saving" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60"
+          @click="submit"
+          >
             {{ saving ? 'Saving…' : (editingId ? 'Update' : 'Create') }}
           </button>
           <button type="button" class="px-3 py-2 border rounded" @click="closeModal">Cancel</button>
@@ -248,6 +263,28 @@ import { ref, onMounted , watch , nextTick} from 'vue'
 import MapPicker from '@/Components/MapPicker.vue'
 import { UnitsApi, buildUnitCreateFD, buildUnitUpdateFD } from '@/Services/units'
 import { Link } from '@inertiajs/vue3'
+import { Head } from '@inertiajs/vue3'
+import { UsersApi } from '@/Services/users'
+import { VendorsApi } from '@/Services/vendors'
+
+const userOptions = ref([])
+const vendorOptions = ref([])
+
+async function fetchOptions() {
+  const users = await UsersApi.list()
+  userOptions.value = users.map(u => ({
+    id: u.id, name: u.name, email: u.email
+  }))
+
+  const vendors = await VendorsApi.list()
+  vendorOptions.value = vendors.map(v => ({
+    id: v.id, name: v.name, email: v.email
+  }))
+}
+
+onMounted(async () => {
+  await Promise.all([fetchUnits(), fetchOptions()])
+})
 
 const rows = ref([])
 const loading = ref(false)

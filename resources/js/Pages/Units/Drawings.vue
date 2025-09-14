@@ -14,6 +14,7 @@
     <FolderPicker
     type="drawing"
     label="Folder *"
+     fileType="drawing"
     v-model="createForm.folder_id"
     :options="folders"
     @created="folders.unshift($event)"
@@ -34,7 +35,7 @@
         </div>
 
         <div class="mt-4">
-          <input type="file" multiple accept="image/*" @change="onNewFiles" />
+          <input type="file" multiple  @change="onNewFiles" />
           <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
             <img v-for="(src, i) in newPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
           </div>
@@ -70,8 +71,8 @@
 
             <div class="p-2 space-y-2 text-xs">
               <div class="flex items-center justify-between">
-                <span>#{{ g.id }}</span>
-                <span class="text-gray-500">Folder: {{ g.folder_id }}</span>
+                <!-- <span>#{{ g.id }}</span> -->
+                <span class="text-gray-500">Folder: {{ g.title_en}}</span>
               </div>
 
               <div>

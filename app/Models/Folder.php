@@ -36,7 +36,16 @@ class Folder extends Model
     {
         return $this->hasMany(UnitGallery::class, 'folder_id');
     }
-    public static function getFolderByType($type) {
-        return self::select('id', 'name')->where('file_type',$type)->get();
+    // public static function getFolderByType($type) {
+    //     return self::select('id', 'name')->where('file_type',$type)->get();
+    // }
+     public function scopeOfType($query, string $type)
+    {
+        return $query->where('file_type', $type);
+    }
+
+    public static function getFolderByType($type)
+    {
+        return self::ofType($type)->select('id','name','folder_image')->get();
     }
 }

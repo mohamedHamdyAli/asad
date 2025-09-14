@@ -7,14 +7,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', fn() => inertia('Auth/Login'))->name('login');
+
 
 Route::get('/settings', fn() => inertia('Settings'))->name('settings');
 Route::get('/messages', fn() => inertia('Messages'))->name('messages');

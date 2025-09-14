@@ -18,7 +18,10 @@ class FolderCrudService
 
     public function getData($type)
     {
-        return Folder::getFolderByType($type);
+        return Folder::ofType($type)
+            ->select('id', 'name', 'folder_image')
+            ->orderByDesc('id')
+            ->get();
     }
 
     public function createFolder($request)

@@ -1,20 +1,21 @@
 <template>
+  <Head title="Vendors Management" />
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Vendors Management</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Managers (PM)</h2>
         <button
           @click="openCreate()"
           class="inline-flex items-center rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          + Add Vendor
+          + Add PM
         </button>
       </div>
 
       <!-- List -->
       <div class="bg-white shadow rounded-lg p-4">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">Vendors</h3>
+          <h3 class="text-lg font-bold">Project Managers</h3>
           <button @click="fetchVendors" class="px-3 py-1 border rounded">Refresh</button>
         </div>
 
@@ -67,7 +68,7 @@
       <div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-5 relative">
           <button @click="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">✕</button>
-          <h3 class="text-lg font-bold mb-4">{{ editingId ? 'Edit Vendor' : 'Add Vendor' }}</h3>
+          <h3 class="text-lg font-bold mb-4">{{ editingId ? 'Edit PM' : 'Add PM' }}</h3>
 
           <form @submit.prevent="submit">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -150,6 +151,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, onMounted } from 'vue'
 import { VendorsApi, buildVendorCreateFD, buildVendorUpdateFD } from '@/Services/vendors'
+import { Head } from '@inertiajs/vue3'
 
 const rows = ref([])
 const loading = ref(false)

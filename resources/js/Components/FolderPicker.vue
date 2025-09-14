@@ -10,7 +10,7 @@
       >
         <option value="" disabled>{{ loading ? 'Loading folders…' : 'Select folder' }}</option>
         <option v-for="f in folders" :key="f.id" :value="f.id">
-          {{ f.label }} ({{ f.id }})
+          {{ f.label }}
         </option>
       </select>
 
@@ -65,6 +65,7 @@ const props = defineProps({
   type: { type: String, required: true },
   modelValue: { type: [Number, String, null], default: null },
   label: { type: String, default: 'Folder' },
+  fileType: { type: String, default: null },
   options: { type: Array, default: null },
 })
 

@@ -14,6 +14,7 @@
   <FolderPicker
     type="document"
     label="Folder *"
+    fileType="document"
     v-model="createForm.folder_id"
     :options="folders"
     @created="folders.unshift($event)"
@@ -30,7 +31,7 @@
         </div>
 
         <div class="mt-4">
-          <input type="file" multiple accept="image/*,application/pdf" @change="onNewFiles" />
+          <input type="file" multiple @change="onNewFiles" />
           <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
             {{ newFiles.length }} file(s) selected
           </div>
@@ -72,10 +73,10 @@
             </div>
 
             <div class="p-3 space-y-2 text-sm">
-              <div class="flex items-center justify-between text-xs text-gray-500">
+              <!-- <div class="flex items-center justify-between text-xs text-gray-500">
                 <span>#{{ d.id }}</span>
                 <span>Folder: {{ d.folder_id }}</span>
-              </div>
+              </div> -->
 
               <div>
                 <label class="block text-[11px] text-gray-500">Title (EN)</label>
@@ -93,10 +94,11 @@
     :options="folders"
     @created="folders.unshift($event)"
     @refresh="fetchFolders"
-  />     <div>
+  />
+  <!--   <div>
                 <label class="block text-[11px] text-gray-500">Folder ID *</label>
                 <input v-model.number="edit[d.id].folder_id" class="form-input" type="number" min="1" />
-              </div>
+              </div> -->
 
               <div class="text-[11px]">
                 <label class="block text-gray-500">Replace file</label>

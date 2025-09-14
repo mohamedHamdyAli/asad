@@ -1,4 +1,5 @@
 <template>
+  <Head title="Language Management" />
   <AuthenticatedLayout>
     <div class="p-6">
       <h2 class="text-2xl font-semibold text-gray-800 mb-6">Language Management</h2>
@@ -129,6 +130,7 @@ import { Link } from '@inertiajs/vue3'
 import { onMounted, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { languagesApi } from '@/api/languages'
+import { Head } from '@inertiajs/vue3'
 
 const languages = ref([])
 const openMenus = ref({})

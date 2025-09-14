@@ -1,4 +1,6 @@
 <template>
+      <Head title="Language Editor" />
+
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex justify-between items-center">
@@ -37,6 +39,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import http from '@/lib/http'
+import { Head } from '@inertiajs/vue3'
 
 const props = defineProps({ id: [Number, String], type: String })
 function parseFromUrl () {

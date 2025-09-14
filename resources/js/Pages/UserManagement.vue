@@ -1,4 +1,6 @@
 <template>
+        <Head title="User Management" />
+
     <AuthenticatedLayout>
     <div class="bg-white p-6 rounded-lg shadow">
       <!-- Header -->
@@ -117,6 +119,7 @@
   <script setup>
   import { ref, computed } from 'vue'
   import { Icon } from '@iconify/vue'
+  import { Head } from '@inertiajs/vue3'
   import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
   
   const tabs = ['super_admin', 'admin', 'spc_admin', 'employee']

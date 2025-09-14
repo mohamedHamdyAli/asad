@@ -1,4 +1,6 @@
 <template>
+      <Head title="Banner Management" />
+
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <h2 class="text-2xl font-semibold text-gray-800">Banners Gallery</h2>
@@ -88,6 +90,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, onMounted, reactive } from 'vue'
 import { BannerApi, buildCreateBannerFD, buildUpdateBannerFD } from '@/Services/banner'
+import { Head } from '@inertiajs/vue3'
 
 const banners = ref([])
 const listLoading = ref(false)

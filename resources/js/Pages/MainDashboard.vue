@@ -1,10 +1,11 @@
 <template>
+  <Head title="Dashboard" />
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <!-- Top Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <DashboardCard icon="mdi:domain" title="Total Units" :value="metrics.totalEntities" />
-        <DashboardCard icon="mdi:account-group-outline" title="Total Users" :value="metrics.totalMembers" />
+        <DashboardCard icon="mdi:domain" title="Total Units" :value="0" />
+        <DashboardCard icon="mdi:account-group-outline" title="Total Users" :value="0" />
       </div>
 
       <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -22,6 +23,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Head } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import DashboardCard from '@/Components/DashboardCard.vue'
 import RevenueTrendChart from '@/Components/RevenueTrendChart.vue'

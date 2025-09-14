@@ -1,4 +1,6 @@
 <template>
+      <Head title="Intro Management" />
+
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <h2 class="text-2xl font-semibold text-gray-800">Intro Management</h2>
@@ -91,6 +93,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { onMounted, ref } from 'vue'
 import { IntroApi, buildIntroFormData } from '@/Services/intro'
+import { Head } from '@inertiajs/vue3'
 
 const intros = ref([])
 const listLoading = ref(false)
