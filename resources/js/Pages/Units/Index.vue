@@ -121,120 +121,138 @@
       <!-- Scrollable Body -->
       <div class="px-5 py-4 space-y-4">
         <form @submit.prevent="submit" class="space-y-4">
-          <!-- names -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Name (EN)*</label>
-              <input v-model="form.name.en" class="form-input" type="text" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Name (AR)*</label>
-              <input v-model="form.name.ar" class="form-input" type="text" :required="!editingId" />
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
-              <input v-model="form.description.en" class="form-input" type="text" :required="!editingId" />
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
-              <input v-model="form.description.ar" class="form-input" type="text" :required="!editingId" />
-            </div>
-          </div>
+<!-- names -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Name (EN)*</label>
+    <input :class="inputClass('name.en')" v-model="form.name.en" type="text" :required="!editingId" />
+    <p v-if="err('name.en')" class="mt-1 text-xs text-red-600">{{ err('name.en') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Name (AR)*</label>
+    <input :class="inputClass('name.ar')" v-model="form.name.ar" type="text" :required="!editingId" />
+    <p v-if="err('name.ar')" class="mt-1 text-xs text-red-600">{{ err('name.ar') }}</p>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
+    <input :class="inputClass('description.en')" v-model="form.description.en" type="text" :required="!editingId" />
+    <p v-if="err('description.en')" class="mt-1 text-xs text-red-600">{{ err('description.en') }}</p>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
+    <input :class="inputClass('description.ar')" v-model="form.description.ar" type="text" :required="!editingId" />
+    <p v-if="err('description.ar')" class="mt-1 text-xs text-red-600">{{ err('description.ar') }}</p>
+  </div>
+</div>
 
-          <!-- required meta -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Location*</label>
-              <input v-model="form.location" class="form-input" type="text" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
-              <input v-model.number="form.lat" class="form-input" type="number" step="any" min="-90" max="90" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
-              <input v-model.number="form.long" class="form-input" type="number" step="any" min="-180" max="180" :required="!editingId" />
-            </div>
+<!-- required meta -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Location*</label>
+    <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId" />
+    <p v-if="err('location')" class="mt-1 text-xs text-red-600">{{ err('location') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
+    <input :class="inputClass('lat')" v-model.number="form.lat" type="number" step="any" min="-90" max="90" :required="!editingId" />
+    <p v-if="err('lat')" class="mt-1 text-xs text-red-600">{{ err('lat') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
+    <input :class="inputClass('long')" v-model.number="form.long" type="number" step="any" min="-180" max="180" :required="!editingId" />
+    <p v-if="err('long')" class="mt-1 text-xs text-red-600">{{ err('long') }}</p>
+  </div>
 
-            <!-- Map (full width for comfort) -->
-            <div class="md:col-span-2">
-              <MapPicker
-                label="Pick on map"
-                v-model:lat="form.lat"
-                v-model:lng="form.long"
-                v-model:address="form.location"
-              />
-            </div>
+  <!-- Map -->
+  <div class="md:col-span-2">
+    <MapPicker
+      label="Pick on map"
+      v-model:lat="form.lat"
+      v-model:lng="form.long"
+      v-model:address="form.location"
+    />
+  </div>
 
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
-              <input v-model="form.start_date" class="form-input" type="date" :required="!editingId" />
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">End Date* (>= start)</label>
-              <input v-model="form.end_date" class="form-input" type="date" :required="!editingId" />
-            </div>
-          </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
+    <input :class="inputClass('start_date')" v-model="form.start_date" type="date" :required="!editingId" />
+    <p v-if="err('start_date')" class="mt-1 text-xs text-red-600">{{ err('start_date') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">End Date* (>= start)</label>
+    <input :class="inputClass('end_date')" v-model="form.end_date" type="date" :required="!editingId" />
+    <p v-if="err('end_date')" class="mt-1 text-xs text-red-600">{{ err('end_date') }}</p>
+  </div>
+</div>
 
-         <!-- associations + status -->
+<!-- associations + status -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
   <div>
     <label class="block text-xs text-gray-500 mb-1">User *</label>
-    <select v-model.number="form.user_id" class="form-input" :required="!editingId">
+    <select :class="inputClass('user_id')" v-model.number="form.user_id" :required="!editingId">
       <option value="" disabled>Select a user</option>
       <option v-for="u in userOptions" :key="u.id" :value="u.id">
-        {{ u.name }}
+        {{ u.name }} — {{ u.email }}
       </option>
     </select>
+    <p v-if="err('user_id')" class="mt-1 text-xs text-red-600">{{ err('user_id') }}</p>
   </div>
 
   <div>
     <label class="block text-xs text-gray-500 mb-1">Vendor *</label>
-    <select v-model.number="form.vendor_id" class="form-input" :required="!editingId">
+    <select :class="inputClass('vendor_id')" v-model.number="form.vendor_id" :required="!editingId">
       <option value="" disabled>Select a vendor</option>
       <option v-for="v in vendorOptions" :key="v.id" :value="v.id">
-        {{ v.name }}
+        {{ v.name }} — {{ v.email }}
       </option>
     </select>
+    <p v-if="err('vendor_id')" class="mt-1 text-xs text-red-600">{{ err('vendor_id') }}</p>
   </div>
 
   <div>
     <label class="block text-xs text-gray-500 mb-1">Status</label>
-    <select v-model="form.status" class="form-input">
+    <select class="form-input" v-model="form.status">
+      <option value="">(none)</option>
       <option value="under_construction">under_construction</option>
       <option value="completed">completed</option>
     </select>
   </div>
 </div>
 
+<!-- files -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">
+      Cover Image* {{ editingId ? '(optional to replace)' : '' }}
+    </label>
+    <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover" :required="!editingId" />
+    <p v-if="err('cover_image')" class="mt-1 text-xs text-red-600">{{ err('cover_image') }}</p>
+    <div v-if="coverPreview" class="mt-2">
+      <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
+    </div>
+  </div>
 
-          <!-- files -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">
-                Cover Image* {{ editingId ? '(optional to replace)' : '' }}
-              </label>
-              <input type="file" accept="image/*" @change="onCover" :required="!editingId" />
-              <div v-if="coverPreview" class="mt-2">
-                <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
-              <input type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
-              <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
-                <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
-              </div>
-            </div>
-          </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
+    <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
+    <p v-if="err('gallery')" class="mt-1 text-xs text-red-600">{{ err('gallery') }}</p>
+    <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
+      <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
+    </div>
+  </div>
+</div>
 
+<!-- Nice top alert (inside modal body, above form or under it) -->
+<div v-if="errorMsg" class="rounded border border-red-200 bg-red-50 text-red-700 px-3 py-2">
+  {{ errorMsg }}
+</div>
           <!-- Errors -->
-          <div v-if="errorMsg" class="text-sm text-red-600">{{ errorMsg }}</div>
+          <!-- <div v-if="errorMsg" class="text-sm text-red-600">{{ errorMsg }}</div>
           <ul v-if="Object.keys(fieldErrors).length" class="text-sm text-red-600 list-disc pl-6">
             <li v-for="(errs, key) in fieldErrors" :key="key">
               <strong>{{ key }}:</strong> {{ errs.join(', ') }}
             </li>
-          </ul>
+          </ul> -->
         </form>
       </div>
 
@@ -266,6 +284,98 @@ import { Link } from '@inertiajs/vue3'
 import { Head } from '@inertiajs/vue3'
 import { UsersApi } from '@/Services/users'
 import { VendorsApi } from '@/Services/vendors'
+import { computed } from 'vue'
+
+const isCreate = computed(() => !editingId.value)
+
+const errors = ref({})       // field → [messages]
+
+const setFieldError = (field, msgs) => {
+  if (!msgs || (Array.isArray(msgs) && msgs.length === 0)) {
+    delete errors.value[field]
+    return
+  }
+  errors.value[field] = Array.isArray(msgs) ? msgs : [String(msgs)]
+}
+const err = (field) => errors.value[field]?.[0] || ''
+const hasErr = (field) => Boolean(errors.value[field])
+
+const inputClass = (field) => [
+  'form-input',
+  hasErr(field) ? 'border-red-400 focus:ring-red-500' : ''
+]
+
+function scrollToFirstError() {
+  const modalBody = document.querySelector('.max-h-\\[min\\(88vh\\,900px\\)\\]')
+  const first = modalBody?.querySelector('input.border-red-400, select.border-red-400, textarea.border-red-400')
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+function validate() {
+  errors.value = {}
+  errorMsg.value = ''
+
+  const f = form.value
+  const need = (v) => v !== null && v !== undefined && String(v).trim() !== ''
+
+  // Required on CREATE
+  if (isCreate.value) {
+    if (!need(f.name.en)) setFieldError('name.en', 'Name (EN) is required')
+    if (!need(f.name.ar)) setFieldError('name.ar', 'Name (AR) is required')
+    if (!need(f.description.en)) setFieldError('description.en', 'Description (EN) is required')
+    if (!need(f.description.ar)) setFieldError('description.ar', 'Description (AR) is required')
+    if (!need(f.location)) setFieldError('location', 'Location is required')
+
+    if (!(typeof f.lat === 'number' && f.lat >= -90 && f.lat <= 90)) {
+      setFieldError('lat', 'Latitude must be between -90 and 90')
+    }
+    if (!(typeof f.long === 'number' && f.long >= -180 && f.long <= 180)) {
+      setFieldError('long', 'Longitude must be between -180 and 180')
+    }
+
+    if (!need(f.start_date)) setFieldError('start_date', 'Start date is required')
+    if (!need(f.end_date)) setFieldError('end_date', 'End date is required')
+
+    if (need(f.start_date) && need(f.end_date) && new Date(f.end_date) < new Date(f.start_date)) {
+      setFieldError('end_date', 'End date must be after or equal to start date')
+    }
+
+    if (!need(f.user_id)) setFieldError('user_id', 'User is required')
+    if (!need(f.vendor_id)) setFieldError('vendor_id', 'Vendor is required')
+
+    if (!f.cover_image) setFieldError('cover_image', 'Cover image is required')
+    if (!Array.isArray(f.gallery) || f.gallery.length === 0) {
+      setFieldError('gallery', 'Add at least one gallery image')
+    }
+  } else {
+    // Update: validate only if present
+    if (f.lat !== null && (f.lat < -90 || f.lat > 90)) setFieldError('lat', 'Latitude must be between -90 and 90')
+    if (f.long !== null && (f.long < -180 || f.long > 180)) setFieldError('long', 'Longitude must be between -180 and 180')
+    if (need(f.start_date) && need(f.end_date) && new Date(f.end_date) < new Date(f.start_date)) {
+      setFieldError('end_date', 'End date must be after or equal to start date')
+    }
+  }
+
+  if (Object.keys(errors.value).length) {
+    errorMsg.value = 'Please fix the highlighted fields.'
+    return false
+  }
+  return true
+}
+
+// Map Laravel 422 errors → our local `errors`
+function applyServerErrors(e) {
+  const errs = e?.response?.data?.errors
+  if (!errs) return false
+  errors.value = {}
+  for (const [k, arr] of Object.entries(errs)) {
+    // Laravel may send keys like name.en / name.ar / gallery.0 etc.
+    setFieldError(k, arr)
+  }
+  errorMsg.value = e?.response?.data?.message || 'Validation failed. Please review the fields below.'
+  return true
+}
+
 
 const userOptions = ref([])
 const vendorOptions = ref([])
@@ -405,9 +515,13 @@ async function fetchUnits() {
 
 async function submit() {
   saving.value = true
-  errorMsg.value = ''
-  fieldErrors.value = {}
   try {
+    if (!validate()) {
+      await nextTick()
+      scrollToFirstError()
+      return
+    }
+
     if (editingId.value) {
       const fd = buildUnitUpdateFD(form.value)
       await UnitsApi.update(editingId.value, fd)
@@ -419,9 +533,9 @@ async function submit() {
     closeModal()
   } catch (e) {
     const status = e?.response?.status
-    if (status === 422 && e?.response?.data?.errors) {
-      fieldErrors.value = e.response.data.errors
-      errorMsg.value = e.response.data.message || 'Validation error'
+    if (status === 422 && applyServerErrors(e)) {
+      await nextTick()
+      scrollToFirstError()
     } else {
       errorMsg.value = e?.response?.data?.message || e?.message || 'Request failed'
     }
@@ -429,6 +543,7 @@ async function submit() {
     saving.value = false
   }
 }
+
 
 async function remove(u) {
   if (!confirm(`Delete unit #${u.id}?`)) return
