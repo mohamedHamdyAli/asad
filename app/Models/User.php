@@ -68,4 +68,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(UnitIssue::class, 'user_id');
     }
+    public function unitQuote()
+    {
+        return $this->hasMany(UnitQuote::class, 'user_id');
+    }
 }
