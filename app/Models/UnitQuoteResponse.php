@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TypeOfPrice extends Model
+class UnitQuoteResponse extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title'];
+   protected $fillable = ['unit_quote_id','vendor_id', 'title','price','time_line' ];
 
     protected function asJson($value)
     {
@@ -19,13 +19,19 @@ class TypeOfPrice extends Model
     {
         return json_decode($value);
     }
+    public function getTimeLineAttribute($value)
+    {
+        return json_decode($value);
+    }
 
     public function unitQuote()
     {
-        return $this->hasMany(UnitQuote::class, 'type_of_price_id');
+        return $this->belongsTo(UnitQuote::class, 'unit_quote_id');
     }
-    public static function allData()
+
+    public function vendor()
     {
-        return self::all();
+        return $this->belongsTo(User::class, 'vendor_id');
     }
+
 }

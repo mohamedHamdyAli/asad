@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ContactsController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
+use App\Http\Controllers\Api\QuoteController as ApiQuoteController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
@@ -59,8 +61,16 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
 
+    });
+
+    Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
         // Contacts
         Route::get('/contact-infos', [ContactsController::class, 'getByCountry'])->name('contact-infos.byCountry');
+
+        // UnitQuote
+        Route::get('get-building-type', [ApiQuoteController::class, 'getBuildingType']);
+        Route::get('get-price-type', [ApiQuoteController::class, 'getPriceType']);
+        Route::post('quote-request', [ApiQuoteController::class, 'quoteRequest']);
     });
 });
 

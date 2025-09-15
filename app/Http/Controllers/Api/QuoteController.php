@@ -3,18 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\QuoteRequest;
+use App\services\Quote\QuoteApiService;
 
 class QuoteController extends Controller
 {
-    private ContactsServiceApi $contactsServiceApi;
+    private QuoteApiService $quoteApiService;
 
-    public function __construct(ContactsServiceApi $contactsServiceApi)
+    public function __construct(QuoteApiService $quoteApiService)
     {
-        $this->contactsServiceApi = $contactsServiceApi;
+        $this->quoteApiService = $quoteApiService;
     }
     public function getBuildingType()
     {
-        return $this->unitService->getUnitDrawing($request->validated());
+        return $this->quoteApiService->getBuildingType();
+    }
+    public function getPriceType()
+    {
+        return $this->quoteApiService->getPriceType();
+    }
+    public function quoteRequest(QuoteRequest $request){
+        return $this->quoteApiService->quoteRequest($request->validated());
     }
 }
