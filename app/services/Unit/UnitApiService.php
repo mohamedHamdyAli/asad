@@ -32,10 +32,15 @@ class UnitApiService
             return failReturnMsg('No documents found for this unit', 404);
         }
 
-        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
-            'foldername' => $folderName,
-            'files' => $items,
-        ])->values();
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)
+            ->map(function ($items, $folderName) {
+                $folder = $items->first()->folder;
+                return [
+                    'foldername' => $folderName,
+                    'folder_image' => $folder?->folder_image,
+                    'files' => $items,
+                ];
+            })->values();
 
         return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
     }
@@ -47,10 +52,15 @@ class UnitApiService
             return failReturnMsg('No Gallery found for this unit', 404);
         }
 
-        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
-            'foldername' => $folderName,
-            'files' => $items,
-        ])->values();
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)
+            ->map(function ($items, $folderName) {
+                $folder = $items->first()->folder;
+                return [
+                    'foldername' => $folderName,
+                    'folder_image' => $folder?->folder_image,
+                    'files' => $items,
+                ];
+            })->values();
 
         return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
     }
@@ -63,10 +73,15 @@ class UnitApiService
             return failReturnMsg('No Drawing found for this unit', 404);
         }
 
-        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)->map(fn($items, $folderName) => [
-            'foldername' => $folderName,
-            'files' => $items,
-        ])->values();
+        $data = $docs->groupBy(fn($doc) => $doc->folder ? getLocalizedValue($doc->folder, 'name') : null)
+            ->map(function ($items, $folderName) {
+                $folder = $items->first()->folder;
+                return [
+                    'foldername' => $folderName,
+                    'folder_image' => $folder?->folder_image,
+                    'files' => $items,
+                ];
+            })->values();
 
         return successReturnData(FolderWithDocumentsResource::collection($data), 'Data Fetched Successfully');
     }

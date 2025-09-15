@@ -16,6 +16,7 @@ class FolderWithDocumentsResource extends JsonResource
     {
         return [
             'folderName' => $this['foldername'],
+            'folder_image' => getImageassetUrl($this['folder_image']) ,
             'files' => UnitDocumentResource::collection($this['files']),
         ];
 
