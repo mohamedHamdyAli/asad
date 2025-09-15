@@ -27,11 +27,13 @@ class FolderRequest extends FormRequest
             'name' => 'required|array',
             'name.*' => 'required|string',
             'folder_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
+            'unit_id' => 'required|exists:units,id',
         ] : [
             'file_type' => 'nullable|string|in:gallery,document,drawing',
             'name' => 'nullable|array',
             'name.*' => 'nullable|string',
             'folder_image' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
+            'unit_id' => 'nullable|exists:units,id',
         ];
 
         return $rules;
