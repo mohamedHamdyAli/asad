@@ -13,6 +13,7 @@ class Folder extends Model
         'file_type',
         'name',
         'folder_image',
+        'unit_id',
     ];
 
     protected function asJson($value)
