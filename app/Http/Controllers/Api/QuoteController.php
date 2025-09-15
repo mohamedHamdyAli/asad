@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class QuoteController extends Controller
+{
+    private ContactsServiceApi $contactsServiceApi;
+
+    public function __construct(ContactsServiceApi $contactsServiceApi)
+    {
+        $this->contactsServiceApi = $contactsServiceApi;
+    }
+    public function getBuildingType()
+    {
+        return $this->unitService->getUnitDrawing($request->validated());
+    }
+}
