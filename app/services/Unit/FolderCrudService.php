@@ -19,7 +19,7 @@ class FolderCrudService
     public function getData($type)
     {
         return Folder::ofType($type)
-            ->select('id', 'name', 'folder_image')
+            ->select('id', 'name', 'folder_image', 'unit_id')
             ->orderByDesc('id')
             ->get();
     }

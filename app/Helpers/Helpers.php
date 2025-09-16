@@ -77,6 +77,16 @@ if (!function_exists('userAuth')) {
         return 'this user is not authenticated or not a user role';
     }
 }
+if (!function_exists('guestAuth')) {
+    function guestAuth()
+    {
+        $user = auth('api')->user();
+        if ($user != null && $user->role === 'guest') {
+            return $user;
+        }
+        return null;
+    }
+}
 
 if (!function_exists('vendorAuth')) {
     function vendorAuth()
@@ -196,6 +206,9 @@ if (!function_exists('calculateDistance')) {
 if (!function_exists('getFolderName')) {
     function getFolderName($id)
     {
-        return Folder::where('id', $id)->first()->name->en ?? null;
+        $name = Folder::where('id', $id)->first()->name->en ?? null;
+
+        return $name ? preg_replace('/\s+/', '', $name) : null;
     }
 }
+

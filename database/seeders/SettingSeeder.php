@@ -59,6 +59,7 @@ class SettingSeeder extends Seeder
         $this->create_new_config('SMS_PROVIDER_PASSWORD', Null);
 
         // App config
+        $this->create_new_config('currency', 'KWD');
 
 
     }
