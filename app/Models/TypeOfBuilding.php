@@ -24,4 +24,8 @@ class TypeOfBuilding extends Model
     {
         return $this->hasMany(UnitQuote::class, 'type_of_building_id');
     }
+    public static function allData()
+    {
+        return self::all();
+    }
 }

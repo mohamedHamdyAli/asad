@@ -77,6 +77,16 @@ if (!function_exists('userAuth')) {
         return 'this user is not authenticated or not a user role';
     }
 }
+if (!function_exists('guestAuth')) {
+    function guestAuth()
+    {
+        $user = auth('api')->user();
+        if ($user != null && $user->role === 'guest') {
+            return $user;
+        }
+        return null;
+    }
+}
 
 if (!function_exists('vendorAuth')) {
     function vendorAuth()
