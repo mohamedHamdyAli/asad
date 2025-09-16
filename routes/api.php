@@ -30,6 +30,9 @@ use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineControlle
 use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
+use App\Http\Controllers\Admin\TypeOfBuildingController as AdminTypeOfBuildingController;
+use App\Http\Controllers\Admin\TypeOfPriceController as AdminTypeOfPriceController;
+
 
 
 
@@ -235,4 +238,24 @@ Route::group(['prefix' => 'unit-consultants'], static function () {
     Route::post('/create', [AdminUnitConsultantController::class, 'store'])->name('unit.consultants.store');
     Route::post('/update', [AdminUnitConsultantController::class, 'update'])->name('unit.consultants.update');
     Route::delete('/delete/{id}', [AdminUnitConsultantController::class, 'destroy'])->name('unit.consultants.delete');
+});
+
+Route::group(['prefix' => 'type-of-buildings'], static function () {
+    Route::get('/', [AdminTypeOfBuildingController::class, 'index'])->name('type-of-buildings.index');
+    Route::post('/create', [AdminTypeOfBuildingController::class, 'store'])->name('type-of-buildings.store');
+    Route::get('/show/{id}', [AdminTypeOfBuildingController::class, 'show'])->name('type-of-buildings.show');
+    Route::get('/edit/{id}', [AdminTypeOfBuildingController::class, 'edit'])->name('type-of-buildings.edit');
+    Route::post('/update/{id}', [AdminTypeOfBuildingController::class, 'update'])->name('type-of-buildings.update');
+    Route::delete('/delete/{id}', [AdminTypeOfBuildingController::class, 'destroy'])->name('type-of-buildings.delete');
+});
+
+
+
+Route::group(['prefix' => 'type-of-prices'], static function () {
+    Route::get('/', [AdminTypeOfPriceController::class, 'index'])->name('type-of-prices.index');
+    Route::post('/create', [AdminTypeOfPriceController::class, 'store'])->name('type-of-prices.store');
+    Route::get('/show/{id}', [AdminTypeOfPriceController::class, 'show'])->name('type-of-prices.show');
+    Route::get('/edit/{id}', [AdminTypeOfPriceController::class, 'edit'])->name('type-of-prices.edit');
+    Route::post('/update/{id}', [AdminTypeOfPriceController::class, 'update'])->name('type-of-prices.update');
+    Route::delete('/delete/{id}', [AdminTypeOfPriceController::class, 'destroy'])->name('type-of-prices.delete');
 });
