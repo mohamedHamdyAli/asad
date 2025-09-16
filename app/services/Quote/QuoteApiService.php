@@ -2,11 +2,13 @@
 
 namespace App\services\Quote;
 
+use App\Http\Resources\PriceResponseResource;
 use App\Http\Resources\TypeBuildingResource;
 use App\Http\Resources\TypePriceResource;
 use App\Models\TypeOfBuilding;
 use App\Models\TypeOfPrice;
 use App\Models\UnitQuote;
+use App\Models\UnitQuoteResponse;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
@@ -38,5 +40,13 @@ class QuoteApiService
             }
             return returnSuccessMsg('Data added Successfully');
         });
+    }
+    public function priceResponse($request)
+    {
+        $data = UnitQuoteResponse::allUserData($request['user_id']);
+        if ($data->isEmpty()) {
+            return failReturnMsg('No Data Found', 404);
+        }
+        return successReturnData(PriceResponseResource::collection($data), 'Data Fetched Successfully');
     }
 }

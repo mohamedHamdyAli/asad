@@ -60,9 +60,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Unit::class, 'user_id');
     }
-    public function unitQuoteResponse()
+    public function unitQuoteResponseVendor()
     {
         return $this->hasMany(UnitQuoteResponse::class, 'vendor_id');
+    }
+    public function unitQuoteResponseUser()
+    {
+        return $this->hasMany(UnitQuoteResponse::class, 'user_id');
     }
     public function unitQuoteNote()
     {

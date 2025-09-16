@@ -9,7 +9,7 @@ class UnitQuoteResponse extends Model
 {
     use HasFactory;
 
-   protected $fillable = ['unit_quote_id','vendor_id', 'title','price','time_line' ];
+   protected $fillable = ['unit_quote_id','user_id','vendor_id', 'title','price','time_line' ];
 
     protected function asJson($value)
     {
@@ -33,5 +33,13 @@ class UnitQuoteResponse extends Model
     {
         return $this->belongsTo(User::class, 'vendor_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
+    public static function allUserData($userId)
+    {
+        return self::where('user_id',$userId)->get();
+    }
 }
