@@ -54,72 +54,161 @@
       </div>
 
       <!-- List -->
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">Drawings</h3>
-          <button @click="fetchList" class="px-3 py-1 border rounded">Refresh</button>
+     <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">Drawings</h3>
+    <button
+      @click="fetchList"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+
+  <div
+    v-else
+    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+  >
+    <div
+      v-for="g in rows"
+      :key="g.id"
+      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
+    >
+      <!-- Image header -->
+  <!-- File/Image header -->
+<div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
+<!-- Images -->
+<img
+  v-if="isImage(g)"
+  :src="g.file_url"
+  class="absolute inset-0 w-full h-full object-cover"
+/>
+
+<!-- PDFs -->
+<iframe
+  v-else-if="isPdf(g)"
+  :src="g.file_url"
+  class="absolute inset-0 w-full h-full"
+/>
+
+<!-- Other -->
+<div v-else class="flex flex-col items-center justify-center text-gray-500 text-xs">
+  <div class="text-4xl mb-2">📄</div>
+  <span class="break-all px-2">{{ getFileName(g) }}</span>
+  <a
+    :href="g.file_url"
+    target="_blank"
+    class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100"
+  >
+    Open
+  </a>
+</div>
+
+
+  <!-- gradient overlay -->
+  <div
+    class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent"
+  ></div>
+
+  <!-- badges -->
+  <div class="absolute top-2 left-2 flex flex-wrap gap-2">
+    <span
+      class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
+    >
+      {{ g.title_en || 'Folder' }}
+    </span>
+    <span
+      v-if="edit[g.id].date"
+      class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
+    >
+      {{ edit[g.id].date }}
+    </span>
+  </div>
+</div>
+
+
+      <!-- Body -->
+      <div class="p-3.5 space-y-3 text-sm">
+        <!-- Date -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Date *</label>
+          <input v-model="edit[g.id].date" class="form-input" type="date" />
         </div>
 
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+        <!-- Folder -->
+        <FolderPicker
+          type="drawing"
+          :label="'Folder *'"
+          v-model="edit[g.id].folder_id"
+          :options="folders"
+          @created="folders.unshift($event)"
+          @refresh="fetchFolders"
+        />
 
-        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          <div v-for="g in rows" :key="g.id" class="rounded border overflow-hidden bg-gray-50">
-            <div class="aspect-[4/3] bg-white flex items-center justify-center">
-              <img v-if="g.image_url" :src="g.image_url" class="w-full h-full object-cover" />
-              <div v-else class="text-gray-400 text-sm">No Image</div>
-            </div>
+        <!-- Titles -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
+          <textarea
+            v-model="edit[g.id].title.en"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            @input="autoGrow($event)"
+          />
+        </div>
 
-            <div class="p-2 space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <!-- <span>#{{ g.id }}</span> -->
-                <span class="text-gray-500">Folder: {{ g.title_en}}</span>
-              </div>
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
+          <textarea
+            v-model="edit[g.id].title.ar"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            dir="rtl"
+            @input="autoGrow($event)"
+          />
+        </div>
 
-              <div>
-                <label class="block text-[11px] text-gray-500">Date *</label>
-                <input v-model="edit[g.id].date" class="form-input" type="date" />
-              </div>
+        <!-- Replace image -->
+        <div class="text-[11px]">
+          <label class="block text-gray-500 mb-1">Replace Image</label>
+          <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
+          <p
+            v-if="pendingImage?.[g.id]"
+            class="mt-1 text-[11px] text-gray-500"
+          >
+            Selected: {{ pendingImage[g.id]?.name }}
+          </p>
+        </div>
 
-         <FolderPicker
-    type="drawing"
-    :label="'Folder *'"
-    v-model="edit[g.id].folder_id"
-    :options="folders"
-    @created="folders.unshift($event)"
-    @refresh="fetchFolders"
-  />
-
-
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (EN)</label>
-                <input v-model="edit[g.id].title.en" class="form-input" type="text" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (AR)</label>
-                <input v-model="edit[g.id].title.ar" class="form-input" type="text" />
-              </div>
-
-              <div class="text-[11px]">
-                <label class="block text-gray-500">Replace Image</label>
-                <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
-              </div>
-
-              <div class="flex gap-2 pt-1">
-                <button class="px-2 py-1 border rounded" @click="saveOne(g.id)" :disabled="saving[g.id]">
-                  {{ saving[g.id] ? 'Saving…' : 'Save' }}
-                </button>
-                <button class="px-2 py-1 border rounded text-red-600" @click="remove(g.id)">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-            No drawings found.
-          </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-2 pt-2">
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+            @click="saveOne(g.id)"
+            :disabled="saving[g.id]"
+          >
+            {{ saving[g.id] ? 'Saving…' : 'Save' }}
+          </button>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+            @click="remove(g.id)"
+          >
+            Delete
+          </button>
         </div>
       </div>
+    </div>
+
+    <div
+      v-if="!rows.length"
+      class="col-span-full text-center text-gray-500 py-8"
+    >
+      No drawings found.
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>
@@ -168,6 +257,30 @@ function onNewFiles(e) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
   newPreviews.value = files.map(f => URL.createObjectURL(f))
+}
+
+function isImage(file) {
+  if (!file) return false
+  // Prefer mime_type if available
+  if (file.mime_type) return file.mime_type.startsWith('image/')
+  // Fallback to extension check
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(file.url || '')
+}
+
+function isPdf(file) {
+  if (!file) return false
+  if (file.mime_type) return file.mime_type === 'application/pdf'
+  return /\.pdf$/i.test(file.url || '')
+}
+
+function getFileName(file) {
+  if (!file) return 'Unknown file'
+  if (file.file_name) return file.file_name
+  try {
+    return decodeURIComponent((file.url || '').split('/').pop().split('?')[0])
+  } catch {
+    return 'Unknown file'
+  }
 }
 
 async function createBatch() {
@@ -223,6 +336,12 @@ async function fetchList() {
   } finally {
     loading.value = false
   }
+}
+function autoGrow(e) {
+  const el = e?.target
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${el.scrollHeight}px`
 }
 
 function onReplaceFile(id, e) {

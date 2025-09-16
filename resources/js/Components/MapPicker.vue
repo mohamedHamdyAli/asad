@@ -12,11 +12,11 @@
     <div ref="mapEl" class="rounded border" style="height: 320px;"></div>
 
     <!-- preview -->
-    <div class="text-xs text-gray-600">
+    <!-- <div class="text-xs text-gray-600">
       <div>Lat: <span class="font-mono">{{ fmtLat }}</span></div>
       <div>Lng: <span class="font-mono">{{ fmtLng }}</span></div>
       <div>Address: <span class="font-mono break-all">{{ address || '—' }}</span></div>
-    </div>
+    </div> -->
   </div>
 </template>
 

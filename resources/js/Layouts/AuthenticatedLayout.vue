@@ -9,7 +9,7 @@
             <TopNavbar :user="user" @toggleSidebar="toggleSidebar" />
 
             <!-- Page Content -->
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 bg-dash-light">
                 <slot />
             </main>
         </div>

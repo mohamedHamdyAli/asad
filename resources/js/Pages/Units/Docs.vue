@@ -50,76 +50,139 @@
       </div>
 
       <!-- List -->
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">Documents</h3>
-          <button @click="fetchList" class="px-3 py-1 border rounded">Refresh</button>
+    <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">Documents</h3>
+    <button
+      @click="fetchList"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+
+  <div
+    v-else
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+  >
+    <div
+      v-for="d in rows"
+      :key="d.id"
+      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
+    >
+      <!-- File header -->
+      <div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
+        <template v-if="d.file_url && !d.is_pdf && /\.(jpg|jpeg|png|gif|webp)$/i.test(d.file_url)">
+          <img
+            :src="d.file_url"
+            class="absolute inset-0 w-full h-full object-cover"
+            alt="Document Preview"
+          />
+        </template>
+        <template v-else>
+          <div class="flex flex-col items-center text-gray-500 text-xs">
+            <div class="text-4xl">📄</div>
+            <span class="mt-2 break-all max-w-[90%]">{{ d.file_name }}</span>
+            <a
+              v-if="d.file_url"
+              :href="d.file_url"
+              target="_blank"
+              class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100"
+            >
+              Open
+            </a>
+          </div>
+        </template>
+      </div>
+
+      <!-- Body -->
+      <div class="p-3.5 space-y-3 text-sm">
+        <!-- Title EN -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
+          <textarea
+            v-model="edit[d.id].title.en"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            @input="autoGrow($event)"
+          />
         </div>
 
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+        <!-- Title AR -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
+          <textarea
+            v-model="edit[d.id].title.ar"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            dir="rtl"
+            @input="autoGrow($event)"
+          />
+        </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div v-for="d in rows" :key="d.id" class="rounded border bg-gray-50 overflow-hidden">
-            <div class="aspect-[4/3] bg-white flex items-center justify-center">
-              <template v-if="d.file_url && !d.is_pdf">
-                <img :src="d.file_url" class="w-full h-full object-cover" />
-              </template>
-              <template v-else>
-                <div class="text-gray-500 text-sm flex flex-col items-center">
-                  <span class="text-4xl">📄</span>
-                  <span class="mt-1">{{ d.file_name }}</span>
-                </div>
-              </template>
-            </div>
+        <!-- Folder -->
+        <FolderPicker
+          type="document"
+          :label="'Folder *'"
+          v-model="edit[d.id].folder_id"
+          :options="folders"
+          @created="folders.unshift($event)"
+          @refresh="fetchFolders"
+        />
 
-            <div class="p-3 space-y-2 text-sm">
-              <!-- <div class="flex items-center justify-between text-xs text-gray-500">
-                <span>#{{ d.id }}</span>
-                <span>Folder: {{ d.folder_id }}</span>
-              </div> -->
+        <!-- Replace file -->
+        <div class="text-[11px]">
+          <label class="block text-gray-500 mb-1">Replace File</label>
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            @change="onReplaceFile(d.id, $event)"
+          />
+          <p
+            v-if="pendingFile?.[d.id]"
+            class="mt-1 text-[11px] text-gray-500"
+          >
+            Selected: {{ pendingFile[d.id]?.name }}
+          </p>
+        </div>
 
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (EN)</label>
-                <input v-model="edit[d.id].title.en" class="form-input" type="text" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (AR)</label>
-                <input v-model="edit[d.id].title.ar" class="form-input" type="text" />
-              </div>
-
-           <FolderPicker
-    type="document"
-    :label="'Folder *'"
-    v-model="edit[d.id].folder_id"
-    :options="folders"
-    @created="folders.unshift($event)"
-    @refresh="fetchFolders"
-  />
-  <!--   <div>
-                <label class="block text-[11px] text-gray-500">Folder ID *</label>
-                <input v-model.number="edit[d.id].folder_id" class="form-input" type="number" min="1" />
-              </div> -->
-
-              <div class="text-[11px]">
-                <label class="block text-gray-500">Replace file</label>
-                <input type="file" accept="image/*,application/pdf" @change="onReplaceFile(d.id, $event)" />
-              </div>
-
-              <div class="flex gap-2 pt-1">
-                <a v-if="d.file_url" :href="d.file_url" target="_blank" class="px-2 py-1 border rounded">Open</a>
-                <button class="px-2 py-1 border rounded" @click="saveOne(d.id)" :disabled="saving[d.id]">
-                  {{ saving[d.id] ? 'Saving…' : 'Save' }}
-                </button>
-                <button class="px-2 py-1 border rounded text-red-600" @click="remove(d.id)">Delete</button>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-            No documents found.
-          </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-2 pt-2">
+          <button
+            v-if="d.file_url"
+            @click="window.open(d.file_url, '_blank')"
+            class="px-3 py-1.5 text-sm rounded-lg border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100"
+          >
+            Open
+          </button>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+            @click="saveOne(d.id)"
+            :disabled="saving[d.id]"
+          >
+            {{ saving[d.id] ? 'Saving…' : 'Save' }}
+          </button>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+            @click="remove(d.id)"
+          >
+            Delete
+          </button>
         </div>
       </div>
+    </div>
+
+    <div
+      v-if="!rows.length"
+      class="col-span-full text-center text-gray-500 py-8"
+    >
+      No documents found.
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>
@@ -204,6 +267,14 @@ function seedEditState(arr) {
     }
   })
 }
+
+function autoGrow(e) {
+  const el = e?.target
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${el.scrollHeight}px`
+}
+
 
 async function fetchList() {
   loading.value = true

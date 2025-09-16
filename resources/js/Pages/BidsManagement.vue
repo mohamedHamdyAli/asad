@@ -5,7 +5,7 @@
         <!-- Top Header + Add Bid Button -->
         <div class="flex items-center justify-between space-y-4">
           <h2 class="text-2xl font-bold text-gray-800">Bids Management</h2>
-          <button @click="showModal = true"  class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900">
+          <button @click="showModal = true"  class="inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900">
             + Add New Bid
           </button>
         </div>

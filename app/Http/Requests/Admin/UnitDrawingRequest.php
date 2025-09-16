@@ -24,7 +24,7 @@ class UnitDrawingRequest extends FormRequest
                     $query->where('file_type', 'drawing');
                 }),
             ],
-            'data.*.image' => 'required|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
+            'data.*.image' => 'required|file',
             'data.*.title' => 'required|array',
             'data.*.title.*' => 'required|string',
             'data.*.date' => 'required|date',

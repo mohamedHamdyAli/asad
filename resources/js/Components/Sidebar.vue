@@ -1,9 +1,11 @@
 <template>
-    <aside class="w-64 h-screen bg-gray-900 text-white flex flex-col justify-between fixed">
+    <aside class="w-64 h-screen bg-dash-yellow text-dash-black flex flex-col justify-between fixed">
         <div>
             <!-- Logo -->
             <div class="p-6 text-xl font-bold tracking-wide">
-                ASAD
+                <Link :href="route('dashboard')">
+                    <NavLogo class="block h-9 w-auto fill-current text-gray-800" />
+                </Link>
             </div>
 
             <!-- Navigation -->
@@ -34,7 +36,7 @@
 
                 <!-- Dropdown Placeholder -->
                 <!-- <div>
-                    <button class="w-full flex items-center justify-between text-left px-3 py-2 hover:bg-gray-800 rounded-md">
+                    <button class="w-full flex items-center justify-between text-left px-3 py-2 hover:bg-black rounded-md">
                         <span class="flex items-center space-x-2">
                             <Icon icon="mdi:menu-down" class="text-lg" />
                             <span>Dropdown</span>
@@ -59,4 +61,5 @@
 import NavItem from '@/Components/NavItem.vue'
 import { Link } from '@inertiajs/vue3'
 import { Icon } from '@iconify/vue'
+import NavLogo from './NavLogo.vue';
 </script>

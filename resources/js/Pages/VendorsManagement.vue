@@ -6,7 +6,7 @@
         <h2 class="text-2xl font-bold text-gray-800">Project Managers (PM)</h2>
         <button
           @click="openCreate()"
-          class="inline-flex items-center rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="inline-flex items-center rounded-md bg-black px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           + Add PM
         </button>
@@ -102,7 +102,6 @@
                   <option value="" disabled>Select gender</option>
                   <option value="male">male</option>
                   <option value="female">female</option>
-                  <option value="other">other</option>
                 </select>
               </div>
 

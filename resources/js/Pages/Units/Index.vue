@@ -5,78 +5,151 @@
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold text-gray-800">Units</h2>
         <button @click="openCreate"
-          class="inline-flex items-center rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          class="inline-flex items-center rounded-md bg-black px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
           + Add Unit
         </button>
       </div>
 
-      <!-- List -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">All Units</h3>
-          <button @click="fetchUnits" class="px-3 py-1 border rounded">Refresh</button>
+   <!-- List -->
+<div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">All Units</h3>
+    <button
+      @click="fetchUnits"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+
+  <div
+    v-else
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+  >
+    <div
+      v-for="u in rows"
+      :key="u.id"
+      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
+    >
+      <!-- Image header -->
+      <div class="relative aspect-[4/3] bg-gray-50">
+        <img
+          v-if="u.cover_image_url"
+          :src="u.cover_image_url"
+          class="absolute inset-0 w-full h-full object-cover"
+          alt=""
+        />
+        <div
+          v-else
+          class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm"
+        >
+          No Cover
         </div>
 
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+        <!-- gradient overlay -->
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent"
+        ></div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div v-for="u in rows" :key="u.id" class="rounded border overflow-hidden bg-gray-50">
-            <div class="aspect-[4/3] bg-white flex items-center justify-center">
-              <img v-if="u.cover_image_url" :src="u.cover_image_url" class="w-full h-full object-cover" />
-              <div v-else class="text-gray-400 text-sm">No Cover</div>
-            </div>
-
-            <div class="p-3 space-y-2">
-              <div class="font-semibold truncate">
-                {{ u.name_en || '—' }} <span class="text-gray-400" v-if="u.name_ar">/</span> {{ u.name_ar }}
-              </div>
-              <div class="text-xs text-gray-500">
-                <span class="font-medium">Location:</span> {{ u.location || '—' }}
-              </div>
-              <div class="text-xs text-gray-500">
-                <span class="font-medium">Period:</span> {{ u.start_date || '—' }} → {{ u.end_date || '—' }}
-              </div>
-              <div class="text-xs text-gray-500">
-                <span class="font-medium">Status:</span> {{ u.status || '—' }}
-              </div>
-
-              <!-- Section links (wire later) -->
-              <div class="grid grid-cols-3 gap-2 pt-2 text-xs">
-                <!-- <a :href="unitSection(u.id, 'folders')"
-                  class="px-2 py-1 border rounded text-center hover:bg-gray-100">Folders</a> -->
-                <Link :href="docsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                Docs
-                </Link>
-                <Link :href="galleryPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                Gallery
-                </Link>
-
-                <Link :href="drawingPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                Drawing
-                </Link>
-                <Link :href="reportsPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                Reports
-                </Link>
-                <Link :href="phasesPath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                Phases
-                </Link>
-                <Link :href="timelinePath(u.id)" class="px-2 py-1 border rounded text-center hover:bg-gray-100">
-                TimeLine
-                </Link>
-              </div>
-
-              <div class="flex gap-2 pt-2">
-                <button class="px-3 py-1 border rounded text-sm" @click="openEdit(u)">Edit</button>
-                <button class="px-3 py-1 border rounded text-sm text-red-600" @click="remove(u)">Delete</button>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-            No units found.
-          </div>
+        <!-- top-left badges -->
+        <div class="absolute top-2 left-2 flex flex-wrap gap-2">
+          <span
+            class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200"
+          >
+            {{ u.status || '—' }}
+          </span>
+          <span
+            class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200"
+          >
+            {{ u.location || 'No location' }}
+          </span>
         </div>
       </div>
+
+      <!-- Body -->
+      <div class="p-3.5 space-y-3">
+        <!-- Names -->
+        <div class="text-sm font-semibold text-gray-900 whitespace-pre-wrap break-words">
+          {{ u.name_en || '—' }}
+          <span v-if="u.name_ar" class="text-gray-400"> / </span>
+          <span dir="rtl">{{ u.name_ar }}</span>
+        </div>
+
+        <!-- Period -->
+        <div class="text-xs text-gray-500">
+          <span class="font-medium">Period:</span>
+          {{ u.start_date || '—' }} → {{ u.end_date || '—' }}
+        </div>
+
+        <!-- Section links -->
+        <div class="grid grid-cols-3 gap-2 pt-2 text-xs">
+          <Link
+            :href="docsPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Docs
+          </Link>
+          <Link
+            :href="galleryPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Gallery
+          </Link>
+          <Link
+            :href="drawingPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Drawing
+          </Link>
+          <Link
+            :href="reportsPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Reports
+          </Link>
+          <Link
+            :href="phasesPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Phases
+          </Link>
+          <Link
+            :href="timelinePath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Timeline
+          </Link>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2 pt-3">
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50"
+            @click="openEdit(u)"
+          >
+            Edit
+          </button>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+            @click="remove(u)"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="!rows.length"
+      class="col-span-full text-center text-gray-500 py-8"
+    >
+      No units found.
+    </div>
+  </div>
+</div>
+
 
 <!-- Modal -->
 <div
@@ -147,23 +220,7 @@
 
 <!-- required meta -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Location*</label>
-    <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId" />
-    <p v-if="err('location')" class="mt-1 text-xs text-red-600">{{ err('location') }}</p>
-  </div>
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
-    <input :class="inputClass('lat')" v-model.number="form.lat" type="number" step="any" min="-90" max="90" :required="!editingId" />
-    <p v-if="err('lat')" class="mt-1 text-xs text-red-600">{{ err('lat') }}</p>
-  </div>
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
-    <input :class="inputClass('long')" v-model.number="form.long" type="number" step="any" min="-180" max="180" :required="!editingId" />
-    <p v-if="err('long')" class="mt-1 text-xs text-red-600">{{ err('long') }}</p>
-  </div>
-
-  <!-- Map -->
+    <!-- Map -->
   <div class="md:col-span-2">
     <MapPicker
       label="Pick on map"
@@ -171,6 +228,22 @@
       v-model:lng="form.long"
       v-model:address="form.location"
     />
+  </div>
+
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Location*</label>
+    <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId" disabled/>
+    <p v-if="err('location')" class="mt-1 text-xs text-red-600">{{ err('location') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
+    <input :class="inputClass('lat')" v-model.number="form.lat" type="number" step="any" min="-90" max="90" :required="!editingId" disabled />
+    <p v-if="err('lat')" class="mt-1 text-xs text-red-600">{{ err('lat') }}</p>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
+    <input :class="inputClass('long')" v-model.number="form.long" type="number" step="any" min="-180" max="180" :required="!editingId" disabled />
+    <p v-if="err('long')" class="mt-1 text-xs text-red-600">{{ err('long') }}</p>
   </div>
 
   <div>
@@ -199,9 +272,9 @@
   </div>
 
   <div>
-    <label class="block text-xs text-gray-500 mb-1">Vendor *</label>
+    <label class="block text-xs text-gray-500 mb-1">Project Manager *</label>
     <select :class="inputClass('vendor_id')" v-model.number="form.vendor_id" :required="!editingId">
-      <option value="" disabled>Select a vendor</option>
+      <option value="" disabled>Select a Project Manager</option>
       <option v-for="v in vendorOptions" :key="v.id" :value="v.id">
         {{ v.name }} — {{ v.email }}
       </option>
@@ -212,8 +285,7 @@
   <div>
     <label class="block text-xs text-gray-500 mb-1">Status</label>
     <select class="form-input" v-model="form.status">
-      <option value="">(none)</option>
-      <option value="under_construction">under_construction</option>
+      <option value="under_construction" selected >under_construction</option>
       <option value="completed">completed</option>
     </select>
   </div>
@@ -232,14 +304,14 @@
     </div>
   </div>
 
-  <div>
+  <!-- <div>
     <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
     <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
     <p v-if="err('gallery')" class="mt-1 text-xs text-red-600">{{ err('gallery') }}</p>
     <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
       <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
     </div>
-  </div>
+  </div> -->
 </div>
 
 <!-- Nice top alert (inside modal body, above form or under it) -->
@@ -285,6 +357,7 @@ import { Head } from '@inertiajs/vue3'
 import { UsersApi } from '@/Services/users'
 import { VendorsApi } from '@/Services/vendors'
 import { computed } from 'vue'
+
 
 const isCreate = computed(() => !editingId.value)
 
@@ -344,9 +417,9 @@ function validate() {
     if (!need(f.vendor_id)) setFieldError('vendor_id', 'Vendor is required')
 
     if (!f.cover_image) setFieldError('cover_image', 'Cover image is required')
-    if (!Array.isArray(f.gallery) || f.gallery.length === 0) {
-      setFieldError('gallery', 'Add at least one gallery image')
-    }
+    // if (!Array.isArray(f.gallery) || f.gallery.length === 0) {
+    //   setFieldError('gallery', 'Add at least one gallery image')
+    // }
   } else {
     // Update: validate only if present
     if (f.lat !== null && (f.lat < -90 || f.lat > 90)) setFieldError('lat', 'Latitude must be between -90 and 90')
@@ -444,7 +517,7 @@ function resetForm() {
     end_date: '',
     user_id: null,
     vendor_id: null,
-    status: '',
+    status: 'under_construction',
     cover_image: null,
     gallery: [],
   }

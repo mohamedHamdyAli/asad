@@ -4,7 +4,7 @@
         :href="href"
         :to="to"
         :method="method"
-        class="flex items-center px-3 py-2 rounded-md hover:bg-gray-800 transition-all text-white"
+        class="flex items-center px-3 py-2 rounded-md hover:bg-black transition-all text-black hover:text-white"
     >
         <Icon :icon="icon" class="text-xl me-3 shrink-0" />
         <span class="text-sm font-medium">{{ label }}</span>

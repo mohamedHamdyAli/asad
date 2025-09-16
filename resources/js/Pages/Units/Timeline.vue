@@ -40,60 +40,124 @@
         </div>
       </div>
 
-      <!-- List -->
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">Timeline Items</h3>
-          <button @click="fetchList" class="px-3 py-1 border rounded">Refresh</button>
+   <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">Timeline Items</h3>
+    <button
+      @click="fetchList"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+
+  <div
+    v-else
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+  >
+    <div
+      v-for="r in rows"
+      :key="r.id"
+      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
+    >
+      <!-- File header -->
+      <div
+        class="h-32 bg-gray-50 flex flex-col items-center justify-center text-center p-3 relative"
+      >
+        <div class="text-3xl text-gray-600">{{ r.file_icon.split(' ')[0] }}</div>
+        <div
+          class="mt-2 text-xs text-gray-700 break-words max-w-[90%] whitespace-pre-wrap"
+        >
+          {{ r.file_name }}
         </div>
 
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+        <!-- ID badge -->
+        <span
+          class="absolute top-2 left-2 inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
+        >
+          #{{ r.id }}
+        </span>
+      </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div v-for="r in rows" :key="r.id" class="rounded border bg-gray-50 overflow-hidden">
-            <div class="h-32 bg-white flex items-center justify-center p-3 text-center">
-              <div class="text-gray-600">
-                <div class="text-3xl">{{ r.file_icon.split(' ')[0] }}</div>
-                <div class="text-xs mt-1 break-all">{{ r.file_name }}</div>
-              </div>
-            </div>
+      <!-- Body -->
+      <div class="p-3.5 space-y-3 text-sm">
+        <!-- Title EN -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
+          <textarea
+            v-model="edit[r.id].title.en"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            @input="autoGrow($event)"
+          />
+        </div>
 
-            <div class="p-3 space-y-2 text-sm">
-              <div class="flex items-center justify-between text-xs text-gray-500">
-                <span>#{{ r.id }}</span>
-              </div>
+        <!-- Title AR -->
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
+          <textarea
+            v-model="edit[r.id].title.ar"
+            class="form-input !h-auto min-h-9"
+            rows="1"
+            dir="rtl"
+            @input="autoGrow($event)"
+          />
+        </div>
 
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (EN)</label>
-                <input v-model="edit[r.id].title.en" class="form-input" type="text" />
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500">Title (AR)</label>
-                <input v-model="edit[r.id].title.ar" class="form-input" type="text" />
-              </div>
+        <!-- Replace file -->
+        <div class="text-[11px]">
+          <label class="block text-gray-500 mb-1">Replace File</label>
+          <input
+            type="file"
+            :accept="accepts"
+            @change="onReplaceFile(r.id, $event)"
+          />
+          <p
+            v-if="pendingFile?.[r.id]"
+            class="mt-1 text-[11px] text-gray-500"
+          >
+            Selected: {{ pendingFile[r.id]?.name }}
+          </p>
+        </div>
 
-              <div class="text-[11px]">
-                <label class="block text-gray-500">Replace File</label>
-                <input type="file" :accept="accepts" @change="onReplaceFile(r.id, $event)" />
-              </div>
-
-              <div class="flex gap-2 pt-1">
-                <a v-if="r.file_url" :href="r.file_url" target="_blank" class="px-2 py-1 border rounded">Open</a>
-                <button class="px-2 py-1 border rounded" @click="saveOne(r.id)" :disabled="saving[r.id]">
-                  {{ saving[r.id] ? 'Saving…' : 'Save' }}
-                </button>
-                <button class="px-2 py-1 border rounded text-red-600" @click="remove(r.id)">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-            No timeline items found.
-          </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-2 pt-2">
+          <a
+            v-if="r.file_url"
+            :href="r.file_url"
+            target="_blank"
+            class="px-3 py-1.5 text-sm rounded-lg border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100"
+          >
+            Open
+          </a>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+            @click="saveOne(r.id)"
+            :disabled="saving[r.id]"
+          >
+            {{ saving[r.id] ? 'Saving…' : 'Save' }}
+          </button>
+          <button
+            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+            @click="remove(r.id)"
+          >
+            Delete
+          </button>
         </div>
       </div>
+    </div>
+
+    <div
+      v-if="!rows.length"
+      class="col-span-full text-center text-gray-500 py-8"
+    >
+      No timeline items found.
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>
@@ -200,6 +264,14 @@ async function saveOne(id) {
     saving[id] = false
   }
 }
+
+function autoGrow(e) {
+  const el = e?.target
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${el.scrollHeight}px`
+}
+
 
 async function remove(id) {
   if (!confirm('Delete this timeline item?')) return

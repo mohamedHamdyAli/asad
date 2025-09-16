@@ -1,5 +1,5 @@
 <template>
-    <header class="w-full bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+    <header class="w-full bg-black shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
       <div class="h-16 flex justify-between items-center">
         <!-- Left side: Search + title -->
         <div class="flex items-center space-x-6">
@@ -10,7 +10,7 @@
    <!-- Sample Menu Dropdown -->
 <div class="relative" @click="toggleSampleMenu">
 
-  <button class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 focus:outline-none text-sm font-medium">
+  <button class="flex items-center space-x-2 text-white hover:text-blue-800 focus:outline-none text-sm font-medium">
     <Icon icon="mdi:menu" class="w-5 h-5" />
     <span>Sample menu</span>
     <Icon icon="mdi:chevron-down" class="w-4 h-4" />
@@ -62,12 +62,12 @@
           <!-- Profile Dropdown -->
           <div class="relative" @click="toggleDropdown">
             <button class="flex items-center space-x-2 text-gray-800 hover:text-gray-900 focus:outline-none">
-              <img
+              <!-- <img
                 src="https://i.pravatar.cc/32"
                 alt="Avatar"
                 class="w-8 h-8 rounded-full object-cover"
-              />
-              <span class="text-blue-600 font-medium">{{ user.name }}</span>
+              /> -->
+              <span class="text-white font-medium">Hi, {{ user.name }}</span>
               <Icon icon="mdi:chevron-down" class="w-4 h-4" />
             </button>
   

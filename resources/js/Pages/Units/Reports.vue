@@ -216,6 +216,14 @@ async function remove(id) {
   await fetchList()
 }
 
+function autoGrow(e) {
+  const el = e?.target
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${el.scrollHeight}px`
+}
+
+
 onMounted(fetchList)
 </script>
 

@@ -61,7 +61,7 @@
               </label>
 
               <button :disabled="saving" @click="addLanguage"
-                class="bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
+                class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
                 {{ saving ? 'Saving…' : '+ Add New Language' }}
               </button>
             </div>

@@ -87,64 +87,80 @@ const submit = () => {
       {{ localErrors.general || form.errors.email || form.errors.password }}
     </div>
 
-    <form @submit.prevent="submit" novalidate>
-      <div>
-        <InputLabel for="email" value="Email" />
-        <TextInput
-          id="email"
-          type="email"
-          class="mt-1 block w-full"
-          v-model="form.email"
-          required
-          autocomplete="username"
-          @blur="validateClient"
-          :aria-invalid="!!(localErrors.email || form.errors.email)"
-          :aria-describedby="'email-error'"
-        />
-        <InputError id="email-error" class="mt-2" :message="localErrors.email || form.errors.email" />
-      </div>
+<form @submit.prevent="submit" novalidate class="space-y-6">
+  <h2 class="text-2xl font-bold text-gray-800 text-center">Sign in</h2>
+  <p class="text-center text-gray-500 text-sm">
+    Enter your credentials to access your account
+  </p>
 
-      <div class="mt-4">
-        <InputLabel for="password" value="Password" />
-        <TextInput
-          id="password"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password"
-          required
-          autocomplete="current-password"
-          minlength="8"
-          @blur="validateClient"
-          :aria-invalid="!!(localErrors.password || form.errors.password)"
-          :aria-describedby="'password-error'"
-        />
-        <InputError id="password-error" class="mt-2" :message="localErrors.password || form.errors.password" />
-      </div>
+  <!-- Email -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Email</label>
+    <div class="relative mt-1">
+      <!-- <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">📧</span> -->
+      <input
+        v-model="form.email"
+        type="email"
+        placeholder="you@example.com"
+        class="pl-10 form-input"
+        required
+      />
+    </div>
+    <InputError class="mt-2" :message="localErrors.email || form.errors.email" />
+  </div>
 
-      <div class="mt-4 block">
-        <label class="flex items-center">
-          <Checkbox name="remember" v-model:checked="form.remember" />
-          <span class="ms-2 text-sm text-gray-600">Remember me</span>
-        </label>
-      </div>
+  <!-- Password -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Password</label>
+    <div class="relative mt-1">
+      <!-- <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">🔒</span> -->
+      <input
+        v-model="form.password"
+        type="password"
+        placeholder="••••••••"
+        class="pl-10 form-input"
+        required
+        minlength="8"
+      />
+    </div>
+    <InputError class="mt-2" :message="localErrors.password || form.errors.password" />
+  </div>
 
-      <div class="mt-4 flex items-center justify-end">
-        <Link
-          v-if="canResetPassword"
-          :href="route('password.request')"
-          class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Forgot your password?
-        </Link>
+  <!-- Remember + Forgot -->
+  <div class="flex items-center justify-between">
+    <label class="flex items-center text-sm text-gray-600">
+      <Checkbox name="remember" v-model:checked="form.remember" class="mr-2" />
+      Remember me
+    </label>
+    <Link
+      v-if="canResetPassword"
+      :href="route('password.request')"
+      class="text-sm text-indigo-600 hover:text-indigo-800"
+    >
+      Forgot password?
+    </Link>
+  </div>
 
-        <PrimaryButton
-          class="ms-4"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Log in
-        </PrimaryButton>
-      </div>
-    </form>
+  <!-- Submit -->
+  <button
+    type="submit"
+    :disabled="form.processing"
+    class="w-full rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 py-2 text-white font-medium shadow hover:from-indigo-500 hover:to-indigo-600 transition disabled:opacity-50"
+  >
+    {{ form.processing ? 'Signing in…' : 'Log in' }}
+  </button>
+</form>
+
+
   </GuestLayout>
 </template>
+
+<style scoped>
+/* in your global.css (or <style> in layout) */
+.form-input {
+  @apply w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
+         focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+         placeholder-gray-400;
+}
+
+</style>
