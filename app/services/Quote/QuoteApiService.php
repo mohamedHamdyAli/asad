@@ -4,13 +4,9 @@ namespace App\services\Quote;
 
 use App\Http\Resources\TypeBuildingResource;
 use App\Http\Resources\TypePriceResource;
-use App\Models\Folder;
 use App\Models\TypeOfBuilding;
 use App\Models\TypeOfPrice;
-use App\Models\Unit;
 use App\Models\UnitQuote;
-use App\Models\Folder;
-use App\Models\Unit;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
