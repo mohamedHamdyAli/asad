@@ -19,11 +19,11 @@
           </div>
           <div>
             <label class="block text-xs text-gray-500 mb-1">Description (EN) *</label>
-            <input v-model="newPhase.description.en" type="text" class="form-input" />
+            <textarea v-model="newPhase.description.en" type="text" class="form-input"></textarea>
           </div>
           <div>
             <label class="block text-xs text-gray-500 mb-1">Description (AR) *</label>
-            <input v-model="newPhase.description.ar" type="text" class="form-input" />
+            <textarea v-model="newPhase.description.ar" type="text" class="form-input"></textarea>
           </div>
           <div class="flex items-end">
             <button
@@ -109,7 +109,7 @@
               class="form-input !h-auto min-h-9"
               rows="1"
               @input="autoGrow($event)"
-            />
+            ></textarea>
           </div>
 
           <div>
@@ -120,7 +120,7 @@
               rows="1"
               dir="rtl"
               @input="autoGrow($event)"
-            />
+            ></textarea>
           </div>
         </div>
 

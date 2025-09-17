@@ -18,8 +18,8 @@
           <input v-model="form.name.en" class="form-input" type="text" placeholder="Name (EN)" />
           <input v-model="form.name.ar" class="form-input" type="text" placeholder="الاسم (AR)" />
 
-          <input v-model="form.description.en" class="form-input" type="text" placeholder="Description (EN)" />
-          <input v-model="form.description.ar" class="form-input" type="text" placeholder="الوصف (AR)" />
+          <textarea v-model="form.description.en" class="form-input" type="text" placeholder="Description (EN)"></textarea>
+          <textarea v-model="form.description.ar" class="form-input" type="text" placeholder="الوصف (AR)"></textarea>
 
           <input v-model.number="form.order" class="form-input" type="number" placeholder="Order" />
 

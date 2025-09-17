@@ -106,13 +106,13 @@
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
                 <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
-                  @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'" />
+                  @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'" ></textarea>
               </div>
 
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
                 <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
-                  @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'" />
+                  @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'" ></textarea>
               </div>
 
               <!-- Replace image -->

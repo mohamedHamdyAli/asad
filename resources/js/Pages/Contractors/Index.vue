@@ -29,11 +29,11 @@
           </div>
           <div class="md:col-span-2">
             <label class="block text-xs text-gray-500 mb-1">Description (EN) *</label>
-            <input v-model="createForm.description.en" type="text" class="form-input" />
+            <textarea v-model="createForm.description.en" type="text" class="form-input" ></textarea>
           </div>
           <div class="md:col-span-2">
             <label class="block text-xs text-gray-500 mb-1">Description (AR) *</label>
-            <input v-model="createForm.description.ar" type="text" class="form-input" />
+            <textarea v-model="createForm.description.ar" type="text" class="form-input" ></textarea>
           </div>
         </div>
 

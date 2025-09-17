@@ -208,12 +208,12 @@
   </div>
   <div class="md:col-span-2">
     <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
-    <input :class="inputClass('description.en')" v-model="form.description.en" type="text" :required="!editingId" />
+    <textarea :class="inputClass('description.en')" v-model="form.description.en" type="text" :required="!editingId"></textarea>
     <p v-if="err('description.en')" class="mt-1 text-xs text-red-600">{{ err('description.en') }}</p>
   </div>
   <div class="md:col-span-2">
     <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
-    <input :class="inputClass('description.ar')" v-model="form.description.ar" type="text" :required="!editingId" />
+    <textarea :class="inputClass('description.ar')" v-model="form.description.ar" type="text" :required="!editingId"></textarea>
     <p v-if="err('description.ar')" class="mt-1 text-xs text-red-600">{{ err('description.ar') }}</p>
   </div>
 </div>

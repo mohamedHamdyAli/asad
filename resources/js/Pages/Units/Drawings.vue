@@ -156,7 +156,7 @@
             class="form-input !h-auto min-h-9"
             rows="1"
             @input="autoGrow($event)"
-          />
+          ></textarea>
         </div>
 
         <div>
@@ -167,7 +167,7 @@
             rows="1"
             dir="rtl"
             @input="autoGrow($event)"
-          />
+          ></textarea>
         </div>
 
         <!-- Replace image -->
