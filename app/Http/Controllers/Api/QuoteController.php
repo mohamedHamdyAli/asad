@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\QuoteRequest;
+use App\Http\Requests\Api\UserIdRequest;
 use App\services\Quote\QuoteApiService;
 
 class QuoteController extends Controller
@@ -24,5 +25,8 @@ class QuoteController extends Controller
     }
     public function quoteRequest(QuoteRequest $request){
         return $this->quoteApiService->quoteRequest($request->validated());
+    }
+    public function getPriceResponse(UserIdRequest $request){
+        return $this->quoteApiService->priceResponse($request->validated());
     }
 }

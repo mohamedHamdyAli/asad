@@ -73,6 +73,7 @@ Route::prefix('user')->group(function () {
         // UnitQuote
         Route::get('get-building-type', [ApiQuoteController::class, 'getBuildingType']);
         Route::get('get-price-type', [ApiQuoteController::class, 'getPriceType']);
+        Route::get('get-price-response', [ApiQuoteController::class, 'getPriceResponse']);
         Route::post('quote-request', [ApiQuoteController::class, 'quoteRequest']);
     });
 });
