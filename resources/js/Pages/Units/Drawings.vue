@@ -17,6 +17,7 @@
      fileType="drawing"
     v-model="createForm.folder_id"
     :options="folders"
+    :unitId="props.unitId"
     @created="folders.unshift($event)"
     @refresh="fetchFolders"
   />
@@ -223,7 +224,7 @@ import { UnitDrawingsApi, buildDrawingsCreateFD, buildDrawingsUpdateFD } from '@
   const folderLoading = ref(false)
   async function fetchFolders() {
     folderLoading.value = true
-    try { folders.value = await FolderApi.list('drawing') }
+    try { folders.value = await FolderApi.list('drawing', props.unitId) }
     finally { folderLoading.value = false }
   }
 

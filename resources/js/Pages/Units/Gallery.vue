@@ -12,7 +12,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <FolderPicker type="gallery" label="Folder *" v-model="createForm.folder_id" :options="folders"
-            @created="folders.unshift($event)" @refresh="fetchFolders" />
+            :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
           <div>
             <label class="block text-xs text-gray-500 mb-1">Date *</label>
             <input v-model="createForm.date" class="form-input" type="date" required />
@@ -48,136 +48,107 @@
         </div>
       </div>
 
-   <!-- List -->
-<div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-gray-800">Images</h3>
-    <button @click="fetchList" class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50">
-      Refresh
-    </button>
-  </div>
-
-  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
-
-  <div
-    v-else
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-5"
-  >
-    <div
-      v-for="g in rows"
-      :key="g.id"
-      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
-    >
-      <!-- Image header -->
-      <div class="relative aspect-[4/3] bg-white">
-        <img
-          v-if="g.image_url"
-          :src="g.image_url"
-          class="absolute inset-0 w-full h-full object-cover"
-          alt=""
-        />
-        <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-          No Image
+      <!-- List -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Images</h3>
+          <button @click="fetchList" class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50">
+            Refresh
+          </button>
         </div>
 
-        <!-- top gradient -->
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent"></div>
+        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
 
-        <!-- badges -->
-        <div class="absolute top-2 left-2 flex flex-wrap items-center gap-2">
-          <span class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
-            {{ g.title_en || '—' }}
-          </span>
-          <span class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
-            {{ edit[g.id].date || 'No date' }}
-          </span>
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
+          <div v-for="g in rows" :key="g.id"
+            class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200">
+            <!-- Image header -->
+            <div class="relative aspect-[4/3] bg-white">
+              <img v-if="g.image_url" :src="g.image_url" class="absolute inset-0 w-full h-full object-cover" alt="" />
+              <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+                No Image
+              </div>
+
+              <!-- top gradient -->
+              <div
+                class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent">
+              </div>
+
+              <!-- badges -->
+              <div class="absolute top-2 left-2 flex flex-wrap items-center gap-2">
+                <span
+                  class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
+                  {{ g.title_en || '—' }}
+                </span>
+                <span
+                  class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
+                  {{ edit[g.id].date || 'No date' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="p-3.5 space-y-3">
+              <!-- Folder -->
+              <div class="text-xs text-gray-500">
+                <span class="font-medium text-gray-700">Folder</span>
+              </div>
+              <FolderPicker type="gallery" :label="' '" v-model="edit[g.id].folder_id" :options="folders"
+                :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
+
+              <!-- Date -->
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Date</label>
+                <input v-model="edit[g.id].date" class="form-input" type="date" />
+              </div>
+
+              <!-- Titles (always full, wrapped) -->
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
+                <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
+                  @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
+                <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
+                  @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'" />
+              </div>
+
+              <!-- Replace image -->
+              <div class="text-[11px]">
+                <label class="block text-gray-500 mb-1">Replace Image</label>
+                <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
+                <p v-if="pendingImage[g.id]" class="mt-1 text-[11px] text-gray-500">
+                  Selected: {{ pendingImage[g.id]?.name }}
+                </p>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex items-center gap-2 pt-1">
+                <button
+                  class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  @click="saveOne(g.id)" :disabled="saving[g.id] || !isDirty(g)">
+                  {{ saving[g.id] ? 'Saving…' : 'Save' }}
+                </button>
+                <button
+                  class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+                  @click="remove(g.id)">
+                  Delete
+                </button>
+                <span v-if="isDirty(g)"
+                  class="ml-auto inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2.5 py-0.5 text-[11px] border border-amber-200">
+                  Unsaved changes
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
+            No images found.
+          </div>
         </div>
       </div>
-
-      <!-- Body -->
-      <div class="p-3.5 space-y-3">
-        <!-- Folder -->
-        <div class="text-xs text-gray-500">
-          <span class="font-medium text-gray-700">Folder</span>
-        </div>
-        <FolderPicker
-          type="gallery"
-          :label="' '"
-          v-model="edit[g.id].folder_id"
-          :options="folders"
-          @created="folders.unshift($event)"
-          @refresh="fetchFolders"
-        />
-
-        <!-- Date -->
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Date</label>
-          <input v-model="edit[g.id].date" class="form-input" type="date" />
-        </div>
-
-        <!-- Titles (always full, wrapped) -->
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
-          <textarea
-            v-model="edit[g.id].title.en"
-            class="form-input !h-auto min-h-9"
-            rows="1"
-            @input="autoGrow($event)"
-            :placeholder="g.title_en ? '' : 'Enter English title'"
-          />
-        </div>
-
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
-          <textarea
-            v-model="edit[g.id].title.ar"
-            class="form-input !h-auto min-h-9"
-            rows="1"
-            dir="rtl"
-            @input="autoGrow($event)"
-            :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'"
-          />
-        </div>
-
-        <!-- Replace image -->
-        <div class="text-[11px]">
-          <label class="block text-gray-500 mb-1">Replace Image</label>
-          <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
-          <p v-if="pendingImage[g.id]" class="mt-1 text-[11px] text-gray-500">
-            Selected: {{ pendingImage[g.id]?.name }}
-          </p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 pt-1">
-          <button
-            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
-            @click="saveOne(g.id)"
-            :disabled="saving[g.id] || !isDirty(g)"
-          >
-            {{ saving[g.id] ? 'Saving…' : 'Save' }}
-          </button>
-          <button
-            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
-            @click="remove(g.id)"
-          >
-            Delete
-          </button>
-          <span
-            v-if="isDirty(g)"
-            class="ml-auto inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2.5 py-0.5 text-[11px] border border-amber-200"
-          >
-            Unsaved changes
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-      No images found.
-    </div>
-  </div>
-</div>
 
     </div>
   </AuthenticatedLayout>
@@ -194,7 +165,7 @@ const folders = ref([])
 const folderLoading = ref(false)
 async function fetchFolders() {
   folderLoading.value = true
-  try { folders.value = await FolderApi.list('gallery') }
+  try { folders.value = await FolderApi.list('gallery', props.unitId) }
   finally { folderLoading.value = false }
 }
 

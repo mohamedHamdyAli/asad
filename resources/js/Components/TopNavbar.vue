@@ -1,5 +1,5 @@
 <template>
-    <header class="w-full bg-black shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+    <header class="w-full bg-dash-dark shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
       <div class="h-16 flex justify-between items-center">
         <!-- Left side: Search + title -->
         <div class="flex items-center space-x-6">

@@ -1,8 +1,8 @@
 <template>
-    <aside class="w-64 h-screen bg-dash-yellow text-dash-black flex flex-col justify-between fixed">
+    <aside class="w-64 h-screen bg-dash-gray text-dash-black flex flex-col justify-between fixed">
         <div>
             <!-- Logo -->
-            <div class="p-6 text-xl font-bold tracking-wide">
+            <div class="p-6 text-xl font-bold tracking-wide mx-4 my-4">
                 <Link :href="route('dashboard')">
                     <NavLogo class="block h-9 w-auto fill-current text-gray-800" />
                 </Link>

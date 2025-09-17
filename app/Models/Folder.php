@@ -45,6 +45,11 @@ class Folder extends Model
         return $query->where('file_type', $type);
     }
 
+    public function scopeOfUnit($query, $unitId)
+    {
+        return $query->where('unit_id', $unitId); 
+    }
+
     public static function getFolderByType($type)
     {
         return self::ofType($type)->select('id','name','folder_image')->get();

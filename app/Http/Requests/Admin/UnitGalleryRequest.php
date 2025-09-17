@@ -39,7 +39,7 @@ class UnitGalleryRequest extends FormRequest
         ] : [
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',
-            'data.*.id' => 'nullable|exists:unit_documents,id',
+            'data.*.id' => 'required|exists:unit_galleries,id',
             'data.*.folder_id' => [
                 'required',
                 Rule::exists('folders', 'id')->where(function ($query) {

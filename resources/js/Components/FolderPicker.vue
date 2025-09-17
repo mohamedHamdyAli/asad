@@ -17,7 +17,7 @@
       <button type="button" class="px-2 py-1 border rounded" @click="showModal = true">
         + New
       </button>
-      <button type="button" class="px-2 py-1 border rounded" @click="fetchFolders">↻</button>
+      <!-- <button type="button" class="px-2 py-1 border rounded" @click="fetchFolders">↻</button> -->
     </div>
 
     <!-- Create Folder Modal -->
@@ -65,8 +65,8 @@ const props = defineProps({
   type: { type: String, required: true },
   modelValue: { type: [Number, String, null], default: null },
   label: { type: String, default: 'Folder' },
-  fileType: { type: String, default: null },
   options: { type: Array, default: null },
+  unitId: { type: [Number, String], required: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'created', 'refresh'])
@@ -75,18 +75,7 @@ const loading = ref(false)
 const folders = ref(props.options ?? [])
 watch(() => props.options, (v) => { if (Array.isArray(v)) folders.value = v })
 
-async function fetchFolders() {
-  if (props.options) {
-    emit('refresh')
-    return
-  }
-  loading.value = true
-  try {
-    folders.value = await FolderApi.list(props.type)
-  } finally {
-    loading.value = false
-  }
-}
+
 onMounted(() => { if (!props.options) fetchFolders() })
 
 const showModal = ref(false)
@@ -111,12 +100,26 @@ function toNumber(v) {
   return Number.isNaN(n) ? null : n
 }
 
+async function fetchFolders() {
+  if (props.options) {
+    emit('refresh')
+    return
+  }
+  loading.value = true
+  try {
+    folders.value = await FolderApi.list(props.type, props.unitId)
+  } finally {
+    loading.value = false
+  }
+}
+
 async function createFolder() {
   creating.value = true
   error.value = ''
   try {
     const fd = buildFolderFD({
       file_type: props.type,
+      unit_id: props.unitId,
       name: form.value.name,
       folder_image: form.value.folder_image,
     })
@@ -131,7 +134,9 @@ async function createFolder() {
     creating.value = false
   }
 }
+
 </script>
+
 
 <style scoped>
 .form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }

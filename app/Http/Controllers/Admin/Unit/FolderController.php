@@ -5,25 +5,24 @@ namespace App\Http\Controllers\Admin\Unit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\FolderRequest;
 use App\services\Unit\FolderCrudService;
+use Illuminate\Http\Request;
 
 class FolderController extends Controller
 {
     private FolderCrudService $folderService;
+    public function __construct(FolderCrudService $folderService) { $this->folderService = $folderService; }
 
-    public function __construct(FolderCrudService $folderService)
-    {
-        $this->folderService = $folderService;
-    }
+   public function index($type, Request $request)
+{
+    $unitId = $request->query('unit_id'); // unit_id comes from ?unit_id=123
+    $data = $this->folderService->getData($type, $unitId);
 
-    public function index($type)
-    {
-        $data = $this->folderService->getData($type);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Folder fetched successfully',
-            'data' => $data
-        ], 200);
-    }
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Folders fetched successfully',
+        'data' => $data
+    ], 200);
+}
 
     public function store(FolderRequest $request)
     {
@@ -37,8 +36,7 @@ class FolderController extends Controller
 
     public function update(FolderRequest $request, $id)
     {
-        $data = $this->folderService->updateFolderData($request->validated(), $id);
-
+        $data = $this->folderService->updateFolderData($request->validated(), (int)$id);
         return response()->json([
             'status' => 'success',
             'message' => 'Folder updated successfully',
@@ -48,8 +46,7 @@ class FolderController extends Controller
 
     public function destroy($id)
     {
-         $this->folderService->deleteFolder($id);
-
+        $this->folderService->deleteFolder((int)$id);
         return response()->json([
             'status' => 'success',
             'message' => 'Folder deleted successfully'

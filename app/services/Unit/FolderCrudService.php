@@ -3,28 +3,28 @@
 namespace App\services\Unit;
 
 use App\Models\Folder;
-use App\Models\Unit;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class FolderCrudService
 {
-    private string $uploadFolder;
+    private string $uploadFolder = "units/folder";
 
-    public function __construct()
-    {
-        $this->uploadFolder = "units/folder";
+  public function getData($type, $unitId = null)
+{
+    $query = Folder::where('file_type', $type)
+        ->select('id', 'name', 'folder_image', 'unit_id')
+        ->orderByDesc('id');
+
+    if ($unitId) {
+        $query->where('unit_id', $unitId);
     }
 
-    public function getData($type)
-    {
-        return Folder::ofType($type)
-            ->select('id', 'name', 'folder_image', 'unit_id')
-            ->orderByDesc('id')
-            ->get();
-    }
+    return $query->get();
+}
 
-    public function createFolder($request)
+
+    public function createFolder(array $request)
     {
         return DB::transaction(function () use ($request) {
             if (!empty($request['folder_image'])) {
@@ -37,35 +37,33 @@ class FolderCrudService
         });
     }
 
-    public function updateFolderData($request, $id)
+    public function updateFolderData(array $request, int $id)
     {
         return DB::transaction(function () use ($request, $id) {
-            $Folder = Folder::findOrFail($id);
+            $folder = Folder::findOrFail($id);
 
             if (!empty($request['folder_image'])) {
                 $request['folder_image'] = FileService::replace(
                     $request['folder_image'],
                     $this->uploadFolder,
-                    $Folder->getRawOriginal('folder_image')
+                    $folder->getRawOriginal('folder_image')
                 );
             }
             if (!empty($request['name'])) {
                 $request['name'] = json_encode($request['name'], JSON_UNESCAPED_UNICODE);
             }
-            $Folder->update($request);
-            return $Folder;
+            $folder->update($request);
+            return $folder;
         });
     }
 
-    public function deleteFolder($id)
+    public function deleteFolder(int $id)
     {
         return DB::transaction(function () use ($id) {
-            $Folder = Folder::findOrFail($id);
-            FileService::delete($Folder->getRawOriginal('folder_image'));
-            $Folder->delete();
+            $folder = Folder::findOrFail($id);
+            FileService::delete($folder->getRawOriginal('folder_image'));
+            $folder->delete();
             return true;
         });
     }
-
-
 }
