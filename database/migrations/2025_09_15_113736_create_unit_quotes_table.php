@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('type_of_building_id')->constrained('type_of_buildings')->onDelete('cascade');
             $table->foreignId('type_of_price_id')->constrained('type_of_prices')->onDelete('cascade');
-            $table->string('pay_image');
             $table->timestamps();
         });
     }
