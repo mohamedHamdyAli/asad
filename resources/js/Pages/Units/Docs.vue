@@ -147,13 +147,13 @@
 
               <!-- Actions -->
               <div class="flex items-center gap-2 pt-2">
-                <button
+                <!-- <button
                   v-if="d.file_url"
                   @click="window.open(d.file_url, '_blank')"
                   class="px-3 py-1.5 text-sm rounded-lg border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100"
                 >
                   Open
-                </button>
+                </button> -->
                 <button
                   class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
                   @click="saveOne(d.id)"
