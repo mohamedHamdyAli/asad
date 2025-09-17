@@ -32,7 +32,7 @@ class UnitGalleryRequest extends FormRequest
                     $query->where('file_type', 'gallery');
                 }),
             ],
-            'data.*.image' => 'required|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
+            'data.*.image' => 'required|file|mimes:jpeg,png,jpg,svg,webp,pdf|max:6144',
             'data.*.title' => 'required|array',
             'data.*.title.*' => 'required|string',
             'data.*.date' => 'required|date',
@@ -46,7 +46,7 @@ class UnitGalleryRequest extends FormRequest
                     $query->where('file_type', 'gallery');
                 }),
             ],
-            'data.*.image' => 'nullable|file|mimes:jpeg,png,jpg,svg,webp|max:6144',
+            'data.*.image' => 'nullable|file|mimes:jpeg,png,jpg,svg,webp,pdf|max:6144',
             'data.*.title' => 'nullable|array',
             'data.*.title.*' => 'required_with:data.*.title|string',
             'data.*.date' => 'nullable|date',

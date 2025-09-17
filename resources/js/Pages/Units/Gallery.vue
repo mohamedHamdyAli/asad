@@ -62,30 +62,40 @@
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
           <div v-for="g in rows" :key="g.id"
             class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200">
-            <!-- Image header -->
-            <div class="relative aspect-[4/3] bg-white">
-              <img v-if="g.image_url" :src="g.image_url" class="absolute inset-0 w-full h-full object-cover" alt="" />
-              <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-                No Image
+           <!-- File/Image header -->
+            <div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
+              <!-- Images -->
+              <img v-if="isImage(g)" :src="fileUrl(g)" class="absolute inset-0 w-full h-full object-cover" />
+
+              <!-- PDFs -->
+              <div v-else-if="isPdf(g)"
+                class="relative z-10 flex flex-col items-center justify-center text-gray-500 text-xs pointer-events-auto">
+                <div class="text-4xl mb-2">📕</div>
+                <span class="px-2">PDF Document</span>
+                <a :href="fileUrl(g)" target="_blank" rel="noopener"
+                  class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100">
+                  Open
+                </a>
               </div>
 
-              <!-- top gradient -->
+              <!-- Other -->
+              <div v-else
+                class="relative z-10 flex flex-col items-center justify-center text-gray-500 text-xs pointer-events-auto">
+                <div class="text-4xl mb-2">📄</div>
+                <span class="break-all px-2">{{ getFileName(g) }}</span>
+                <a :href="fileUrl(g)" target="_blank" rel="noopener"
+                  class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100">
+                  Open
+                </a>
+              </div>
+
+              <!-- gradient overlay -->
               <div
                 class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent">
               </div>
-
-              <!-- badges -->
-              <div class="absolute top-2 left-2 flex flex-wrap items-center gap-2">
-                <span
-                  class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
-                  {{ g.title_en || '—' }}
-                </span>
-                <span
-                  class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-700 border border-gray-200">
-                  {{ edit[g.id].date || 'No date' }}
-                </span>
-              </div>
             </div>
+
+
 
             <!-- Body -->
             <div class="p-3.5 space-y-3">
@@ -118,7 +128,7 @@
               <!-- Replace image -->
               <div class="text-[11px]">
                 <label class="block text-gray-500 mb-1">Replace Image</label>
-                <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
+                <input type="file"  @change="onReplaceFile(g.id, $event)" />
                 <p v-if="pendingImage[g.id]" class="mt-1 text-[11px] text-gray-500">
                   Selected: {{ pendingImage[g.id]?.name }}
                 </p>
@@ -193,6 +203,28 @@ function onNewFiles(e) {
   newFiles.value = files
   newPreviews.value = files.map(f => URL.createObjectURL(f))
 }
+
+
+function fileUrl(file) {
+  if (!file) return ''
+  return `/storage/${file.image}`
+}
+
+function isImage(file) {
+  if (!file?.image) return false
+  return /\.(jpe?g|png|gif|webp|svg|bmp|tiff?|heic|heif|avif)$/i.test(file.image)
+}
+
+function isPdf(file) {
+  if (!file?.image) return false
+  return /\.pdf$/i.test(file.image)
+}
+
+function getFileName(file) {
+  if (!file?.image) return 'Unknown file'
+  return decodeURIComponent(file.image.split('/').pop())
+}
+
 
 async function createBatch() {
   creating.value = true

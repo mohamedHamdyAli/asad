@@ -11,16 +11,8 @@
         <h3 class="text-lg font-bold mb-3">Add Drawings</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <FolderPicker
-    type="drawing"
-    label="Folder *"
-     fileType="drawing"
-    v-model="createForm.folder_id"
-    :options="folders"
-    :unitId="props.unitId"
-    @created="folders.unshift($event)"
-    @refresh="fetchFolders"
-  />
+          <FolderPicker type="drawing" label="Folder *" fileType="drawing" v-model="createForm.folder_id"
+            :options="folders" :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
           <div>
             <label class="block text-xs text-gray-500 mb-1">Date *</label>
             <input v-model="createForm.date" class="form-input" type="date" required />
@@ -36,18 +28,17 @@
         </div>
 
         <div class="mt-4">
-          <input type="file" multiple  @change="onNewFiles" />
+          <input type="file" multiple @change="onNewFiles" />
           <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
-            <img v-for="(src, i) in newPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
+            <a v-for="(src, i) in newPreviews" :key="i" :href="src" target="_blank" rel="noopener">
+              <img :src="src" class="w-24 h-16 object-cover rounded border" />
+            </a>
           </div>
         </div>
 
         <div class="mt-4 flex items-center gap-3">
-          <button
-            :disabled="creating || !canCreate"
-            @click="createBatch"
-            class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
-          >
+          <button :disabled="creating || !canCreate" @click="createBatch"
+            class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60">
             {{ creating ? 'Uploading…' : 'Upload' }}
           </button>
           <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
@@ -55,161 +46,108 @@
       </div>
 
       <!-- List -->
-     <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-gray-800">Drawings</h3>
-    <button
-      @click="fetchList"
-      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
-    >
-      Refresh
-    </button>
-  </div>
-
-  <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
-
-  <div
-    v-else
-    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-  >
-    <div
-      v-for="g in rows"
-      :key="g.id"
-      class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
-    >
-      <!-- Image header -->
-  <!-- File/Image header -->
-<div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
-<!-- Images -->
-<img
-  v-if="isImage(g)"
-  :src="g.file_url"
-  class="absolute inset-0 w-full h-full object-cover"
-/>
-
-<!-- PDFs -->
-<iframe
-  v-else-if="isPdf(g)"
-  :src="g.file_url"
-  class="absolute inset-0 w-full h-full"
-/>
-
-<!-- Other -->
-<div v-else class="flex flex-col items-center justify-center text-gray-500 text-xs">
-  <div class="text-4xl mb-2">📄</div>
-  <span class="break-all px-2">{{ getFileName(g) }}</span>
-  <a
-    :href="g.file_url"
-    target="_blank"
-    class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100"
-  >
-    Open
-  </a>
-</div>
-
-
-  <!-- gradient overlay -->
-  <div
-    class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent"
-  ></div>
-
-  <!-- badges -->
-  <div class="absolute top-2 left-2 flex flex-wrap gap-2">
-    <span
-      class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
-    >
-      {{ g.title_en || 'Folder' }}
-    </span>
-    <span
-      v-if="edit[g.id].date"
-      class="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
-    >
-      {{ edit[g.id].date }}
-    </span>
-  </div>
-</div>
-
-
-      <!-- Body -->
-      <div class="p-3.5 space-y-3 text-sm">
-        <!-- Date -->
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Date *</label>
-          <input v-model="edit[g.id].date" class="form-input" type="date" />
-        </div>
-
-        <!-- Folder -->
-        <FolderPicker
-          type="drawing"
-          :label="'Folder *'"
-          v-model="edit[g.id].folder_id"
-          :options="folders"
-          @created="folders.unshift($event)"
-          @refresh="fetchFolders"
-        />
-
-        <!-- Titles -->
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
-          <textarea
-            v-model="edit[g.id].title.en"
-            class="form-input !h-auto min-h-9"
-            rows="1"
-            @input="autoGrow($event)"
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
-          <textarea
-            v-model="edit[g.id].title.ar"
-            class="form-input !h-auto min-h-9"
-            rows="1"
-            dir="rtl"
-            @input="autoGrow($event)"
-          ></textarea>
-        </div>
-
-        <!-- Replace image -->
-        <div class="text-[11px]">
-          <label class="block text-gray-500 mb-1">Replace Image</label>
-          <input type="file" accept="image/*" @change="onReplaceFile(g.id, $event)" />
-          <p
-            v-if="pendingImage?.[g.id]"
-            class="mt-1 text-[11px] text-gray-500"
-          >
-            Selected: {{ pendingImage[g.id]?.name }}
-          </p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 pt-2">
-          <button
-            class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
-            @click="saveOne(g.id)"
-            :disabled="saving[g.id]"
-          >
-            {{ saving[g.id] ? 'Saving…' : 'Save' }}
+      <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Drawings</h3>
+          <button @click="fetchList" class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50">
+            Refresh
           </button>
-          <button
-            class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
-            @click="remove(g.id)"
-          >
-            Delete
-          </button>
+        </div>
+
+        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+
+        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+          <div v-for="g in rows" :key="g.id"
+            class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200">
+            <!-- File/Image header -->
+            <div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
+              <!-- Images -->
+              <img v-if="isImage(g)" :src="fileUrl(g)" class="absolute inset-0 w-full h-full object-cover" />
+
+              <!-- PDFs -->
+              <div v-else-if="isPdf(g)"
+                class="relative z-10 flex flex-col items-center justify-center text-gray-500 text-xs pointer-events-auto">
+                <div class="text-4xl mb-2">📕</div>
+                <span class="px-2">PDF Document</span>
+                <a :href="fileUrl(g)" target="_blank" rel="noopener"
+                  class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100">
+                  Open
+                </a>
+              </div>
+
+              <!-- Other -->
+              <div v-else
+                class="relative z-10 flex flex-col items-center justify-center text-gray-500 text-xs pointer-events-auto">
+                <div class="text-4xl mb-2">📄</div>
+                <span class="break-all px-2">{{ getFileName(g) }}</span>
+                <a :href="fileUrl(g)" target="_blank" rel="noopener"
+                  class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100">
+                  Open
+                </a>
+              </div>
+
+              <!-- gradient overlay -->
+              <div
+                class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent">
+              </div>
+            </div>
+
+
+            <!-- Body -->
+            <div class="p-3.5 space-y-3 text-sm">
+              <!-- Date -->
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Date *</label>
+                <input v-model="edit[g.id].date" class="form-input" type="date" />
+              </div>
+
+              <!-- Folder -->
+              <FolderPicker type="drawing" :label="'Folder *'" v-model="edit[g.id].folder_id" :options="folders"
+                @created="folders.unshift($event)" @refresh="fetchFolders" />
+
+              <!-- Titles -->
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
+                <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
+                  @input="autoGrow($event)"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
+                <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
+                  @input="autoGrow($event)"></textarea>
+              </div>
+
+              <!-- Replace image -->
+              <div class="text-[11px]">
+                <label class="block text-gray-500 mb-1">Replace File</label>
+                <input type="file" @change="onReplaceFile(g.id, $event)" />
+                <p v-if="pendingImage?.[g.id]" class="mt-1 text-[11px] text-gray-500">
+                  Selected: {{ pendingImage[g.id]?.name }}
+                </p>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex items-center gap-2 pt-2">
+                <button
+                  class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  @click="saveOne(g.id)" :disabled="saving[g.id]">
+                  {{ saving[g.id] ? 'Saving…' : 'Save' }}
+                </button>
+                <button
+                  class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+                  @click="remove(g.id)">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
+            No drawings found.
+          </div>
         </div>
       </div>
-    </div>
-
-    <div
-      v-if="!rows.length"
-      class="col-span-full text-center text-gray-500 py-8"
-    >
-      No drawings found.
-    </div>
-  </div>
-</div>
-
     </div>
   </AuthenticatedLayout>
 </template>
@@ -218,16 +156,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitDrawingsApi, buildDrawingsCreateFD, buildDrawingsUpdateFD } from '@/Services/unitDrawings'
-  import FolderPicker from '@/Components/FolderPicker.vue'
-  import { FolderApi } from '@/Services/folders'
-  const folders = ref([])
-  const folderLoading = ref(false)
-  async function fetchFolders() {
-    folderLoading.value = true
-    try { folders.value = await FolderApi.list('drawing', props.unitId) }
-    finally { folderLoading.value = false }
-  }
+import FolderPicker from '@/Components/FolderPicker.vue'
+import { FolderApi } from '@/Services/folders'
 
+const folders = ref([])
+const folderLoading = ref(false)
+async function fetchFolders() {
+  folderLoading.value = true
+  try {
+    folders.value = await FolderApi.list('drawing', props.unitId)
+  } finally {
+    folderLoading.value = false
+  }
+}
 
 const props = defineProps({
   unitId: { type: [Number, String], required: true },
@@ -260,29 +201,26 @@ function onNewFiles(e) {
   newPreviews.value = files.map(f => URL.createObjectURL(f))
 }
 
+function fileUrl(file) {
+  if (!file) return ''
+  return `/storage/${file.image}`
+}
+
 function isImage(file) {
-  if (!file) return false
-  // Prefer mime_type if available
-  if (file.mime_type) return file.mime_type.startsWith('image/')
-  // Fallback to extension check
-  return /\.(jpg|jpeg|png|gif|webp)$/i.test(file.url || '')
+  if (!file?.image) return false
+  return /\.(jpe?g|png|gif|webp|svg|bmp|tiff?|heic|heif|avif)$/i.test(file.image)
 }
 
 function isPdf(file) {
-  if (!file) return false
-  if (file.mime_type) return file.mime_type === 'application/pdf'
-  return /\.pdf$/i.test(file.url || '')
+  if (!file?.image) return false
+  return /\.pdf$/i.test(file.image)
 }
 
 function getFileName(file) {
-  if (!file) return 'Unknown file'
-  if (file.file_name) return file.file_name
-  try {
-    return decodeURIComponent((file.url || '').split('/').pop().split('?')[0])
-  } catch {
-    return 'Unknown file'
-  }
+  if (!file?.image) return 'Unknown file'
+  return decodeURIComponent(file.image.split('/').pop())
 }
+
 
 async function createBatch() {
   creating.value = true
@@ -322,7 +260,7 @@ function seedEditState(arr) {
   arr.forEach(g => {
     edit[g.id] = {
       date: g.date || '',
-      folder_id: g.folder_id ?? null, // required on update
+      folder_id: g.folder_id ?? null,
       title: { en: g.title_en || '', ar: g.title_ar || '' },
     }
   })
@@ -357,10 +295,10 @@ async function saveOne(id) {
   try {
     const items = [{
       id,
-      folder_id: item.folder_id,   // required
-      date: item.date,             // optional (rule allows nullable)
-      title: item.title,           // optional (if sent, both fields validated)
-      image: pendingImage[id],     // optional
+      folder_id: item.folder_id,
+      date: item.date,
+      title: item.title,
+      image: pendingImage[id],
     }]
     const fd = buildDrawingsUpdateFD(props.unitId, items)
     await UnitDrawingsApi.update(fd)
@@ -381,10 +319,14 @@ async function remove(id) {
 }
 
 onMounted(async () => { await fetchFolders(); await fetchList(); })
-
 </script>
 
 <style scoped>
-.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
-.aspect-\[4\/3\] { aspect-ratio: 4 / 3; }
+.form-input {
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.aspect-\[4\/3\] {
+  aspect-ratio: 4 / 3;
+}
 </style>

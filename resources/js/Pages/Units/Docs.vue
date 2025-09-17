@@ -65,7 +65,7 @@
 
         <div
           v-else
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5"
         >
           <div
             v-for="d in rows"
@@ -138,7 +138,6 @@
                 <label class="block text-gray-500 mb-1">Replace File</label>
                 <input
                   type="file"
-                  accept="image/*,application/pdf"
                   @change="onReplaceFile(d.id, $event)"
                 />
                 <p v-if="pendingFile?.[d.id]" class="mt-1 text-[11px] text-gray-500">
@@ -233,6 +232,31 @@ const canCreate = computed(() =>
 function onNewFiles(e) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
+}
+
+
+function isImage(file) {
+  if (!file) return false
+  // Prefer mime_type if available
+  if (file.mime_type) return file.mime_type.startsWith('image/')
+  // Fallback to extension check
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(file.url || '')
+}
+
+function isPdf(file) {
+  if (!file) return false
+  if (file.mime_type) return file.mime_type === 'application/pdf'
+  return /\.pdf$/i.test(file.url || '')
+}
+
+function getFileName(file) {
+  if (!file) return 'Unknown file'
+  if (file.file_name) return file.file_name
+  try {
+    return decodeURIComponent((file.url || '').split('/').pop().split('?')[0])
+  } catch {
+    return 'Unknown file'
+  }
 }
 
 async function createBatch() {
