@@ -57,7 +57,7 @@
   
         <!-- Right side: Icons + profile -->
         <div class="flex items-center space-x-4">
-          <Icon icon="mdi:bell-outline" class="w-5 h-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
+          <Icon icon="mdi:bell-outline" class="w-5 h-5 text-white hover:text-gray-700 cursor-pointer" />
   
           <!-- Profile Dropdown -->
           <div class="relative" @click="toggleDropdown">
