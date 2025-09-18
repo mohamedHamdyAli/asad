@@ -1,5 +1,5 @@
 <template>
-    <header class="w-full bg-dash-dark shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+    <header class="w-full custom-background shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8">
       <div class="h-16 flex justify-between items-center">
         <!-- Left side: Search + title -->
         <div class="flex items-center space-x-6">
@@ -121,3 +121,9 @@ onMounted(() => {
 
   </script>
   
+  <style>
+.custom-background {
+ /* background-color: #FF2D20;
+  */
+background: linear-gradient(0deg, #fcca11 0%, #000000 93%);}
+</style>

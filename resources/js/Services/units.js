@@ -102,6 +102,7 @@ export const UnitsApi = {
 };
 
 /* ---------- FormData builders ---------- */
+/* ---------- FormData builders ---------- */
 export function buildUnitCreateFD({
   name = { en: "", ar: "" },
   description = { en: "", ar: "" },
@@ -119,28 +120,32 @@ export function buildUnitCreateFD({
   ...rest
 }) {
   const fd = new FormData();
-  // required bilingual fields
+
   fd.append("name[en]", name.en ?? "");
   fd.append("name[ar]", name.ar ?? "");
   fd.append("description[en]", description.en ?? "");
   fd.append("description[ar]", description.ar ?? "");
-  // required scalar fields
+
   fd.append("location", location ?? "");
   fd.append("lat", String(lat ?? ""));
   fd.append("long", String(long ?? ""));
   fd.append("start_date", start_date ?? "");
   fd.append("end_date", end_date ?? "");
-  // required files
+
   if (cover_image) fd.append("cover_image", cover_image);
-  (gallery || []).forEach((file) => file && fd.append("gallery[]", file));
-  // required associations
+
+  (gallery || []).forEach((file, i) => {
+    if (file) fd.append(`gallery[${i}]`, file);
+  });
+
   fd.append("user_id", String(user_id ?? ""));
   fd.append("vendor_id", String(vendor_id ?? ""));
-  // optional
+
   if (status) fd.append("status", status);
   Object.entries(rest).forEach(([k, v]) => {
     if (v !== undefined && v !== null && v !== "") fd.append(k, v);
   });
+
   return fd;
 }
 
@@ -162,28 +167,37 @@ export function buildUnitUpdateFD(partial = {}) {
   } = partial;
 
   const fd = new FormData();
+
   if (name) {
     if (name.en !== undefined) fd.append("name[en]", name.en ?? "");
     if (name.ar !== undefined) fd.append("name[ar]", name.ar ?? "");
   }
+
   if (description) {
     if (description.en !== undefined) fd.append("description[en]", description.en ?? "");
     if (description.ar !== undefined) fd.append("description[ar]", description.ar ?? "");
   }
+
   if (location !== undefined) fd.append("location", location ?? "");
   if (lat !== undefined) fd.append("lat", String(lat ?? ""));
   if (long !== undefined) fd.append("long", String(long ?? ""));
   if (start_date !== undefined) fd.append("start_date", start_date ?? "");
   if (end_date !== undefined) fd.append("end_date", end_date ?? "");
   if (cover_image) fd.append("cover_image", cover_image);
+
   if (Array.isArray(gallery) && gallery.length) {
-    gallery.forEach((file) => file && fd.append("gallery[]", file));
+    gallery.forEach((file, i) => {
+      if (file) fd.append(`gallery[${i}]`, file);
+    });
   }
+
   if (user_id !== undefined) fd.append("user_id", String(user_id ?? ""));
   if (vendor_id !== undefined) fd.append("vendor_id", String(vendor_id ?? ""));
   if (status !== undefined && status !== "") fd.append("status", status);
+
   Object.entries(rest).forEach(([k, v]) => {
     if (v !== undefined && v !== null && v !== "") fd.append(k, v);
   });
+
   return fd;
 }

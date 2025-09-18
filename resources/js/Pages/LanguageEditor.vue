@@ -4,7 +4,7 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-semibold text-gray-800">Translate Language File</h2>
+        <h2 class="text-2xl font-semibold text-white">Translate Language File</h2>
       </div>
 
       <div v-if="loadError" class="p-3 bg-red-50 text-red-600 rounded">{{ loadError }}</div>
