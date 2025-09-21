@@ -18,7 +18,7 @@ class PriceResponseResource extends JsonResource
             'id' => $this->id,
             'title' => getLocalizedValue($this,'title'),
             'price' => $this->price,
-            'time_line' => $this->time_line,
+            'time_line' => getLocalizedValue($this,'time_line'),
         ];
     }
 }
