@@ -299,18 +299,54 @@
     </label>
     <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover" :required="!editingId" />
     <p v-if="err('cover_image')" class="mt-1 text-xs text-red-600">{{ err('cover_image') }}</p>
-    <div v-if="coverPreview" class="mt-2">
-      <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
-    </div>
+<div v-if="coverPreview" class="mt-2 relative inline-block">
+  <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
+  <button
+    type="button"
+    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600"
+    @click="removeCover"
+  >
+    ✕
+  </button>
+</div>
+
+
   </div>
 
   <div>
     <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
     <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
     <p v-if="err('gallery')" class="mt-1 text-xs text-red-600">{{ err('gallery') }}</p>
-    <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
-      <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
-    </div>
+
+<!-- Existing gallery from DB -->
+<div v-if="existingGallery.length" class="mt-2 flex flex-wrap gap-2">
+  <div v-for="g in existingGallery" :key="g.id" class="relative inline-block">
+    <img :src="g.image_url" class="w-24 h-16 object-cover rounded border" />
+    <button
+      type="button"
+      class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600"
+      @click="removeGalleryImage(g.id)"
+    >
+      ✕
+    </button>
+  </div>
+</div>
+
+<!-- New gallery uploads -->
+<div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
+  <div v-for="(src, i) in galleryPreviews" :key="i" class="relative inline-block">
+    <img :src="src" class="w-24 h-16 object-cover rounded border" />
+    <button
+      type="button"
+      class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600"
+      @click="galleryPreviews.splice(i, 1)"
+    >
+      ✕
+    </button>
+  </div>
+</div>
+
+
   </div>
 </div>
 
@@ -391,6 +427,7 @@ function validate() {
   const f = form.value
   const need = (v) => v !== null && v !== undefined && String(v).trim() !== ''
 
+  
   // Required on CREATE
   if (isCreate.value) {
     if (!need(f.name.en)) setFieldError('name.en', 'Name (EN) is required')
@@ -435,6 +472,36 @@ function validate() {
   }
   return true
 }
+
+const existingGallery = ref([])
+
+// async function openEdit(u) {
+//   resetForm()
+//   editingId.value = u.id
+//   const data = await UnitsApi.show(u.id)
+
+//   // cover
+//   coverPreview.value = data.cover_image_url || null
+
+//   // existing gallery
+//   existingGallery.value = Array.isArray(data.gallery) ? data.gallery : []
+//   galleryPreviews.value = [] // only for new uploads
+// }
+
+async function removeGalleryImage(imageId) {
+  if (!confirm("Delete this image?")) return
+  await UnitsApi.deleteGalleryImage(editingId.value, imageId)
+  existingGallery.value = existingGallery.value.filter(g => g.id !== imageId)
+}
+
+
+async function removeCover() {
+  if (!confirm("Delete cover image?")) return;
+  await UnitsApi.deleteCover(editingId.value);
+  coverPreview.value = null;
+}
+
+
 
 // Map Laravel 422 errors → our local `errors`
 function applyServerErrors(e) {
@@ -533,8 +600,10 @@ function openCreate() { resetForm(); showModal.value = true }
 async function openEdit(u) {
   resetForm()
   editingId.value = u.id
+
   const data = await UnitsApi.show(u.id)
-  // preload
+
+  // 🟢 preload base fields
   form.value.name.en = data.name_en || ''
   form.value.name.ar = data.name_ar || ''
   form.value.description.en = data.description_en || ''
@@ -547,14 +616,16 @@ async function openEdit(u) {
   form.value.user_id = data.user_id ?? null
   form.value.vendor_id = data.vendor_id ?? null
   form.value.status = data.status || ''
-  coverPreview.value = data.cover_image_url || null
 
-  // 🟢 preload gallery
-  if (Array.isArray(data.gallery)) {
-    galleryPreviews.value = data.gallery.map(g => g.image_url)
-    // keep form.gallery empty so backend doesn’t re-upload unless user adds new ones
-    form.value.gallery = []
-  }
+  // 🟢 preload cover
+  coverPreview.value = data.cover_image_url || null
+  form.value.cover_image = null // reset so new upload can replace
+
+  // 🟢 preload existing gallery from backend
+  existingGallery.value = Array.isArray(data.gallery) ? data.gallery : []
+  // keep new uploads empty
+  galleryPreviews.value = []
+  form.value.gallery = []
 
   showModal.value = true
 }

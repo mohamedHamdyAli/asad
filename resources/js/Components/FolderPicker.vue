@@ -1,104 +1,16 @@
-<template>
-  <div>
-    <label v-if="label" class="block text-xs text-gray-500 mb-1">{{ label }}</label>
-    <div class="flex gap-2">
-      <select
-        class="form-input flex-1"
-        :disabled="loading"
-        :value="modelValue ?? ''"
-        @change="$emit('update:modelValue', toNumber($event.target.value))"
-      >
-        <option value="" disabled>
-          {{ loading ? 'Loading folders…' : 'Select folder' }}
-        </option>
-        <option v-for="f in folders" :key="f.id" :value="f.id">
-          {{ f.label }}
-        </option>
-      </select>
-
-      <button
-        type="button"
-        class="px-2 py-1 border rounded"
-        @click="showModal = true"
-      >
-        + New
-      </button>
-    </div>
-
-    <!-- Create Folder Modal -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
-    >
-      <div class="bg-white rounded-xl p-4 w-full max-w-md relative">
-        <button
-          class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-          @click="closeModal"
-        >
-          ✕
-        </button>
-        <h3 class="text-lg font-semibold mb-3">Create Folder</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Name (EN) *</label>
-            <input v-model="form.name.en" type="text" class="form-input" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Name (AR) *</label>
-            <input v-model="form.name.ar" type="text" class="form-input" />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 mb-1">Image (optional)</label>
-            <input type="file" accept="image/*" @change="onFile" />
-            <img
-              v-if="preview"
-              :src="preview"
-              class="mt-2 w-24 h-16 object-cover rounded border"
-            />
-          </div>
-        </div>
-
-        <div class="mt-4 flex justify-end gap-2">
-          <button class="px-3 py-1 border rounded" @click="closeModal">
-            Cancel
-          </button>
-          <button
-            class="px-3 py-1 bg-green-600 text-white rounded disabled:opacity-60"
-            :disabled="creating || !form.name.en.trim() || !form.name.ar.trim()"
-            @click="createFolder"
-          >
-            {{ creating ? 'Saving…' : 'Create' }}
-          </button>
-        </div>
-
-        <div v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</div>
-      </div>
-    </div>
-  </div>
-</template>
-
-
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref } from 'vue'
 import { FolderApi, buildFolderFD } from '@/Services/folders'
 
 const props = defineProps({
   type: { type: String, required: true },
   modelValue: { type: [Number, String, null], default: null },
   label: { type: String, default: 'Folder' },
-  options: { type: Array, default: null },
+  options: { type: Array, required: true }, // 👈 parent always passes folders
   unitId: { type: [Number, String], required: true },
 })
 
-const emit = defineEmits(['update:modelValue', 'created', 'refresh'])
-
-const loading = ref(false)
-const folders = ref(props.options ?? [])
-watch(() => props.options, (v) => { if (Array.isArray(v)) folders.value = v })
-
-
-onMounted(() => { if (!props.options) fetchFolders() })
+const emit = defineEmits(['update:modelValue', 'created'])
 
 const showModal = ref(false)
 const creating = ref(false)
@@ -122,19 +34,6 @@ function toNumber(v) {
   return Number.isNaN(n) ? null : n
 }
 
-async function fetchFolders() {
-  if (props.options) {
-    emit('refresh')
-    return
-  }
-  loading.value = true
-  try {
-    folders.value = await FolderApi.list(props.type, props.unitId)
-  } finally {
-    loading.value = false
-  }
-}
-
 async function createFolder() {
   creating.value = true
   error.value = ''
@@ -146,9 +45,8 @@ async function createFolder() {
       folder_image: form.value.folder_image,
     })
     const created = await FolderApi.create(fd)
-    folders.value = [created, ...folders.value]
-    emit('created', created)
-    emit('update:modelValue', created.id)
+    emit('created', created) // parent merges it
+    emit('update:modelValue', created.id) // select it immediately
     closeModal()
   } catch (e) {
     error.value = e?.response?.data?.message || e?.message || 'Create failed'
@@ -156,10 +54,105 @@ async function createFolder() {
     creating.value = false
   }
 }
-
 </script>
 
+<template>
+  <div>
+    <label v-if="label" class="block text-xs text-gray-500 mb-1">{{ label }}</label>
+    <div class="flex gap-2">
+      <select class="form-input flex-1" :value="modelValue ?? ''"
+        @change="$emit('update:modelValue', toNumber($event.target.value))">
+        <option value="" disabled>Select folder</option>
+        <option v-for="f in options" :key="f.id" :value="f.id">
+          {{ f.label }}
+        </option>
+      </select>
+
+      <button type="button" class="px-2 py-1 border rounded" @click="showModal = true">
+        + New
+      </button>
+    </div>
+
+    <!-- create folder -->
+<Teleport to="body">
+  <div
+    v-if="showModal"
+    class="fixed inset-0 z-[1000] flex items-center justify-center"
+  >
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      @click="closeModal"
+    ></div>
+
+    <!-- Panel -->
+    <div
+      class="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-fadeIn"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold text-gray-800">Create Folder</h3>
+        <button
+          class="text-gray-400 hover:text-gray-600"
+          @click="closeModal"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Form -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Name (EN) *</label>
+    <input v-model="form.name.en" type="text" class="form-input" />
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Name (AR) *</label>
+    <input v-model="form.name.ar" type="text" class="form-input" />
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-xs text-gray-500 mb-1">Image (optional)</label>
+    <input type="file" accept="image/*" @change="onFile" class="form-input" />
+    <img
+      v-if="preview"
+      :src="preview"
+      class="mt-2 w-24 h-16 object-cover rounded border"
+    />
+  </div>
+</div>
+
+
+      <!-- Footer -->
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+          @click="closeModal"
+        >
+          Cancel
+        </button>
+        <button
+          class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-60"
+          :disabled="creating || !form.name.en.trim() || !form.name.ar.trim()"
+          @click="createFolder"
+        >
+          {{ creating ? 'Saving…' : 'Create' }}
+        </button>
+      </div>
+
+      <!-- Error -->
+      <div v-if="error" class="mt-3 text-sm text-red-600">{{ error }}</div>
+    </div>
+  </div>
+</Teleport>
+
+
+  </div>
+</template>
 
 <style scoped>
-.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
+.form-input {
+  @apply w-full border border-gray-300 rounded-md px-3 py-2
+         focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
 </style>

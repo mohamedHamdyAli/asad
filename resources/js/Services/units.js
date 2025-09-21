@@ -99,9 +99,17 @@ export const UnitsApi = {
     const { data } = await axios.delete(`/api/units/delete/${id}`);
     return data;
   },
+  deleteCover: async (unitId) => {
+  const { data } = await axios.delete(`/api/units/${unitId}/cover`);
+  return data;
+},
+deleteGalleryImage: async (unitId, imageId) => {
+  const { data } = await axios.delete(`/api/units/${unitId}/gallery/${imageId}`);
+  return data;
+},
+
 };
 
-/* ---------- FormData builders ---------- */
 /* ---------- FormData builders ---------- */
 export function buildUnitCreateFD({
   name = { en: "", ar: "" },

@@ -63,7 +63,6 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
-
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
@@ -137,6 +136,8 @@ Route::group(['prefix' => 'units'], static function () {
     Route::get('/show/{id}', [AdminUnitController::class, 'show'])->name('units.show');
     Route::post('/update/{id}', [AdminUnitController::class, 'update'])->name('units.update');
     Route::delete('/delete/{id}', [AdminUnitController::class, 'destroy'])->name('units.delete');
+    Route::delete('/{id}/cover', [AdminUnitController::class, 'deleteCover']);
+    Route::delete('/{unitId}/gallery/{imageId}', [AdminUnitController::class, 'deleteGalleryImage']);
 });
 
 Route::group(['prefix' => 'folder'], static function () {

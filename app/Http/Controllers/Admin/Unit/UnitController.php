@@ -105,4 +105,34 @@ class UnitController extends Controller
             'message' => 'Unit deleted successfully'
         ], 200);
     }
+
+    public function deleteCover($id)
+    {
+        $deleted = $this->unitService->deleteCoverImage($id);
+        if (!$deleted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cover not found'
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Cover deleted successfully'
+        ], 200);
+    }
+
+    public function deleteGalleryImage($unitId, $imageId)
+    {
+        $deleted = $this->unitService->deleteGalleryImage($unitId, $imageId);
+        if (!$deleted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gallery image not found'
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Gallery image deleted successfully'
+        ], 200);
+    }
 }

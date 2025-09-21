@@ -106,4 +106,35 @@ class UnitCrudService
             return true;
         });
     }
+
+    public function deleteCoverImage($id)
+{
+    return DB::transaction(function () use ($id) {
+        $unit = Unit::find($id);
+        if (!$unit) return false;
+
+        FileService::delete($unit->getRawOriginal('cover_image'));
+
+        $unit->update(['cover_image' => null]);
+
+        return true;
+    });
+}
+
+public function deleteGalleryImage($unitId, $imageId)
+{
+    return DB::transaction(function () use ($unitId, $imageId) {
+        $unit = Unit::find($unitId);
+        if (!$unit) return false;
+
+        $image = $unit->homeUnitGallery()->find($imageId);
+        if (!$image) return false;
+
+        FileService::delete($image->getRawOriginal('image'));
+        $image->delete();
+
+        return true;
+    });
+}
+
 }
