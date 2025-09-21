@@ -1,16 +1,17 @@
 <?php
 
 
-use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Controllers\Admin\UnitQuoteController as AdminUnitQuoteController;
+use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
+use App\Http\Controllers\Api\QuoteController as ApiQuoteController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
-use App\Http\Controllers\Api\QuoteController as ApiQuoteController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
@@ -27,11 +28,11 @@ use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController
 use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
 use App\Http\Controllers\Admin\Unit\DrawingsController as AdminDrawingsController;
 use App\Http\Controllers\Admin\Unit\TimeLineController as AdminTimeLineController;
+use App\Http\Controllers\Admin\TypeOfPriceController as AdminTypeOfPriceController;
+use App\Http\Controllers\Admin\TypeOfBuildingController as AdminTypeOfBuildingController;
 use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
-use App\Http\Controllers\Admin\TypeOfBuildingController as AdminTypeOfBuildingController;
-use App\Http\Controllers\Admin\TypeOfPriceController as AdminTypeOfPriceController;
 
 
 
@@ -260,4 +261,13 @@ Route::group(['prefix' => 'type-of-prices'], static function () {
     Route::get('/edit/{id}', [AdminTypeOfPriceController::class, 'edit'])->name('type-of-prices.edit');
     Route::post('/update/{id}', [AdminTypeOfPriceController::class, 'update'])->name('type-of-prices.update');
     Route::delete('/delete/{id}', [AdminTypeOfPriceController::class, 'destroy'])->name('type-of-prices.delete');
+});
+
+
+Route::prefix('unit-quotes')->group(function () {
+    Route::get('/', [AdminUnitQuoteController::class, 'index'])->name('unit-quotes.index');
+    Route::post('/create', [AdminUnitQuoteController::class, 'store'])->name('unit-quotes.store');
+    Route::get('/show/{id}', [AdminUnitQuoteController::class, 'show'])->name('unit-quotes.show');
+    Route::post('/update/{id}', [AdminUnitQuoteController::class, 'update'])->name('unit-quotes.update');
+    Route::delete('/delete/{id}', [AdminUnitQuoteController::class, 'destroy'])->name('unit-quotes.delete');
 });
