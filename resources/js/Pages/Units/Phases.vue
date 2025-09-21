@@ -2,8 +2,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Unit Phases</h2>
-        <a :href="backToUnits" class="px-3 py-1 border rounded text-white">Back to Units </a>
+        <h2 class="text-2xl font-bold text-dash-title">Unit Phases</h2>
+        <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units </a>
       </div>
 
       <div class="bg-white p-4 rounded shadow">

@@ -145,7 +145,7 @@ const submit = () => {
   <button
     type="submit"
     :disabled="form.processing"
-    class="w-full rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 py-2 text-white font-medium shadow hover:from-indigo-500 hover:to-indigo-600 transition disabled:opacity-50"
+    class="w-full rounded-lg bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
   >
     {{ form.processing ? 'Signing in…' : 'Log in' }}
   </button>

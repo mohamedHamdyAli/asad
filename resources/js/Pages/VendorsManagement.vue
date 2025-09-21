@@ -4,8 +4,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Project Managers (PM)</h2>
-        <button @click="openCreate" class="px-3 py-1 border rounded text-white hover:bg-gray-700">
+        <h2 class="text-2xl font-bold text-dash-title">Project Managers (PM)</h2>
+        <button @click="openCreate" class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
           + Add PM
         </button>
       </div>
@@ -75,7 +75,7 @@
 
       <!-- Modal -->
      <!-- Modal -->
-<div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+<div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 back-drop">
   <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-5 relative">
     <button @click="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
       ✕
@@ -412,5 +412,8 @@ onMounted(fetchVendors)
 <style scoped>
 .form-input {
   @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+.back-drop {
+margin-top: -25px !important;
 }
 </style>

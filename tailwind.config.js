@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
 import forms from '@tailwindcss/forms'
+import { Title } from 'chart.js'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -18,7 +19,7 @@ export default {
             colors: {
                 dash: {
                     yellow: "#fcca11",
-                    light: "#4d4732",
+                    light: "#f5f5f5",
                     gray: "#e5e7eb",
                     dark: "#1f2937",
                     navy: "#111827",
@@ -27,6 +28,7 @@ export default {
                     green: "#16a34a",
                     red: "#dc2626",
                     orange: "#f97316",
+                    title: "#374151",
                 },
             },
         },

@@ -2,8 +2,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Contractors</h2>
-        <button class="px-3 py-1 border rounded text-white" @click="fetchList">Refresh</button>
+        <h2 class="text-2xl font-bold text-dash-title">Contractors</h2>
+        <button class="px-3 py-1 border rounded text-black" @click="fetchList">Refresh</button>
       </div>
 
       <!-- Create one contractor -->
@@ -63,7 +63,7 @@
 
             <div class="p-3 space-y-3 text-sm">
               <div class="flex items-center justify-between">
-                <div class="font-semibold">#{{ c.id }}</div>
+                <!-- <div class="font-semibold">#{{ c.id }}</div> -->
                 <button class="px-2 py-1 border rounded text-red-600" @click="remove(c.id)">Delete</button>
               </div>
 

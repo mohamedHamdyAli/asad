@@ -2,8 +2,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Unit Timeline</h2>
-        <a :href="backToUnits" class="px-3 py-1 border rounded text-white">Back to Units</a>
+        <h2 class="text-2xl font-bold text-dash-title">Unit Timeline</h2>
+        <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
 
       <!-- Create (batch) -->
@@ -74,11 +74,11 @@
         </div>
 
         <!-- ID badge -->
-        <span
+        <!-- <span
           class="absolute top-2 left-2 inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-gray-600 border border-gray-200"
         >
           #{{ r.id }}
-        </span>
+        </span> -->
       </div>
 
       <!-- Body -->

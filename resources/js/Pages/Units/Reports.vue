@@ -2,8 +2,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Unit Reports</h2>
-        <a :href="backToUnits" class="px-3 py-1 border rounded text-white">Back to Units</a>
+        <h2 class="text-2xl font-bold text-dash-title">Unit Reports</h2>
+        <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
 
       <!-- Create (batch) -->
@@ -65,7 +65,7 @@
 
             <div class="p-3 space-y-2 text-sm">
               <div class="flex items-center justify-between text-xs text-gray-500">
-                <span>#{{ r.id }}</span>
+                <!-- <span>#{{ r.id }}</span> -->
               </div>
 
               <div>

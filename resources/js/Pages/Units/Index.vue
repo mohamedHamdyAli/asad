@@ -3,9 +3,9 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Units</h2>
+        <h2 class="text-2xl font-bold text-dash-title">Units</h2>
         <button @click="openCreate"
-          class="px-3 py-1 border rounded text-white hover:bg-gray-700">
+          class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
           + Add Unit
         </button>
       </div>
@@ -159,7 +159,7 @@
 >
   <!-- Backdrop -->
   <div
-    class="absolute inset-0 bg-black/40"
+    class="absolute inset-0 bg-black/40 back-drop"
     @click="closeModal"
     aria-hidden="true"
   ></div>
@@ -331,7 +331,7 @@
       <!-- Sticky Footer -->
       <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
         <div class="px-5 py-3 flex items-center gap-3">
-          <button :disabled="saving" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60"
+          <button :disabled="saving" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
           @click="submit"
           >
             {{ saving ? 'Saving…' : (editingId ? 'Update' : 'Create') }}
@@ -644,4 +644,9 @@ onMounted(fetchUnits)
 .aspect-\[4\/3\] {
   aspect-ratio: 4 / 3;
 }
+
+.back-drop {
+margin-top: -25px;
+}
+
 </style>

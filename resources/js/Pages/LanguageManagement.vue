@@ -2,7 +2,7 @@
   <Head title="Language Management" />
   <AuthenticatedLayout>
     <div class="p-6">
-      <h2 class="text-2xl font-semibold text-white mb-6">Language Management</h2>
+      <h2 class="text-2xl font-semibold text-dash-title mb-6">Language Management</h2>
 
       <div class="flex flex-col lg:flex-row gap-6 items-start">
         <!-- Add form -->
