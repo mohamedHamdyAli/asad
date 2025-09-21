@@ -2,8 +2,8 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Contractors</h2>
-        <button class="px-3 py-1 border rounded" @click="fetchList">Refresh</button>
+        <h2 class="text-2xl font-bold text-white">Contractors</h2>
+        <button class="px-3 py-1 border rounded text-white" @click="fetchList">Refresh</button>
       </div>
 
       <!-- Create one contractor -->

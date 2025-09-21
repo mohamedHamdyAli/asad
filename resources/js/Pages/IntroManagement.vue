@@ -3,7 +3,7 @@
 
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
-      <h2 class="text-2xl font-semibold text-gray-800">Intro Management</h2>
+      <h2 class="text-2xl font-semibold text-white">Intro Management</h2>
 
       <!-- Create / Update -->
       <div class="bg-white p-4 rounded shadow">
@@ -53,38 +53,114 @@
       </div>
 
       <!-- List -->
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold">Intro Screens</h3>
-          <button @click="fetchIntros" class="px-3 py-1 border rounded">Refresh</button>
-        </div>
+   <!-- List -->
+<div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">Intro Screens</h3>
+    <button
+      @click="fetchIntros"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
 
-        <div v-if="listLoading" class="text-sm text-gray-500">Loading…</div>
+  <div v-if="listLoading" class="text-sm text-gray-500">Loading…</div>
 
-        <div v-else>
-          <div v-for="item in intros" :key="item.id" class="flex justify-between items-center border-b py-3">
-            <div class="min-w-0">
-              <div class="font-semibold truncate">
-                {{ item.name_en }} <span class="text-gray-400">/</span> {{ item.name_ar }}
-              </div>
-              <div class="text-sm text-gray-600 truncate">
-                {{ item.description_en }} <span class="text-gray-400">/</span> {{ item.description_ar }}
-              </div>
-              <div class="text-xs text-gray-500">
-                Order: {{ item.order ?? "-" }} |
-                Enabled: {{ item.is_enabled ? "Yes" : "No" }}
-              </div>
-            </div>
-            <div class="flex gap-3 items-center">
-              <img v-if="item.image_url" :src="item.image_url" class="w-16 h-10 object-cover rounded border" />
-              <button @click="editRow(item.id)" class="text-blue-600 hover:underline">Edit</button>
-              <button @click="remove(item.id)" class="text-red-600 hover:underline">Delete</button>
-            </div>
-          </div>
+  <div v-else>
+    <div v-if="intros.length">
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-4 py-3 border-b">Image</th>
+            <th class="px-4 py-3 border-b">Name</th>
+            <th class="px-4 py-3 border-b">Description</th>
+            <th class="px-4 py-3 border-b">Order</th>
+            <th class="px-4 py-3 border-b">Enabled</th>
+            <th class="px-4 py-3 border-b text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in intros"
+            :key="item.id"
+            class="hover:bg-gray-50 transition-colors odd:bg-gray-50/50"
+          >
+            <!-- Image -->
+            <td class="px-4 py-3 align-middle">
+              <img
+                v-if="item.image_url"
+                :src="item.image_url"
+                class="w-16 h-10 object-cover rounded border"
+              />
+              <span v-else class="text-xs text-gray-400 italic">No image</span>
+            </td>
 
-          <div v-if="!intros.length" class="text-center text-gray-500 py-8">No intros found.</div>
-        </div>
-      </div>
+            <!-- Name -->
+            <td class="px-4 py-3 align-middle">
+              <div class="font-medium text-gray-900 truncate">
+                {{ item.name_en || '—' }}
+              </div>
+              <div class="text-gray-500 text-sm truncate" dir="rtl">
+                {{ item.name_ar || '—' }}
+              </div>
+            </td>
+
+            <!-- Description -->
+            <td class="px-4 py-3 align-middle">
+              <div class="truncate text-sm text-gray-700">
+                {{ item.description_en || '—' }}
+              </div>
+              <div class="truncate text-sm text-gray-500" dir="rtl">
+                {{ item.description_ar || '—' }}
+              </div>
+            </td>
+
+            <!-- Order -->
+            <td class="px-4 py-3 align-middle text-sm text-gray-600">
+              {{ item.order ?? '—' }}
+            </td>
+
+            <!-- Enabled -->
+            <td class="px-4 py-3 align-middle">
+              <span
+                :class="[
+                  'px-2 py-0.5 rounded-full text-xs font-medium',
+                  item.is_enabled
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
+                ]"
+              >
+                {{ item.is_enabled ? 'Yes' : 'No' }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-4 py-3 align-middle text-center space-x-3">
+              <button
+                @click="editRow(item.id)"
+                class="text-blue-600 hover:underline text-sm"
+              >
+                Edit
+              </button>
+              <button
+                @click="remove(item.id)"
+                class="text-red-600 hover:underline text-sm"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div v-else class="text-center text-gray-500 py-8">
+      No intros found.
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>

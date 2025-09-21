@@ -3,7 +3,7 @@
 
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
-      <h2 class="text-2xl font-semibold text-gray-800">Banners Gallery</h2>
+      <h2 class="text-2xl font-semibold text-white">Banners Gallery</h2>
 
       <div class="bg-white p-4 rounded shadow">
         <h3 class="text-lg font-bold mb-3">Add Banner</h3>
@@ -30,58 +30,109 @@
       </div>
 
       <!-- Gallery -->
-      <div class="bg-white p-4 rounded shadow">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold">All Banners</h3>
-          <button @click="fetchBanners" class="px-3 py-1 border rounded">Refresh</button>
-        </div>
+   <!-- Gallery -->
+<div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800">All Banners</h3>
+    <button
+      @click="fetchBanners"
+      class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+    >
+      Refresh
+    </button>
+  </div>
 
-        <div v-if="listLoading" class="text-sm text-gray-500">Loading…</div>
+  <div v-if="listLoading" class="text-sm text-gray-500">Loading…</div>
 
-        <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <div
+  <div v-else>
+    <div v-if="banners.length">
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-4 py-3 border-b">ID</th>
+            <th class="px-4 py-3 border-b">Image</th>
+            <th class="px-4 py-3 border-b">Status</th>
+            <th class="px-4 py-3 border-b">Replace Image</th>
+            <th class="px-4 py-3 border-b text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
             v-for="b in banners"
             :key="b.id"
-            class="rounded border overflow-hidden bg-gray-50"
+            class="hover:bg-gray-50 transition-colors odd:bg-gray-50/50"
           >
-            <div class="aspect-[4/3] bg-white flex items-center justify-center">
-              <img v-if="b.image_url" :src="b.image_url" class="w-full h-full object-cover" />
-              <div v-else class="text-gray-400 text-sm">No Image</div>
-            </div>
+            <!-- ID -->
+            <td class="px-4 py-3 text-sm text-gray-600 align-middle">{{ b.id }}</td>
 
-            <div class="p-2 space-y-2">
-              <div class="flex items-center justify-between text-xs text-gray-600">
-                <span>#{{ b.id }}</span>
-                <span :class="b.is_enabled ? 'text-green-600' : 'text-gray-400'">
+            <!-- Image -->
+            <td class="px-4 py-3 align-middle">
+              <img
+                v-if="b.image_url"
+                :src="b.image_url"
+                class="w-24 h-16 object-cover rounded border"
+              />
+              <span v-else class="text-xs text-gray-400 italic">No image</span>
+            </td>
+
+            <!-- Status -->
+            <td class="px-4 py-3 align-middle">
+              <label class="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  :checked="b.is_enabled"
+                  @change="toggleEnabled(b)"
+                />
+                <span
+                  :class="[
+                    'px-2 py-0.5 rounded-full text-xs font-medium',
+                    b.is_enabled
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                  ]"
+                >
                   {{ b.is_enabled ? 'Enabled' : 'Disabled' }}
                 </span>
-              </div>
-
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" :checked="b.is_enabled" @change="toggleEnabled(b)" />
-                <span>Enable</span>
               </label>
+            </td>
 
-              <div class="text-xs">
-                <input type="file" accept="image/*" @change="onReplaceFile(b.id, $event)" />
-              </div>
+            <!-- Replace Image -->
+            <td class="px-4 py-3 align-middle text-sm">
+              <input
+                type="file"
+                accept="image/*"
+                @change="onReplaceFile(b.id, $event)"
+                class="block w-full text-xs text-gray-600"
+              />
+              <button
+                class="mt-1 px-2 py-1 border rounded text-xs hover:bg-gray-50"
+                @click="saveReplace(b.id)"
+                :disabled="!pendingImage[b.id] || saving[b.id]"
+              >
+                {{ saving[b.id] ? 'Saving…' : 'Save' }}
+              </button>
+            </td>
 
-              <div class="flex gap-2 pt-1">
-                <button class="px-2 py-1 border rounded text-sm" @click="saveReplace(b.id)" :disabled="!pendingImage[b.id] || saving[b.id]">
-                  {{ saving[b.id] ? 'Saving…' : 'Save' }}
-                </button>
-                <button class="px-2 py-1 border rounded text-sm text-red-600" @click="remove(b.id)">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
+            <!-- Actions -->
+            <td class="px-4 py-3 text-center align-middle">
+              <button
+                class="px-2 py-1 border rounded text-xs text-red-600 hover:bg-red-50"
+                @click="remove(b.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <div v-if="!banners.length" class="col-span-full text-center text-gray-500 py-8">
-            No banners found.
-          </div>
-        </div>
-      </div>
+    <div v-else class="text-center text-gray-500 py-8">
+      No banners found.
+    </div>
+  </div>
+</div>
+
     </div>
   </AuthenticatedLayout>
 </template>

@@ -3,9 +3,9 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Units</h2>
+        <h2 class="text-2xl font-bold text-white">Units</h2>
         <button @click="openCreate"
-          class="inline-flex items-center rounded-md bg-black px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          class="px-3 py-1 border rounded text-white hover:bg-gray-700">
           + Add Unit
         </button>
       </div>
@@ -252,7 +252,7 @@
     <p v-if="err('start_date')" class="mt-1 text-xs text-red-600">{{ err('start_date') }}</p>
   </div>
   <div>
-    <label class="block text-xs text-gray-500 mb-1">End Date* (>= start)</label>
+    <label class="block text-xs text-gray-500 mb-1">End Date*</label>
     <input :class="inputClass('end_date')" v-model="form.end_date" type="date" :required="!editingId" />
     <p v-if="err('end_date')" class="mt-1 text-xs text-red-600">{{ err('end_date') }}</p>
   </div>
@@ -304,14 +304,14 @@
     </div>
   </div>
 
-  <!-- <div>
+  <div>
     <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
     <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
     <p v-if="err('gallery')" class="mt-1 text-xs text-red-600">{{ err('gallery') }}</p>
     <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
       <img v-for="(src, i) in galleryPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
     </div>
-  </div> -->
+  </div>
 </div>
 
 <!-- Nice top alert (inside modal body, above form or under it) -->
@@ -417,9 +417,9 @@ function validate() {
     if (!need(f.vendor_id)) setFieldError('vendor_id', 'Vendor is required')
 
     if (!f.cover_image) setFieldError('cover_image', 'Cover image is required')
-    // if (!Array.isArray(f.gallery) || f.gallery.length === 0) {
-    //   setFieldError('gallery', 'Add at least one gallery image')
-    // }
+    if (!Array.isArray(f.gallery) || f.gallery.length === 0) {
+      setFieldError('gallery', 'Add at least one gallery image')
+    }
   } else {
     // Update: validate only if present
     if (f.lat !== null && (f.lat < -90 || f.lat > 90)) setFieldError('lat', 'Latitude must be between -90 and 90')
@@ -548,8 +548,17 @@ async function openEdit(u) {
   form.value.vendor_id = data.vendor_id ?? null
   form.value.status = data.status || ''
   coverPreview.value = data.cover_image_url || null
+
+  // 🟢 preload gallery
+  if (Array.isArray(data.gallery)) {
+    galleryPreviews.value = data.gallery.map(g => g.image_url)
+    // keep form.gallery empty so backend doesn’t re-upload unless user adds new ones
+    form.value.gallery = []
+  }
+
   showModal.value = true
 }
+
 
 function onMapAddress(addr) {
   form.value.location = addr || form.value.location

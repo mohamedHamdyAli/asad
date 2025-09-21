@@ -1,6 +1,6 @@
 <template>
-  <div class="space-y-2">
-    <label v-if="label" class="block text-xs text-gray-500">{{ label }}</label>
+  <div>
+    <label v-if="label" class="block text-xs text-gray-500 mb-1">{{ label }}</label>
     <div class="flex gap-2">
       <select
         class="form-input flex-1"
@@ -8,22 +8,35 @@
         :value="modelValue ?? ''"
         @change="$emit('update:modelValue', toNumber($event.target.value))"
       >
-        <option value="" disabled>{{ loading ? 'Loading folders…' : 'Select folder' }}</option>
+        <option value="" disabled>
+          {{ loading ? 'Loading folders…' : 'Select folder' }}
+        </option>
         <option v-for="f in folders" :key="f.id" :value="f.id">
           {{ f.label }}
         </option>
       </select>
 
-      <button type="button" class="px-2 py-1 border rounded" @click="showModal = true">
+      <button
+        type="button"
+        class="px-2 py-1 border rounded"
+        @click="showModal = true"
+      >
         + New
       </button>
-      <!-- <button type="button" class="px-2 py-1 border rounded" @click="fetchFolders">↻</button> -->
     </div>
 
     <!-- Create Folder Modal -->
-    <div v-if="showModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+    <div
+      v-if="showModal"
+      class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+    >
       <div class="bg-white rounded-xl p-4 w-full max-w-md relative">
-        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600" @click="closeModal">✕</button>
+        <button
+          class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          @click="closeModal"
+        >
+          ✕
+        </button>
         <h3 class="text-lg font-semibold mb-3">Create Folder</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -38,15 +51,23 @@
           <div class="md:col-span-2">
             <label class="block text-xs text-gray-500 mb-1">Image (optional)</label>
             <input type="file" accept="image/*" @change="onFile" />
-            <img v-if="preview" :src="preview" class="mt-2 w-24 h-16 object-cover rounded border" />
+            <img
+              v-if="preview"
+              :src="preview"
+              class="mt-2 w-24 h-16 object-cover rounded border"
+            />
           </div>
         </div>
 
         <div class="mt-4 flex justify-end gap-2">
-          <button class="px-3 py-1 border rounded" @click="closeModal">Cancel</button>
-          <button class="px-3 py-1 bg-green-600 text-white rounded disabled:opacity-60"
-                  :disabled="creating || !form.name.en.trim() || !form.name.ar.trim()"
-                  @click="createFolder">
+          <button class="px-3 py-1 border rounded" @click="closeModal">
+            Cancel
+          </button>
+          <button
+            class="px-3 py-1 bg-green-600 text-white rounded disabled:opacity-60"
+            :disabled="creating || !form.name.en.trim() || !form.name.ar.trim()"
+            @click="createFolder"
+          >
             {{ creating ? 'Saving…' : 'Create' }}
           </button>
         </div>
@@ -56,6 +77,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'

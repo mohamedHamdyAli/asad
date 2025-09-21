@@ -18,7 +18,7 @@ export default {
             colors: {
                 dash: {
                     yellow: "#fcca11",
-                    light: "#f9fafb",
+                    light: "#4d4732",
                     gray: "#e5e7eb",
                     dark: "#1f2937",
                     navy: "#111827",

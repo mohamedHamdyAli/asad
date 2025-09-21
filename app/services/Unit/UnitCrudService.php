@@ -17,8 +17,11 @@ class UnitCrudService
 
     public function getUnitData($id = null)
     {
-        return $id ? Unit::find($id) : Unit::all();
+        $query = Unit::with('homeUnitGallery');
+
+        return $id ? $query->find($id) : $query->get();
     }
+
     public function getUserUnits($userId, $status = null)
     {
         return Unit::allUserUnit($userId, $status);
@@ -44,13 +47,14 @@ class UnitCrudService
             }
 
             $unit = Unit::create($request);
-            if (!empty($request['gallery']) && is_array($request['gallery'])) {
+            if (!empty($request['gallery'])) {
                 foreach ($request['gallery'] as $image) {
                     $unit->homeUnitGallery()->create([
                         'image' => FileService::upload($image, "{$this->uploadFolder}/gallery"),
                     ]);
                 }
             }
+
             return $unit;
         });
     }

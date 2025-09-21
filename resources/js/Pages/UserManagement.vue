@@ -4,7 +4,7 @@
     <AuthenticatedLayout>
     <div class="bg-white p-6 rounded-lg shadow">
       <!-- Header -->
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">User Management</h2>
+      <h2 class="text-2xl font-semibold text-white mb-4">User Management</h2>
   
       <!-- Tabs -->
       <div class="flex space-x-4 border-b mb-4">
