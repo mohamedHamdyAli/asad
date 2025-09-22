@@ -33,6 +33,8 @@ use App\Http\Controllers\Admin\TypeOfBuildingController as AdminTypeOfBuildingCo
 use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsultantController;
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
+use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
+
 
 
 
@@ -270,4 +272,13 @@ Route::prefix('unit-quotes')->group(function () {
     Route::get('/show/{id}', [AdminUnitQuoteController::class, 'show'])->name('unit-quotes.show');
     Route::post('/update/{id}', [AdminUnitQuoteController::class, 'update'])->name('unit-quotes.update');
     Route::delete('/delete/{id}', [AdminUnitQuoteController::class, 'destroy'])->name('unit-quotes.delete');
+});
+
+
+Route::prefix('unit-quote-responses')->group(function () {
+    Route::get('/', [AdminUnitQuoteResponseController::class, 'index'])->name('unit-quote-responses.index');
+    Route::post('/create', [AdminUnitQuoteResponseController::class, 'store'])->name('unit-quote-responses.store');
+    Route::get('/show/{id}', [AdminUnitQuoteResponseController::class, 'show'])->name('unit-quote-responses.show');
+    Route::post('/update/{id}', [AdminUnitQuoteResponseController::class, 'update'])->name('unit-quote-responses.update');
+    Route::delete('/delete/{id}', [AdminUnitQuoteResponseController::class, 'destroy'])->name('unit-quote-responses.delete');
 });
