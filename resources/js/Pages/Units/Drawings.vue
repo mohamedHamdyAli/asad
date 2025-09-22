@@ -38,7 +38,8 @@
 
         <div class="mt-4 flex items-center gap-3">
           <button :disabled="creating || !canCreate" @click="createBatch"
-            class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60">
+                        class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700"
+>
             {{ creating ? 'Uploading…' : 'Upload' }}
           </button>
           <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>

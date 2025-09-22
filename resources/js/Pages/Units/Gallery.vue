@@ -41,7 +41,7 @@
             !createForm.date ||
             !createForm.title.en?.trim() ||
             !createForm.title.ar?.trim()
-            " @click="createBatch" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60">
+            " @click="createBatch" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700">
             {{ creating ? 'Uploading…' : 'Upload' }}
           </button>
           <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
@@ -62,7 +62,7 @@
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
           <div v-for="g in rows" :key="g.id"
             class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]  transition-all duration-200">
-           <!-- File/Image header -->
+            <!-- File/Image header -->
             <div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
               <!-- Images -->
               <img v-if="isImage(g)" :src="fileUrl(g)" class="absolute inset-0 w-full h-full object-cover" />
@@ -116,19 +116,19 @@
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
                 <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
-                  @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'" ></textarea>
+                  @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'"></textarea>
               </div>
 
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
                 <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
-                  @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'" ></textarea>
+                  @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'"></textarea>
               </div>
 
               <!-- Replace image -->
               <div class="text-[11px]">
                 <label class="block text-gray-500 mb-1">Replace Image</label>
-                <input type="file"  @change="onReplaceFile(g.id, $event)" />
+                <input type="file" @change="onReplaceFile(g.id, $event)" />
                 <p v-if="pendingImage[g.id]" class="mt-1 text-[11px] text-gray-500">
                   Selected: {{ pendingImage[g.id]?.name }}
                 </p>
