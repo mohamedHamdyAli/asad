@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class UnitQuoteSerivce
 {
-     private string $uploadFolder;
+    private string $uploadFolder;
 
     public function __construct()
     {
@@ -17,12 +17,34 @@ class UnitQuoteSerivce
 
     public function getAll()
     {
-        return UnitQuote::with(['user', 'typeOfBuilding', 'typeOfPrice', 'unitQuoteGallery'])->get();
+        return UnitQuote::select([
+            'id',
+            'title',
+            'other_title',
+            'user_id',
+            'type_of_building_id',
+            'type_of_price_id',
+            'pay_image',
+            'created_at',
+            'updated_at'
+        ])->with('unitQuoteGallery')
+            ->get();
     }
 
     public function getById(int $id)
     {
-        return UnitQuote::with(['user', 'typeOfBuilding', 'typeOfPrice', 'unitQuoteGallery'])->find($id);
+        return UnitQuote::select([
+            'id',
+            'title',
+            'other_title',
+            'user_id',
+            'type_of_building_id',
+            'type_of_price_id',
+            'pay_image',
+            'created_at',
+            'updated_at'
+        ])->with('unitQuoteGallery')
+            ->find($id);
     }
 
     public function create(array $data)
@@ -78,5 +100,4 @@ class UnitQuoteSerivce
             return $unitQuote->delete();
         });
     }
-
 }
