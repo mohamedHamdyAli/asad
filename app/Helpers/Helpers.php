@@ -99,6 +99,18 @@ if (!function_exists('vendorAuth')) {
     }
 }
 
+if (!function_exists('userOrGuestAuth')) {
+    function userOrGuestAuth()
+    {
+        $user = auth('api')->user();
+        if ($user != null && in_array($user->role, ['user', 'guest'])) {
+            return $user;
+        }
+        return null;
+    }
+}
+
+
 if (!function_exists('getSettingValue')) {
 
     function getSettingValue(string $key)
