@@ -9,7 +9,7 @@ class UserIdRequest extends BaseApiRequest
     {
 
         $request->merge([
-            'user_id' => userAuth()->id,
+            'user_id' => userOrGuestAuth()->id,
         ]);
     }
     /**
