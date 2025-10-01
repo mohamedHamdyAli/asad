@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->text('description')->nullable(); // installment details
             $table->decimal('percentage', 5, 2)->nullable(); // percentage of the total price
             $table->decimal('amount', 15, 2); // installment amount
-            $table->string('invoice')->nullable(); // invoice file (if only one)
             $table->date('milestone_date')->nullable(); // milestone completion date
             $table->date('submission_date')->nullable(); // submission date
             $table->date('consultant_approval_date')->nullable(); // consultant approval date

@@ -113,4 +113,9 @@ class Unit extends Model
         }
         return $query->get();
     }
+
+    public function payments()
+    {
+        return $this->hasMany(UnitPayment::class, 'unit_id');
+    }
 }

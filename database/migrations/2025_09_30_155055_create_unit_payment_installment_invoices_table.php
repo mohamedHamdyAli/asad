@@ -12,7 +12,12 @@ return new class extends Migration {
     {
         Schema::create('unit_payment_installment_invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_payment_installment_id')->constrained('unit_payment_installments')->onDelete('cascade');
+            $table->unsignedBigInteger('unit_payment_installment_id');
+            $table->foreign('unit_payment_installment_id', 'upi_invoice_fk')
+                ->references('id')
+                ->on('unit_payment_installments')
+                ->onDelete('cascade');
+
             $table->decimal('paid_amount', 15, 2); // partial payment amount
             $table->string('invoice_file')->nullable(); // uploaded invoice file
             $table->date('payment_date')->nullable(); // actual payment date

@@ -62,22 +62,22 @@ Route::get('/units-management/{unitId}/phases', function ($unitId) {
     ]);
 })->name('units.phases');
 
-Route::prefix('unit-payments')->group(function () {
-    // Unit Payments
-    Route::post('{unit}/create', [AdminUnitPaymentController::class, 'store']); // Create new payment plan
-    Route::put('{unitPayment}/update', [AdminUnitPaymentController::class, 'update']); // Update payment plan
-    Route::delete('{unitPayment}/delete', [AdminUnitPaymentController::class, 'destroy']); // Delete payment plan
+// Route::prefix('unit-payments')->group(function () {
+//     // Unit Payments
+//     Route::post('{unit}/create', [AdminUnitPaymentController::class, 'store']); // Create new payment plan
+//     Route::put('{unitPayment}/update', [AdminUnitPaymentController::class, 'update']); // Update payment plan
+//     Route::delete('{unitPayment}/delete', [AdminUnitPaymentController::class, 'destroy']); // Delete payment plan
 
-    // Installments
-    Route::post('{unitPayment}/installments/create', [AdminUnitPaymentInstallmentController::class, 'store']);
-    Route::put('installments/{installment}/update', [AdminUnitPaymentInstallmentController::class, 'update']);
-    Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
+//     // Installments
+//     Route::post('{unitPayment}/installments/create', [AdminUnitPaymentInstallmentController::class, 'store']);
+//     Route::put('installments/{installment}/update', [AdminUnitPaymentInstallmentController::class, 'update']);
+//     Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
 
-    // Invoices
-    Route::get('installments/{installment}/invoices', [AdminUnitPaymentInstallmentController::class, 'getInvoices']);
-    Route::post('invoices/{invoice}/confirm', [AdminUnitPaymentInstallmentController::class, 'confirmInvoice']);
-    Route::post('invoices/{invoice}/reject', [AdminUnitPaymentInstallmentController::class, 'rejectInvoice']);
-});
+//     // Invoices
+//     Route::get('installments/{installment}/invoices', [AdminUnitPaymentInstallmentController::class, 'getInvoices']);
+//     Route::post('invoices/{invoice}/confirm', [AdminUnitPaymentInstallmentController::class, 'confirmInvoice']);
+//     Route::post('invoices/{invoice}/reject', [AdminUnitPaymentInstallmentController::class, 'rejectInvoice']);
+// });
 
 
 
@@ -107,8 +107,8 @@ Route::prefix('language')->group(function () {
 
 
 
-Route::put('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
-Route::post('invoices/{invoice}/confirm', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'confirmInvoice']);
+// Route::put('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
+// Route::post('invoices/{invoice}/confirm', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'confirmInvoice']);
 
 
 Route::get('/get-csrf-token', fn() => response()->json([
