@@ -66,6 +66,8 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
+        Route::post('installments/{installment}/invoices', [\App\Http\Controllers\Api\PaymentController::class, 'uploadInvoice']);
+
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
