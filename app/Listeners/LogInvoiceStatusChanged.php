@@ -2,25 +2,24 @@
 
 namespace App\Listeners;
 
-use App\Events\PaymentStatusChanged;
+use App\Events\InvoiceStatusChanged;
 use App\Models\UnitPaymentLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LogPaymentStatusChanged implements ShouldQueue
+class LogInvoiceStatusChanged
 {
-    public function handle(PaymentStatusChanged $event): void
+    public function handle(InvoiceStatusChanged $event): void
     {
         // skip if no real change
         if ($event->oldStatus === $event->newStatus) {
             return;
         }
 
-        $installment = $event->installment;
+        $invoice = $event->invoice;
 
         // Prevent duplicate consecutive logs for same new status
-        $lastLog = UnitPaymentLog::where('model_type', get_class($installment))
-            ->where('model_id', $installment->id)
+        $lastLog = UnitPaymentLog::where('model_type', get_class($invoice))
+            ->where('model_id', $invoice->id)
             ->orderByDesc('created_at')
             ->first();
 
@@ -33,11 +32,11 @@ class LogPaymentStatusChanged implements ShouldQueue
         }
 
         UnitPaymentLog::create([
-            'model_type'  => get_class($installment),
-            'model_id'    => $installment->id,
+            'model_type'  => get_class($invoice),
+            'model_id'    => $invoice->id,
             'user_id'     => Auth::id(),
             'action'      => 'status_changed',
-            'description' => "Installment #{$installment->id} status changed from {$event->oldStatus} to {$event->newStatus}",
+            'description' => "Invoice #{$invoice->id} status changed from {$event->oldStatus} to {$event->newStatus}",
             'old_data'    => ['status' => $event->oldStatus],
             'new_data'    => ['status' => $event->newStatus],
         ]);

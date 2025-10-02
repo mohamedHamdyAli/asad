@@ -22,6 +22,13 @@ use App\Events\PaymentStatusChanged;
 class UnitPaymentInstallmentController extends Controller
 {
     /**
+     * Get invoices of installment
+     */
+    public function getInvoices(UnitPaymentInstallment $installment)
+    {
+        return response()->json($installment->invoices);
+    }
+    /**
      * Update installment status from admin panel.
      */
     public function updateStatus(Request $request, UnitPaymentInstallment $installment)
@@ -56,12 +63,20 @@ class UnitPaymentInstallmentController extends Controller
         $oldStatus = $invoice->status;
         $newStatus = $request->action === 'confirm' ? 'confirmed' : 'rejected';
 
+        if ($oldStatus === $newStatus) {
+            return response()->json([
+                'message' => "Invoice already {$newStatus}",
+                'data' => $invoice,
+            ], 200);
+        }
+
         $invoice->status = $newStatus;
         if ($newStatus === 'confirmed') {
-            $invoice->payment_date ??= now();
+            $invoice->payment_date = $invoice->payment_date ?? now();
         }
         $invoice->save();
 
+        // Fire event so listeners update installment & logs
         event(new InvoiceStatusChanged($invoice, $oldStatus, $newStatus));
 
         return response()->json([
@@ -69,4 +84,5 @@ class UnitPaymentInstallmentController extends Controller
             'data' => $invoice,
         ]);
     }
+
 }

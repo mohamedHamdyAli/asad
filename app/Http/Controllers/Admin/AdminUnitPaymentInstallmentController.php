@@ -34,6 +34,10 @@ class AdminUnitPaymentInstallmentController extends Controller
         ]);
 
         $installment = $unitPayment->installments()->create($data);
+        if($unitPayment->status == 'completed'){
+            $unitPayment->status = 'in_progress';
+            $unitPayment->save();
+        }
 
         return response()->json(['message' => 'Installment created', 'data' => $installment]);
     }
@@ -69,29 +73,5 @@ class AdminUnitPaymentInstallmentController extends Controller
         $installment->delete();
 
         return response()->json(['message' => 'Installment deleted']);
-    }
-
-    /**
-     * Get invoices of installment
-     */
-    public function getInvoices(UnitPaymentInstallment $installment)
-    {
-        return response()->json($installment->invoices);
-    }
-
-    /**
-     * Confirm invoice
-     */
-    public function confirmInvoice($invoiceId)
-    {
-        return response()->json(['message' => 'Invoice confirmed', 'id' => $invoiceId]);
-    }
-
-    /**
-     * Reject invoice
-     */
-    public function rejectInvoice($invoiceId)
-    {
-        return response()->json(['message' => 'Invoice rejected', 'id' => $invoiceId]);
     }
 }

@@ -20,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
         // When invoice status changes (confirm / reject)
         \App\Events\InvoiceStatusChanged::class => [
             \App\Listeners\UpdateInstallmentOnInvoiceStatusChanged::class,
+            \App\Listeners\LogInvoiceStatusChanged::class,
         ],
 
         // When installment/payment status changes (for logging/notifications)
@@ -27,4 +28,9 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\LogPaymentStatusChanged::class,
         ],
     ];
+
+    public function boot(): void
+    {
+        parent::boot();
+    }
 }

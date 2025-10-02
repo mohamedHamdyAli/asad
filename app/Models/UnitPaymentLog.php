@@ -13,6 +13,7 @@ class UnitPaymentLog extends Model
         'model_type',
         'model_id',
         'action',
+        'description',
         'old_data',
         'new_data',
         'user_id',

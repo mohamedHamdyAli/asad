@@ -300,11 +300,7 @@ Route::prefix('unit-payments')->group(function () {
     Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
 
     // Invoices
-    Route::get('installments/{installment}/invoices', [AdminUnitPaymentInstallmentController::class, 'getInvoices']);
-    Route::post('invoices/{invoice}/confirm', [AdminUnitPaymentInstallmentController::class, 'confirmInvoice']);
-    Route::post('invoices/{invoice}/reject', [AdminUnitPaymentInstallmentController::class, 'rejectInvoice']);
-
-
+    Route::get('installments/{installment}/invoices', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'getInvoices']);
     Route::post('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
     Route::post('invoices/{invoice}/confirm', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'confirmInvoice']);
 });
