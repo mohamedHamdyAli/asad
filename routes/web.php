@@ -21,6 +21,8 @@ Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
 Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
 Route::get('/contractors-management', fn() => inertia('Contractors/Index'))->name('contractors-management');
+Route::get('/Consultants-management', fn() => inertia('Consultants/Index'))->name('Consultants-management');
+// Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **
 Route::get('/units-management', fn() => inertia('Units/Index'))->name('unit-management');
@@ -32,6 +34,12 @@ Route::get('/units-management/{unitId}/gallery', function ($unitId) {
 
 Route::get('/units-management/{unitId}/docs', function ($unitId) {
     return Inertia::render('Units/Docs', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.docs');
+
+Route::get('/units-management/{unitId}/contractors', function ($unitId) {
+    return Inertia::render('Units/UnitContractors', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.docs');
