@@ -121,10 +121,18 @@
           >
             Timeline
           </Link>
+
+                    <Link
+            :href="unitContractorsPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Assignments
+          </Link>
+
         </div>
 
         <!-- Actions -->
-        <div class="flex gap-2 pt-3">
+        <div class="flex gap-2 pt-2">
           <button
             class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50"
             @click="openEdit(u)"
@@ -138,6 +146,23 @@
             Delete
           </button>
         </div>
+   <!-- Contractors Section -->
+<!-- <div class="mt-3 rounded-lg border border-gray-200 bg-gray-50/70 p-3 space-y-2">
+  <div class="flex items-center justify-between">
+    <h4 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+      Contractors
+    </h4>
+    <button
+      class="text-xs px-2 py-1 rounded border bg-white hover:bg-gray-100"
+      @click="$refs[`uc_${u.id}`]?.fetch()"
+    >
+      Refresh
+    </button>
+  </div>
+
+  <UnitContractors ref="uc_${u.id}" :unit-id="u.id" />
+</div> -->
+
       </div>
     </div>
 
@@ -291,6 +316,7 @@
   </div>
 </div>
 
+
 <!-- files -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
   <div>
@@ -393,7 +419,7 @@ import { Head } from '@inertiajs/vue3'
 import { UsersApi } from '@/Services/users'
 import { VendorsApi } from '@/Services/vendors'
 import { computed } from 'vue'
-
+import UnitContractors from '@/Components/UnitContractors.vue'
 
 const isCreate = computed(() => !editingId.value)
 
@@ -570,6 +596,7 @@ function drawingPath(id) { return `/units-management/${id}/drawing` }
 function galleryPath(id) { return `/units-management/${id}/gallery` }
 function timelinePath(id) { return `/units-management/${id}/timeline` }
 function reportsPath(id) { return `/units-management/${id}/reports` }
+function unitContractorsPath(id) { return `/units-management/${id}/contractors` }
 // const phasesPath = id => `/units-management/${id}/phases`
 function phasesPath(id) { return `/units-management/${id}/phases` }
 

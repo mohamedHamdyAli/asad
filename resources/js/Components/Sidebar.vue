@@ -40,6 +40,13 @@
           :href="route('contractors-management')"
           class="border-b border-gray-300/70"
         />
+                <NavItem
+          icon="mdi:responsive"
+          label="Consultants management"
+          :to="route('Consultants-management')"
+          :href="route('Consultants-management')"
+          class="border-b border-gray-300/70"
+        />
         <NavItem
           icon="mdi:file-document-edit-outline"
           label="App Intros"
