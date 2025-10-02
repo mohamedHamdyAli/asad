@@ -5,11 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
-use App\Http\Controllers\Admin\UnitQuoteController as AdminUnitQuoteController;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
+use App\Http\Controllers\Admin\AdminUnitPaymentController;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\QuoteController as ApiQuoteController;
+use App\Http\Controllers\Admin\AdminUnitPaymentInstallmentController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\BannerController as ApiBannerController;
 use App\Http\Controllers\Admin\IntroController as AdminIntroController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\LanguageController as AdminLanguageController;
 use App\Http\Controllers\Admin\Unit\FolderController as AdminFolderController;
 use App\Http\Controllers\Admin\Unit\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
+use App\Http\Controllers\Admin\UnitQuoteController as AdminUnitQuoteController;
 use App\Http\Controllers\Admin\Unit\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\ConsultantController as AdminConsultantController;
 use App\Http\Controllers\Admin\ContractorController as AdminContractorController;
@@ -66,6 +68,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
+        Route::post('installments/{installment}/invoices', [\App\Http\Controllers\Api\PaymentController::class, 'uploadInvoice']);
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
@@ -281,4 +284,23 @@ Route::prefix('unit-quote-responses')->group(function () {
     Route::get('/show/{id}', [AdminUnitQuoteResponseController::class, 'show'])->name('unit-quote-responses.show');
     Route::post('/update/{id}', [AdminUnitQuoteResponseController::class, 'update'])->name('unit-quote-responses.update');
     Route::delete('/delete/{id}', [AdminUnitQuoteResponseController::class, 'destroy'])->name('unit-quote-responses.delete');
+});
+
+
+
+Route::prefix('unit-payments')->group(function () {
+    // Unit Payments
+    Route::post('{unit}/create', [AdminUnitPaymentController::class, 'store']); // Create new payment plan
+    Route::post('{unitPayment}/update', [AdminUnitPaymentController::class, 'update']); // Update payment plan
+    Route::delete('{unitPayment}/delete', [AdminUnitPaymentController::class, 'destroy']); // Delete payment plan
+
+    // Installments
+    Route::post('{unitPayment}/installments/create', [AdminUnitPaymentInstallmentController::class, 'store']);
+    Route::post('installments/{installment}/update', [AdminUnitPaymentInstallmentController::class, 'update']);
+    Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
+
+    // Invoices
+    Route::get('installments/{installment}/invoices', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'getInvoices']);
+    Route::post('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
+    Route::post('invoices/{invoice}/confirm', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'confirmInvoice']);
 });

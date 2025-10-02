@@ -68,6 +68,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(UnitQuoteResponse::class, 'user_id');
     }
+    public function unitPaymentLog()
+    {
+        return $this->hasMany(UnitPaymentLog::class, 'user_id');
+    }
     public function unitQuoteNote()
     {
         return $this->hasMany(UnitQuoteNote::class, 'vendor_id');

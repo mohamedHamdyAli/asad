@@ -48,6 +48,10 @@ class Unit extends Model
     {
         return $this->hasMany(UnitConstulant::class, 'unit_id');
     }
+    public function unitPayment()
+    {
+        return $this->hasMany(UnitPayment::class, 'unit_id');
+    }
     public function unitContractor()
     {
         return $this->hasMany(UnitContractor::class, 'unit_id');
@@ -108,5 +112,10 @@ class Unit extends Model
             $query->where('status', $status);
         }
         return $query->get();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(UnitPayment::class, 'unit_id');
     }
 }
