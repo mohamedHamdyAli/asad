@@ -3,75 +3,89 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\UnitPayment;
-use App\Models\UnitPaymentInstallment;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\UnitPaymentInstallmentRequest;
+use App\services\Unit\UnitPaymentInstallmentCrudService;
+use Illuminate\Http\JsonResponse;
 
 class AdminUnitPaymentInstallmentController extends Controller
 {
-    /**
-     * List installments of a payment
-     */
-    public function index(UnitPayment $unitPayment)
+    private UnitPaymentInstallmentCrudService $installmentService;
+
+    public function __construct(UnitPaymentInstallmentCrudService $installmentService)
     {
-        return response()->json($unitPayment->installments()->with('invoices')->get());
+        $this->installmentService = $installmentService;
     }
 
-    /**
-     * Create new installment
-     */
-    public function store(Request $request, UnitPayment $unitPayment)
+    public function store(UnitPaymentInstallmentRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'percentage' => 'nullable|numeric|min:0|max:100',
-            'amount' => 'required|numeric|min:0',
-            'milestone_date' => 'nullable|date',
-            'submission_date' => 'nullable|date',
-            'consultant_approval_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-        ]);
+        $result = $this->installmentService->createInstallment($request->validated());
 
-        $installment = $unitPayment->installments()->create($data);
-        if($unitPayment->status == 'completed'){
-            $unitPayment->status = 'in_progress';
-            $unitPayment->save();
+        if (!$result['status']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $result['message'] ?? 'Failed to create installment',
+            ], 404);
         }
 
-        return response()->json(['message' => 'Installment created', 'data' => $installment]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Installment created successfully',
+        ], 201);
     }
 
-    /**
-     * Update installment
-     */
-    public function update(Request $request, UnitPaymentInstallment $installment)
+
+    public function update(UnitPaymentInstallmentRequest $request, $id): JsonResponse
     {
-        $data = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'percentage' => 'nullable|numeric|min:0|max:100',
-            'amount' => 'nullable|numeric|min:0',
-            'status' => 'nullable|in:pending,paid,overdue',
-            'milestone_date' => 'nullable|date',
-            'submission_date' => 'nullable|date',
-            'consultant_approval_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'payment_date' => 'nullable|date',
-        ]);
+        $result = $this->installmentService->updateInstallment($id, $request->validated());
 
-        $installment->update($data);
+        if (!$result['status']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $result['message'] ?? 'Installment not found',
+            ], 404);
+        }
 
-        return response()->json(['message' => 'Installment updated', 'data' => $installment]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Installment updated successfully',
+            'data' => $result['data'],
+        ], 200);
     }
 
-    /**
-     * Delete installment
-     */
-    public function destroy(UnitPaymentInstallment $installment)
+
+     public function destroy($id): JsonResponse
     {
-        $installment->delete();
+        $result = $this->installmentService->deleteInstallment($id);
 
-        return response()->json(['message' => 'Installment deleted']);
+        if (!$result['status']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $result['message'] ?? 'Installment not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Installment deleted successfully',
+        ], 200);
     }
+
+    public function show($unitPaymentId): JsonResponse
+{
+    $result = $this->installmentService->getInstallmentsByUnitPayment($unitPaymentId);
+
+    if (!$result['status']) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $result['message'] ?? 'Unit payment not found',
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Installments fetched successfully',
+        'data' => $result['data'],
+    ], 200);
+}
+
 }

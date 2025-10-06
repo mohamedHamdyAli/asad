@@ -1,4 +1,6 @@
 <?php
+
+namespace App\Http\Controllers\Admin;
 /**
  * Admin (Dashboard) controller for installments operations.
  *
@@ -9,80 +11,51 @@
  *  PUT /admin/installments/{installment}/status
  *  POST /admin/invoices/{invoice}/confirm  (body: action = confirm|reject)
  */
-
-namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\UnitPaymentInstallment;
-use App\Models\UnitPaymentInstallmentInvoice;
-use App\Events\InvoiceStatusChanged;
-use App\Events\PaymentStatusChanged;
+use App\Http\Requests\Admin\InstallmentStatusRequest;
+use App\Http\Requests\Admin\InvoiceConfirmRequest;
+use App\services\Unit\UnitPaymentInstallmentInvoiceService;
+use Illuminate\Http\JsonResponse;
 
 class UnitPaymentInstallmentController extends Controller
 {
-    /**
-     * Get invoices of installment
-     */
-    public function getInvoices(UnitPaymentInstallment $installment)
+    private UnitPaymentInstallmentInvoiceService $invoiceService;
+
+    public function __construct(UnitPaymentInstallmentInvoiceService $invoiceService)
     {
-        return response()->json($installment->invoices);
+        $this->invoiceService = $invoiceService;
     }
-    /**
-     * Update installment status from admin panel.
-     */
-    public function updateStatus(Request $request, UnitPaymentInstallment $installment)
+
+    public function getInvoices($installmentId): JsonResponse
     {
-        $request->validate([
-            'status' => 'required|in:pending,paid,overdue',
-        ]);
-
-        $oldStatus = $installment->status;
-        $installment->status = $request->status;
-        $installment->save();
-
-        event(new PaymentStatusChanged($installment, $oldStatus, $request->status));
+        $result = $this->invoiceService->getInvoices($installmentId);
 
         return response()->json([
-            'message' => 'Installment status updated successfully',
-            'data' => $installment,
-        ]);
+            'status' => $result['status'] ? 'success' : 'error',
+            'message' => $result['message'] ?? ($result['status'] ? 'Invoices fetched successfully' : 'Failed to fetch invoices'),
+            'data' => $result['data'] ?? null,
+        ], $result['status'] ? 200 : 404);
     }
 
-    /**
-     * Admin confirm/reject a pending invoice.
-     *
-     * Body: action => 'confirm' | 'reject'
-     */
-    public function confirmInvoice(Request $request, UnitPaymentInstallmentInvoice $invoice)
+    public function updateStatus(InstallmentStatusRequest $request, $installmentId): JsonResponse
     {
-        $request->validate([
-            'action' => 'required|in:confirm,reject',
-        ]);
-
-        $oldStatus = $invoice->status;
-        $newStatus = $request->action === 'confirm' ? 'confirmed' : 'rejected';
-
-        if ($oldStatus === $newStatus) {
-            return response()->json([
-                'message' => "Invoice already {$newStatus}",
-                'data' => $invoice,
-            ], 200);
-        }
-
-        $invoice->status = $newStatus;
-        if ($newStatus === 'confirmed') {
-            $invoice->payment_date = $invoice->payment_date ?? now();
-        }
-        $invoice->save();
-
-        // Fire event so listeners update installment & logs
-        event(new InvoiceStatusChanged($invoice, $oldStatus, $newStatus));
+        $result = $this->invoiceService->updateStatus($installmentId, $request->status);
 
         return response()->json([
-            'message' => "Invoice {$newStatus} successfully",
-            'data' => $invoice,
-        ]);
+            'status' => $result['status'] ? 'success' : 'error',
+            'message' => $result['message'] ?? ($result['status'] ? 'Status updated successfully' : 'Failed to update status'),
+            'data' => $result['data'] ?? null,
+        ], $result['status'] ? 200 : 404);
     }
 
+     public function confirmInvoice(InvoiceConfirmRequest $request): JsonResponse
+    {
+        $result = $this->invoiceService->confirmInvoice($request->validated());
+
+        return response()->json([
+            'status'  => $result['status'] ? 'success' : 'error',
+            'message' => $result['message'],
+            'data'    => $result['data'] ?? null,
+        ], $result['status'] ? 200 : 404);
+    }
 }

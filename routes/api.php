@@ -3,10 +3,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
+use App\Http\Controllers\Admin\UnitPaymentInstallmentController;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
 use App\Http\Controllers\Api\QuoteController as ApiQuoteController;
@@ -68,7 +70,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-timeline', [ApiUnitController::class, 'getUnitTimeline']);
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
-        Route::post('installments/{installment}/invoices', [\App\Http\Controllers\Api\PaymentController::class, 'uploadInvoice']);
+        Route::post('installments/{installment}/invoices', [PaymentController::class, 'uploadInvoice']);
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
@@ -290,17 +292,34 @@ Route::prefix('unit-quote-responses')->group(function () {
 
 Route::prefix('unit-payments')->group(function () {
     // Unit Payments
-    Route::post('{unit}/create', [AdminUnitPaymentController::class, 'store']); // Create new payment plan
-    Route::post('{unitPayment}/update', [AdminUnitPaymentController::class, 'update']); // Update payment plan
-    Route::delete('{unitPayment}/delete', [AdminUnitPaymentController::class, 'destroy']); // Delete payment plan
+    Route::get('/{unitId}', [AdminUnitPaymentController::class, 'index'])->name('unit-payments.index');
+    Route::post('/create', [AdminUnitPaymentController::class, 'store'])->name('unit-payments.store');
+    Route::post('/update/{id}', [AdminUnitPaymentController::class, 'update'])->name('unit-payments.update');
+    Route::delete('/delete/{id}', [AdminUnitPaymentController::class, 'destroy'])->name('unit-payments.delete');
 
     // Installments
-    Route::post('{unitPayment}/installments/create', [AdminUnitPaymentInstallmentController::class, 'store']);
-    Route::post('installments/{installment}/update', [AdminUnitPaymentInstallmentController::class, 'update']);
-    Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
+    Route::post('installments/create', [AdminUnitPaymentInstallmentController::class, 'store'])
+        ->name('unit-payment-installments.store');
+
+    Route::post('installments/update/{id}', [AdminUnitPaymentInstallmentController::class, 'update'])
+        ->name('unit-payment-installments.update');
+
+
+    Route::delete('installments/delete/{id}', [AdminUnitPaymentInstallmentController::class, 'destroy'])
+        ->name('unit-payment-installments.delete');
+
+    Route::get('installments/show/{unitPaymentId}', [AdminUnitPaymentInstallmentController::class, 'show'])
+    ->name('unit-payment-installments.show');
+
 
     // Invoices
-    Route::get('installments/{installment}/invoices', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'getInvoices']);
-    Route::post('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
-    Route::post('invoices/{invoice}/confirm', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'confirmInvoice']);
+     Route::get('installments/{installment}/invoices', [UnitPaymentInstallmentController::class, 'getInvoices'])
+        ->name('unit-payment-installments.invoices');
+
+    Route::post('installments/{installment}/status', [UnitPaymentInstallmentController::class, 'updateStatus'])
+        ->name('unit-payment-installments.status');
+
+    Route::post('invoices/confirm', [UnitPaymentInstallmentController::class, 'confirmInvoice'])
+        ->name('unit-payment-installments.confirm-invoice');
+
 });

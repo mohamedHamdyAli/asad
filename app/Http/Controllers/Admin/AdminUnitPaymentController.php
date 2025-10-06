@@ -3,68 +3,73 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Unit;
-use App\Models\UnitPayment;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\UnitPaymentRequest;
+use App\services\Unit\UnitPaymentCrudService;
+use Illuminate\Http\JsonResponse;
 
 class AdminUnitPaymentController extends Controller
 {
-    /**
-     * Create new payment plan for a unit
-     */
-    public function store(Request $request, Unit $unit)
+    private UnitPaymentCrudService $unitPaymentCrudService;
+
+    public function __construct(UnitPaymentCrudService $unitPaymentCrudService)
     {
-        $data = $request->validate([
-            'total_price' => 'required|numeric|min:0',
-            'installments_count' => 'required|integer|min:1',
-            'payment_type' => 'required|in:cash,installments',
-        ]);
-
-        $payment = $unit->payments()->create([
-            'total_price' => $data['total_price'],
-            'installments_count' => $data['installments_count'],
-            'remaining_installments' => $data['installments_count'],
-            'payment_type' => $data['payment_type'],
-            'overall_status' => 'pending',
-        ]);
-
-        return response()->json(['message' => 'Payment plan created', 'data' => $payment]);
+        $this->unitPaymentCrudService = $unitPaymentCrudService;
     }
 
-    /**
-     * Update payment plan
-     */
-    public function update(Request $request, UnitPayment $unitPayment)
+
+    public function index($unitId): JsonResponse
     {
-        $data = $request->validate([
-            'total_price' => 'nullable|numeric|min:0',
-            'installments_count' => 'nullable|integer|min:1',
-            'payment_type' => 'nullable|in:cash,installments',
-            'overall_status' => 'nullable|in:pending,in_progress,completed,overdue',
-        ]);
+        $data = $this->unitPaymentCrudService->getUnitPayments($unitId);
 
-        $unitPayment->update($data);
-
-        return response()->json(['message' => 'Payment plan updated', 'data' => $unitPayment]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit payments fetched successfully',
+            'data' => $data,
+        ], 200);
     }
 
-    /**
-     * Delete payment plan
-     */
-    public function destroy(UnitPayment $unitPayment)
+    public function store(UnitPaymentRequest $request): JsonResponse
     {
-        $unitPayment->delete();
+        $created = $this->unitPaymentCrudService->createUnitPayments($request->validated());
 
-        return response()->json(['message' => 'Payment plan deleted']);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit payments created successfully',
+        ], 201);
+    }
+    public function update(UnitPaymentRequest $request, $id): JsonResponse
+    {
+        $updated = $this->unitPaymentCrudService->updateUnitPayments($id, $request->validated());
+
+        if (!$updated) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unit payment not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit payment updated successfully',
+        ], 200);
     }
 
-    /**
-     * Show payment plan details with summary
-     */
-    public function show(Unit $unit)
-    {
-        $payments = $unit->payments()->with('installments.invoices')->get();
 
-        return response()->json(['unit' => $unit, 'payments' => $payments]);
+
+    public function destroy($id): JsonResponse
+    {
+        $deleted = $this->unitPaymentCrudService->deleteUnitPayment($id);
+
+        if (!$deleted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unit payment not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Unit payment deleted successfully',
+        ], 200);
     }
 }
