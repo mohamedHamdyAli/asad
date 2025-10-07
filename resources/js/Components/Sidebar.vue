@@ -69,6 +69,13 @@
           class="border-b border-gray-300/70"
         />
         <NavItem
+          icon="mdi:world"
+          label="Contact Us Management"
+          :to="route('contactus-management')"
+          :href="route('contactus-management')"
+          class="border-b border-gray-300/70"
+        />
+        <NavItem
           icon="mdi:people"
           label="Manage Users"
           :to="route('users-management')"

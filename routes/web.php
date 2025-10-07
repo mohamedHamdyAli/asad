@@ -22,6 +22,7 @@ Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro
 Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
 Route::get('/contractors-management', fn() => inertia('Contractors/Index'))->name('contractors-management');
 Route::get('/Consultants-management', fn() => inertia('Consultants/Index'))->name('Consultants-management');
+Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
 // Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **
