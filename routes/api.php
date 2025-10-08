@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
+use App\Http\Controllers\Admin\AdminUnitPaymentLogController;
 use App\Http\Controllers\Admin\UnitPaymentInstallmentController;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
 use App\Http\Controllers\Api\IntroController as ApiIntroController;
@@ -309,11 +310,11 @@ Route::prefix('unit-payments')->group(function () {
         ->name('unit-payment-installments.delete');
 
     Route::get('installments/show/{unitPaymentId}', [AdminUnitPaymentInstallmentController::class, 'show'])
-    ->name('unit-payment-installments.show');
+        ->name('unit-payment-installments.show');
 
 
     // Invoices
-     Route::get('installments/{installment}/invoices', [UnitPaymentInstallmentController::class, 'getInvoices'])
+    Route::get('installments/{installment}/invoices', [UnitPaymentInstallmentController::class, 'getInvoices'])
         ->name('unit-payment-installments.invoices');
 
     Route::post('installments/{installment}/status', [UnitPaymentInstallmentController::class, 'updateStatus'])
@@ -322,4 +323,11 @@ Route::prefix('unit-payments')->group(function () {
     Route::post('invoices/confirm', [UnitPaymentInstallmentController::class, 'confirmInvoice'])
         ->name('unit-payment-installments.confirm-invoice');
 
+
+    // Logs
+    Route::get('/logs/{unitId}', [AdminUnitPaymentLogController::class, 'getUnitLogs'])
+        ->name('unit-payment.logs.unit');
+
+    Route::get('/installment/{installmentId}/logs', [AdminUnitPaymentLogController::class, 'getInstallmentLogs'])
+        ->name('unit-payment.logs.installment');
 });
