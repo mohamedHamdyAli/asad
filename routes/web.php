@@ -114,6 +114,18 @@ Route::prefix('language')->group(function () {
         ->name('languages.file.update');
 });
 
+Route::get('/units-management/{unitId}/payments', function ($unitId) {
+    return Inertia::render('Units/UnitPayments', [
+        'unitId' => (int) $unitId,
+    ]);
+})->name('units.payments');
+
+Route::get('/units-management/{unitId}/payments/{unitPaymentId}/installments', function ($unitId, $unitPaymentId) {
+    return Inertia::render('Units/UnitInstallments', [
+        'unitId' => (int) $unitId,
+        'unitPaymentId' => (int) $unitPaymentId,
+    ]);
+})->name('units.installments');
 
 
 // Route::put('installments/{installment}/status', [\App\Http\Controllers\Admin\UnitPaymentInstallmentController::class, 'updateStatus']);
