@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\PaymentLogs;
+namespace App\services\PaymentLogs;
 
 use App\Models\UnitPayment;
 use App\Models\UnitPaymentLog;
