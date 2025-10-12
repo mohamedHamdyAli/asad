@@ -85,22 +85,37 @@ class FileService
         return $filename;
     }
 
-    public static function generateJsonLanguageFile($code)
+    public static function generateJsonLanguageFile($code, $file)
     {
-        $translations = include base_path("storage/app/langFile.php");
+        $sourcePath = base_path("storage/app/$file.php");
+        $langDir = base_path("resources/lang");
         $filename = "$code.json";
-        $path = base_path("resources/lang/$filename");
+        $path = "$langDir/$filename";
 
-        // Convert array to JSON (pretty print for readability)
+        if (!File::exists($sourcePath)) {
+            throw new Exception("Source translation file not found: $sourcePath");
+        }
+
+        $translations = include $sourcePath;
+        if (!is_array($translations)) {
+            throw new Exception("Invalid translation file format: $sourcePath must return an array.");
+        }
+
+        if (!File::exists($langDir)) {
+            File::makeDirectory($langDir, 0777, true, true);
+        } else {
+            @chmod($langDir, 0777);
+        }
+
         $content = json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-        // Delete if exists
-        if (file_exists($path)) {
+        if (File::exists($path)) {
             File::delete($path);
         }
 
-        // Save the new JSON file
         File::put($path, $content);
+
+        @chmod($path, 0777);
 
         return $filename;
     }

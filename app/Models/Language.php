@@ -12,6 +12,7 @@ class Language extends Model
         'app_file',
         'panel_file',
         'vendor_file',
+        'web_file',
         'is_rtl',
         'icon',
         'country_code',

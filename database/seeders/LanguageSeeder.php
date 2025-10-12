@@ -20,6 +20,7 @@ class LanguageSeeder extends Seeder
                 'app_file' => 'ar_app.json',
                 'panel_file' => 'ar_panel.json',
                 'vendor_file' => 'ar_vendor.json',
+                'web_file' => 'ar_web.json',
                 'is_rtl' => 'true',
                 'icon' => 'staticImage/language/arabic.png',
                 'country_code' => '+966',
@@ -31,6 +32,7 @@ class LanguageSeeder extends Seeder
                 'app_file' => 'en_app.json',
                 'panel_file' => 'en_panel.json',
                 'vendor_file' => 'en_vendor.json',
+                'web_file' => 'en_web.json',
                 'is_rtl' => 'false',
                 'icon' => 'staticImage/language/english.png',
                 'country_code' => '+966',
@@ -38,10 +40,17 @@ class LanguageSeeder extends Seeder
             ],
         ];
         foreach ($Languages as $lang) {
-            Language::updateOrCreate(['code' => $lang['code']], $lang);
-            FileService::generateJsonLanguageFile("{$lang['code']}_app");
-            FileService::generateJsonLanguageFile("{$lang['code']}_panel");
-            FileService::generateJsonLanguageFile("{$lang['code']}_vendor");
+            $languageModel = Language::updateOrCreate(
+                ['code' => $lang['code']],
+                $lang
+            );
+
+            if ($languageModel->wasRecentlyCreated) {
+                FileService::generateJsonLanguageFile("{$lang['code']}_app", 'userAppFile');
+                FileService::generateJsonLanguageFile("{$lang['code']}_panel", 'adminDashboardFile');
+                FileService::generateJsonLanguageFile("{$lang['code']}_vendor", 'vendorDashboardFile');
+                FileService::generateJsonLanguageFile("{$lang['code']}_web", 'webFile');
+            }
         }
     }
 }

@@ -20,7 +20,8 @@ class LanguageRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'lang_id'  => 'required|exists:languages,id',
+            'lang_id'   => 'required|exists:languages,id',
+            'type'      => 'required|in:app,panel,vendor,web,all',
         ];
     }
 }

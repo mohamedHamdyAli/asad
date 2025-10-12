@@ -1,5 +1,5 @@
 {
-    "Welcome": "Welcome",
-    "Logout": "Logout",
-    "Login": "Login"
+    "vendorWelcome": "vendorWelcome",
+    "vendorLogout": "vendorLogout",
+    "vendorLogin": "vendorLogin"
 }

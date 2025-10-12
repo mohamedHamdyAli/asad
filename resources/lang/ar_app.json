@@ -1,5 +1,5 @@
 {
-    "Welcome": "Welcome",
-    "Logout": "Logout",
-    "Login": "Login"
+    "userWelcome": "userWelcome",
+    "userLogout": "userLogout",
+    "userLogin": "userLogin"
 }

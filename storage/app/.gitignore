@@ -1,4 +1,7 @@
 *
 !public/
 !.gitignore
-!langFile.php
+!adminDashboardFile.php
+!userAppFile.php
+!vendorDashboardFile.php
+!webFile.php
