@@ -72,10 +72,6 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
         Route::post('installments/{installment}/invoices', [PaymentController::class, 'uploadInvoice']);
-        Route::get('get-all-installments', [PaymentController::class, 'allInstallments']);
-        Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
-        Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
-
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
