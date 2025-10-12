@@ -22,7 +22,7 @@ class LanguageController extends Controller
     }
     public function getLanguageLabels(LanguageRequest $request)
     {
-        $data = $this->languageService->getLanguageData($request['lang_id'],  'app');
+        $data = $this->languageService->getLanguageData($request['lang_id'],  $request['type']);
         return successReturnData($data['enLabels'],  'Data Fetched Successfully');
     }
 }

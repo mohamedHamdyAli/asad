@@ -50,9 +50,9 @@ class LanguageController extends Controller
             'message' => 'Language created successfully'
         ]);
     }
-    public function show($id)
+    public function show($id, $type)
     {
-        $data = $this->languageService->getLanguageData($id);
+        $data = $this->languageService->getLanguageData($id, $type);
         return response()->json([
             'status' => 'success',
             'message' => 'Language created successfully',
