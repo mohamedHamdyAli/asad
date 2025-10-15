@@ -25,6 +25,8 @@ Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('ban
 Route::get('/contractors-management', fn() => inertia('Contractors/Index'))->name('contractors-management');
 Route::get('/Consultants-management', fn() => inertia('Consultants/Index'))->name('Consultants-management');
 Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
+Route::get('/unit-quotes', fn() => inertia('UnitQuotes'))->name('unit-quotes');
+Route::get('/unit-quote-responses', fn() => inertia('UnitQuoteResponses'))->name('unit-quotes-responses');
 // Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **
@@ -114,11 +116,13 @@ Route::prefix('language')->group(function () {
         ->name('languages.file.update');
 });
 
+
 Route::get('/units-management/{unitId}/payments', function ($unitId) {
-    return Inertia::render('Units/UnitPayments', [
+    return Inertia::render('UnitPaymentsAndInstallments', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.payments');
+
 
 Route::get('/units-management/{unitId}/payments/{unitPaymentId}/installments', function ($unitId, $unitPaymentId) {
     return Inertia::render('Units/UnitInstallments', [
