@@ -127,7 +127,16 @@
             class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
           >
             Assignments
+          </Link>                  
+          
+          <Link
+            :href="unitPaymentsPath(u.id)"
+            class="px-2 py-1.5 rounded-lg border text-center hover:bg-gray-50"
+          >
+            Payments & Installments
           </Link>
+
+          
 
         </div>
 
@@ -597,6 +606,7 @@ function galleryPath(id) { return `/units-management/${id}/gallery` }
 function timelinePath(id) { return `/units-management/${id}/timeline` }
 function reportsPath(id) { return `/units-management/${id}/reports` }
 function unitContractorsPath(id) { return `/units-management/${id}/contractors` }
+function unitPaymentsPath(id) { return `/units-management/${id}/payments` }
 // const phasesPath = id => `/units-management/${id}/phases`
 function phasesPath(id) { return `/units-management/${id}/phases` }
 
