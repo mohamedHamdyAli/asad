@@ -4,24 +4,14 @@
       <!-- Header -->
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold text-gray-800">Unit Quote Responses</h2>
-        <button
-          @click="fetchAll"
-          class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-50"
-        >
+        <button @click="fetchAll" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-50">
           Refresh
         </button>
       </div>
 
       <!-- Search -->
-      <div
-        class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm"
-      >
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Search quotes by title or user…"
-          class="form-input w-1/2"
-        />
+      <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
+        <input v-model="search" type="text" placeholder="Search quotes by title or user…" class="form-input w-1/2" />
         <span class="text-sm text-gray-500">
           {{ filteredQuotes.length }} quote(s) found
         </span>
@@ -34,10 +24,7 @@
         </h3>
 
         <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
-        <div
-          v-else-if="!paginatedQuotes.length"
-          class="text-center text-gray-500 py-6"
-        >
+        <div v-else-if="!paginatedQuotes.length" class="text-center text-gray-500 py-6">
           No quotes found.
         </div>
 
@@ -60,187 +47,141 @@
               </tr>
             </thead>
 
-       <tbody>
-  <tr
-    v-for="q in paginatedQuotes"
-    :key="q.id"
-    class="border-t hover:bg-gray-50 transition"
-    :class="{ 'bg-blue-50/40': q.editing }"
-  >
-    <!-- ID -->
-    <td class="py-2 px-3 font-medium">{{ q.id }}</td>
+            <tbody>
+              <tr v-for="q in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition"
+                :class="{ 'bg-blue-50/40': q.editing }">
+                <!-- ID -->
+                <td class="py-2 px-3 font-medium">{{ q.id }}</td>
 
-    <!-- Title / Other title -->
-    <!-- <td class="py-2 px-3">{{ q.title }}</td> -->
-     <!-- Title + created_at -->
-<td class="py-2 px-3">
-  <div class="font-medium text-gray-900">{{ q.title }}</div>
-  <div class="text-xs text-gray-500 mt-0.5">
-    {{ formatDate(q.created_at) }}
-  </div>
-</td>
+                <!-- Title / Other title -->
+                <!-- <td class="py-2 px-3">{{ q.title }}</td> -->
+                <!-- Title + created_at -->
+                <td class="py-2 px-3">
+                  <div class="font-medium text-gray-900">{{ q.title }}</div>
+                  <div class="text-xs text-gray-500 mt-0.5">
+                    {{ formatDate(q.created_at) }}
+                  </div>
+                </td>
 
-    <td class="py-2 px-3">{{ q.other_title || '—' }}</td>
+                <td class="py-2 px-3">{{ q.other_title || '—' }}</td>
 
-    <!-- Building Type (read-only) -->
-    <td class="py-2 px-3 text-gray-700">
-      {{
-        buildings.find((b) => b.id === q.type_of_building_id)?.name ||
-        buildings.find((b) => b.id === q.type_of_building_id)?.title ||
-        '—'
-      }}
-    </td>
+                <td class="py-2 px-3 text-gray-700">
+                  {{
+                    getEn(
+                      buildings.find((b) => b.id === q.type_of_building_id)?.name ||
+                      buildings.find((b) => b.id === q.type_of_building_id)?.title
+                  )
+                  }}
+                </td>
 
-    <!-- Price Type (read-only) -->
-    <td class="py-2 px-3 text-gray-700">
-      {{
-        prices.find((p) => p.id === q.type_of_price_id)?.name ||
-        prices.find((p) => p.id === q.type_of_price_id)?.title ||
-        '—'
-      }}
-    </td>
+                <td class="py-2 px-3 text-gray-700">
+                  {{
+                    getEn(
+                      prices.find((p) => p.id === q.type_of_price_id)?.name ||
+                      prices.find((p) => p.id === q.type_of_price_id)?.title
+                  )
+                  }}
+                </td>
 
-    <!-- User (read-only) -->
-    <td class="py-2 px-3 text-gray-700">
-      {{
-        users.find((u) => u.id === q.user_id)?.name ||
-        `User ${q.user_id}`
-      }}
-    </td>
 
-    <!-- Vendor (editable dropdown) -->
-    <td class="py-2 px-3">
-      <select
-        v-model="q.response.vendor_id"
-        class="form-input"
-        :disabled="!q.editing && q.has_response"
-      >
-        <option value="" disabled>Select Vendor</option>
-        <option v-for="v in vendors" :key="v.id" :value="v.id">
-          {{ v.name }}
-        </option>
-      </select>
-    </td>
+                <!-- User (read-only) -->
+                <td class="py-2 px-3 text-gray-700">
+                  {{
+                    users.find((u) => u.id === q.user_id)?.name ||
+                    `User ${q.user_id}`
+                  }}
+                </td>
 
-    <!-- Price (editable) -->
-    <td class="py-2 px-3">
-      <input
-        v-model.number="q.response.price"
-        type="number"
-        class="form-input"
-        :disabled="!q.editing && q.has_response"
-      />
-    </td>
+                <!-- Vendor (editable dropdown) -->
+                <td class="py-2 px-3">
+                  <select v-model="q.response.vendor_id" class="form-input" :disabled="!q.editing && q.has_response">
+                    <option value="" disabled>Select Vendor</option>
+                    <option v-for="v in vendors" :key="v.id" :value="v.id">
+                      {{ v.name }}
+                    </option>
+                  </select>
+                </td>
 
-    <!-- Timeline (editable) -->
-    <td class="py-2 px-3">
-      <input
-        v-model="q.response.time_line"
-        type="text"
-        class="form-input"
-        :disabled="!q.editing && q.has_response"
-      />
-    </td>
+                <!-- Price (editable) -->
+                <td class="py-2 px-3">
+                  <input v-model.number="q.response.price" type="number" class="form-input"
+                    :disabled="!q.editing && q.has_response" />
+                </td>
 
-    <!-- Pay image (if available) -->
-    <td class="py-2 px-3">
-      <a
-        v-if="q.pay_image"
-        :href="`/storage/${q.pay_image}`"
-        target="_blank"
-        class="text-blue-600 hover:underline"
-      >
-        <img
-          :src="`/storage/${q.pay_image}`"
-          alt="Preview"
-          class="h-10 w-10 object-cover rounded shadow-sm"
-        />
-      </a>
-      <span v-else class="text-gray-400">—</span>
-    </td>
+                <!-- Timeline (editable) -->
+                <td class="py-2 px-3">
+                  <input v-model="q.response.time_line" type="text" class="form-input"
+                    :disabled="!q.editing && q.has_response" />
+                </td>
 
-    <!-- Status -->
-    <td class="py-2 px-3">
-      <span
-        :class="[
-          'px-2 py-0.5 rounded-full text-xs border',
-          q.has_response
-            ? 'bg-green-100 text-green-700 border-green-200'
-            : 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        ]"
-      >
-        {{ q.has_response ? 'Responded' : 'Pending' }}
-      </span>
-    </td>
+                <!-- Pay image (if available) -->
+                <td class="py-2 px-3">
+                  <a v-if="q.pay_image" :href="`/storage/${q.pay_image}`" target="_blank"
+                    class="text-blue-600 hover:underline">
+                    <img :src="`/storage/${q.pay_image}`" alt="Preview"
+                      class="h-10 w-10 object-cover rounded shadow-sm" />
+                  </a>
+                  <span v-else class="text-gray-400">—</span>
+                </td>
 
-    <!-- Actions -->
-    <td class="py-2 px-3 text-center space-x-1">
-      <button
-        v-if="!q.has_response"
-        class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
-        @click="saveResponse(q)"
-      >
-        Save
-      </button>
+                <!-- Status -->
+                <td class="py-2 px-3">
+                  <span :class="[
+                    'px-2 py-0.5 rounded-full text-xs border',
+                    q.has_response
+                      ? 'bg-green-100 text-green-700 border-green-200'
+                      : 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                  ]">
+                    {{ q.has_response ? 'Responded' : 'Pending' }}
+                  </span>
+                </td>
 
-      <template v-else>
-        <button
-          v-if="!q.editing"
-          class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
-          @click="enableEdit(q)"
-        >
-          Edit
-        </button>
-        <button
-          v-if="q.editing"
-          class="px-3 py-1 text-xs border rounded-lg text-green-700 border-green-200 hover:bg-green-50"
-          @click="updateResponse(q)"
-        >
-          Update
-        </button>
-        <button
-          class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
-          @click="deleteResponse(q)"
-        >
-          Delete
-        </button>
-      </template>
-    </td>
-  </tr>
-</tbody>
+                <!-- Actions -->
+                <td class="py-2 px-3 text-center space-x-1">
+                  <button v-if="!q.has_response"
+                    class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
+                    @click="saveResponse(q)">
+                    Save
+                  </button>
+
+                  <template v-else>
+                    <button v-if="!q.editing"
+                      class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
+                      @click="enableEdit(q)">
+                      Edit
+                    </button>
+                    <button v-if="q.editing"
+                      class="px-3 py-1 text-xs border rounded-lg text-green-700 border-green-200 hover:bg-green-50"
+                      @click="updateResponse(q)">
+                      Update
+                    </button>
+                    <button class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
+                      @click="deleteResponse(q)">
+                      Delete
+                    </button>
+                  </template>
+                </td>
+              </tr>
+            </tbody>
 
           </table>
 
           <!-- Pagination -->
-          <div
-            v-if="totalPages > 1"
-            class="flex justify-between items-center mt-6 text-sm"
-          >
+          <div v-if="totalPages > 1" class="flex justify-between items-center mt-6 text-sm">
             <span class="text-gray-600">
               Showing {{ startItem }}–{{ endItem }} of {{ filteredQuotes.length }}
             </span>
             <div class="space-x-2">
-              <button
-                @click="prevPage"
-                :disabled="currentPage === 1"
-                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
-              >
+              <button @click="prevPage" :disabled="currentPage === 1"
+                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">
                 Prev
               </button>
-              <button
-                v-for="n in totalPages"
-                :key="n"
-                @click="goToPage(n)"
-                class="px-3 py-1 border rounded-lg"
-                :class="n === currentPage ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'"
-              >
+              <button v-for="n in totalPages" :key="n" @click="goToPage(n)" class="px-3 py-1 border rounded-lg"
+                :class="n === currentPage ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'">
                 {{ n }}
               </button>
-              <button
-                @click="nextPage"
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
-              >
+              <button @click="nextPage" :disabled="currentPage === totalPages"
+                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">
                 Next
               </button>
             </div>
@@ -321,18 +262,18 @@ async function fetchAll() {
         editing: false,
         response: r
           ? {
-              id: r.id,
-              vendor_id: r.vendor_id,
-              user_id: r.user_id,
-              price: r.price,
-              time_line: r.time_line_en || '',
-            }
+            id: r.id,
+            vendor_id: r.vendor_id,
+            user_id: r.user_id,
+            price: r.price,
+            time_line: r.time_line_en || '',
+          }
           : {
-              vendor_id: '',
-              user_id: '',
-              price: '',
-              time_line: '',
-            },
+            vendor_id: '',
+            user_id: '',
+            price: '',
+            time_line: '',
+          },
       }
     })
     users.value = allUsers
@@ -409,6 +350,12 @@ function prevPage() {
   }
 }
 
+function getEn(value) {
+  if (!value) return '—'
+  if (typeof value === 'object' && value.en) return value.en
+  return value
+}
+
 
 
 onMounted(fetchAll)
@@ -416,7 +363,6 @@ onMounted(fetchAll)
 
 <style scoped>
 .form-input {
-  @apply w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-         focus:outline-none focus:ring-2 focus:ring-blue-500;
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
 </style>
