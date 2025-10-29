@@ -20,7 +20,7 @@ class InvoiceRequest extends BaseApiRequest
     public function rules(): array
     {
         return [
-            'invoice' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'invoice_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'paid_amount' => 'required|numeric|min:0.01',
         ];
     }
