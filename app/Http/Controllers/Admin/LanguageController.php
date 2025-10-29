@@ -42,6 +42,31 @@ class LanguageController extends Controller
         return response()->json(['status' => 'success', 'data' => $rows]);
     }
 
+    // App\Http\Controllers\Admin\LanguageController.php
+
+public function one($id)
+{
+    $l = \App\Models\Language::findOrFail($id);
+
+    $row = [
+        'id'           => $l->id,
+        'name'         => $l->name,
+        'english_name' => $l->name_en,
+        'code'         => $l->code,
+        'country_code' => $l->country_code,
+        'scope'        => $l->app_scope,
+        'rtl'          => (bool) $l->is_rtl,
+        'icon_url'     => $l->getRawOriginal('icon') ? Storage::url($l->getRawOriginal('icon')) : null,
+    ];
+
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Language fetched successfully',
+        'data'    => $row,
+    ], 200);
+}
+
+
     public function store(LanguageRequest $request)
     {
         $this->languageService->createLanguage($request->validated());
@@ -74,7 +99,7 @@ class LanguageController extends Controller
         $this->languageService->setLanguage($languageCode);
         return redirect()->back();
     }
-    public function editlanguage($id, $type)
+    public function editLanguage($id, $type)
     {
         $data = $this->languageService->getLanguageData($id, $type);
         return response()->json([

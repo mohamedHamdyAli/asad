@@ -67,94 +67,168 @@ class LanguageHelperFunctionService
         });
     }
 
-    public function getLanguageData($id = null, $type = null)
-    {
-        return DB::transaction(function () use ($id, $type) {
-            $data = [];
-            if ($id != null) {
-                $language = Language::findOrFail($id);
-                $data['row'] = $language;
+    // public function getLanguageData($id = null, $type = null)
+    // {
+    //     return DB::transaction(function () use ($id, $type) {
+    //         $data = [];
+    //         if ($id != null) {
+    //             $language = Language::findOrFail($id);
+    //             $data['row'] = $language;
 
-                if ($type != null) {
-                    $languageCode = $language->code ?? 'en';
+    //             if ($type != null) {
+    //                 $languageCode = $language->code ?? 'en';
 
-                    // Default paths
-                    $defaults = [
-                        'panel' => base_path('resources/lang/en_panel.json'),
-                        'app' => base_path('resources/lang/en_app.json'),
-                        'vendor' => base_path('resources/lang/en_vendor.json'),
-                        'web' => base_path('resources/lang/en_web.json'),
-                    ];
+    //                 // Default paths
+    //                 $defaults = [
+    //                     'panel' => base_path('resources/lang/en_panel.json'),
+    //                     'app' => base_path('resources/lang/en_app.json'),
+    //                     'vendor' => base_path('resources/lang/en_vendor.json'),
+    //                     'web' => base_path('resources/lang/en_web.json'),
+    //                 ];
 
-                    // Target file names (custom or default)
-                    $files = [
-                        'panel' => $language->panel_file ?: "{$languageCode}_panel.json",
-                        'app' => $language->app_file ?: "{$languageCode}_app.json",
-                        'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
-                        'web' => $language->web_file ?: "{$languageCode}_web.json",
-                    ];
+    //                 // Target file names (custom or default)
+    //                 $files = [
+    //                     'panel' => $language->panel_file ?: "{$languageCode}_panel.json",
+    //                     'app' => $language->app_file ?: "{$languageCode}_app.json",
+    //                     'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
+    //                     'web' => $language->web_file ?: "{$languageCode}_web.json",
+    //                 ];
 
-                    // Target paths
-                    $paths = [];
-                    foreach ($files as $key => $file) {
-                        $paths[$key] = base_path("resources/lang/{$file}");
-                    }
+    //                 // Target paths
+    //                 $paths = [];
+    //                 foreach ($files as $key => $file) {
+    //                     $paths[$key] = base_path("resources/lang/{$file}");
+    //                 }
 
-                    foreach ($defaults as $key => $defaultPath) {
-                        $targetPath = $paths[$key];
-                        if (!File::exists($targetPath)) {
-                            $defaultContent = File::exists($defaultPath) ? File::get($defaultPath) : json_encode([]);
-                            File::put($targetPath, $defaultContent);
-                            $column = "{$key}_file";
-                            if (empty($language->$column)) {
-                                $language->$column = $files[$key];
-                            }
-                        }
-                    }
-                    $language->save();
+    //                 foreach ($defaults as $key => $defaultPath) {
+    //                     $targetPath = $paths[$key];
+    //                     if (!File::exists($targetPath)) {
+    //                         $defaultContent = File::exists($defaultPath) ? File::get($defaultPath) : json_encode([]);
+    //                         File::put($targetPath, $defaultContent);
+    //                         $column = "{$key}_file";
+    //                         if (empty($language->$column)) {
+    //                             $language->$column = $files[$key];
+    //                         }
+    //                     }
+    //                 }
+    //                 $language->save();
 
-                    if ($type === 'all') {
-                        $allArrays = [];
-                        foreach ($paths as $key => $path) {
-                            $allArrays[$key] = File::exists($path) ? json_decode(File::get($path), true) : [];
-                        }
+    //                 if ($type === 'all') {
+    //                     $allArrays = [];
+    //                     foreach ($paths as $key => $path) {
+    //                         $allArrays[$key] = File::exists($path) ? json_decode(File::get($path), true) : [];
+    //                     }
 
-                        $mergedKeys = array_unique(array_merge(...array_map('array_keys', $allArrays)));
-                        $merged = [];
-                        foreach ($mergedKeys as $k) {
-                            $merged[$k] =
-                                $allArrays['app'][$k] ??
-                                $allArrays['panel'][$k] ??
-                                $allArrays['vendor'][$k] ??
-                                $allArrays['web'][$k] ??
-                                '';
-                        }
+    //                     $mergedKeys = array_unique(array_merge(...array_map('array_keys', $allArrays)));
+    //                     $merged = [];
+    //                     foreach ($mergedKeys as $k) {
+    //                         $merged[$k] =
+    //                             $allArrays['app'][$k] ??
+    //                             $allArrays['panel'][$k] ??
+    //                             $allArrays['vendor'][$k] ??
+    //                             $allArrays['web'][$k] ??
+    //                             '';
+    //                     }
 
-                        $data['enLabels'] = $merged;
-                        $data['type'] = 'all';
-                        return $data;
-                    }
+    //                     $data['enLabels'] = $merged;
+    //                     $data['type'] = 'all';
+    //                     return $data;
+    //                 }
 
-                    $defaultFile = $defaults[$type] ?? $defaults['panel'];
-                    $jsonFile = $paths[$type] ?? $paths['panel'];
+    //                 $defaultFile = $defaults[$type] ?? $defaults['panel'];
+    //                 $jsonFile = $paths[$type] ?? $paths['panel'];
 
-                    $defaultArr = File::exists($defaultFile) ? json_decode(File::get($defaultFile), true) : [];
-                    $targetArr = File::exists($jsonFile) ? json_decode(File::get($jsonFile), true) : [];
+    //                 $defaultArr = File::exists($defaultFile) ? json_decode(File::get($defaultFile), true) : [];
+    //                 $targetArr = File::exists($jsonFile) ? json_decode(File::get($jsonFile), true) : [];
 
-                    foreach ($defaultArr as $k => $v) {
-                        if (!array_key_exists($k, $targetArr))
-                            $targetArr[$k] = $v;
-                    }
+    //                 foreach ($defaultArr as $k => $v) {
+    //                     if (!array_key_exists($k, $targetArr))
+    //                         $targetArr[$k] = $v;
+    //                 }
 
-                    File::put($jsonFile, json_encode($targetArr, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    //                 File::put($jsonFile, json_encode($targetArr, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-                    $data['enLabels'] = $targetArr;
-                    $data['type'] = $type;
-                }
-            }
-            return $data;
-        });
+    //                 $data['enLabels'] = $targetArr;
+    //                 $data['type'] = $type;
+    //             }
+    //         }
+    //         return $data;
+    //     });
+    // }
+
+public function getLanguageData($id = null, $type = null)
+{
+    $data = [];
+    if (!$id) return $data;
+
+    $language = Language::findOrFail($id);
+    $data['row'] = $language;
+
+    if (!$type) return $data;
+
+    $languageCode = $language->code ?? 'en';
+
+    $defaults = [
+        'panel'  => base_path('resources/lang/en_panel.json'),
+        'app'    => base_path('resources/lang/en_app.json'),
+        'vendor' => base_path('resources/lang/en_vendor.json'),
+        'web'    => base_path('resources/lang/en_web.json'),
+    ];
+
+    $files = [
+        'panel'  => $language->panel_file ?: "{$languageCode}_panel.json",
+        'app'    => $language->app_file ?: "{$languageCode}_app.json",
+        'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
+        'web'    => $language->web_file ?: "{$languageCode}_web.json",
+    ];
+
+    $paths = [];
+    foreach ($files as $key => $file) {
+        $paths[$key] = base_path("resources/lang/{$file}");
     }
+
+    // Ensure files exist ONLY (write once if missing)
+    foreach ($defaults as $key => $defaultPath) {
+        $targetPath = $paths[$key];
+        if (!File::exists($targetPath)) {
+            $defaultContent = File::exists($defaultPath) ? File::get($defaultPath) : json_encode([]);
+            File::put($targetPath, $defaultContent);
+            // DO NOT $language->save() here — GET should be read-only
+        }
+    }
+
+    if ($type === 'all') {
+        $all = [];
+        foreach ($paths as $key => $path) {
+            $all[$key] = File::exists($path) ? json_decode(File::get($path), true) : [];
+        }
+        $mergedKeys = array_unique(array_merge(...array_map('array_keys', $all)));
+        $merged = [];
+        foreach ($mergedKeys as $k) {
+            $merged[$k] = $all['app'][$k] ?? $all['panel'][$k] ?? $all['vendor'][$k] ?? $all['web'][$k] ?? '';
+        }
+        $data['enLabels'] = $merged;
+        $data['type'] = 'all';
+        return $data;
+    }
+
+    $defaultFile = $defaults[$type] ?? $defaults['panel'];
+    $jsonFile    = $paths[$type] ?? $paths['panel'];
+
+    $defaultArr = File::exists($defaultFile) ? json_decode(File::get($defaultFile), true) : [];
+    $targetArr  = File::exists($jsonFile) ? json_decode(File::get($jsonFile), true) : [];
+
+    // Build the response IN MEMORY. DO NOT write on GET.
+    foreach ($defaultArr as $k => $v) {
+        if (!array_key_exists($k, $targetArr)) {
+            $targetArr[$k] = $v;
+        }
+    }
+
+    $data['enLabels'] = $targetArr;
+    $data['type'] = $type;
+    return $data;
+}
 
 
     public function updatelanguage($id, $type, $updatedLabels)
@@ -217,5 +291,4 @@ class LanguageHelperFunctionService
     {
         return Language::getLanguageList();
     }
-
 }

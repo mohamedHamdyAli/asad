@@ -17,7 +17,7 @@ Route::get('/messages', fn() => inertia('Messages'))->name('messages');
 Route::get('/Vendors-management', fn() => inertia('VendorsManagement'))->name('vendors-management');
 Route::get('/bids-management', fn() => inertia('BidsManagement'))->name('bids-management');
 Route::get('/languages', fn() => inertia('LanguageManagement'))->name('language-management');
-Route::get('/language-editor', fn() => inertia('LanguageEditor'))->name('language-editor');
+// Route::get('/language-editor', fn() => inertia('LanguageEditor'))->name('language-editor');
 Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('finance-management');
 Route::get('/users-management', fn() => inertia('UserManagement'))->name('users-management');
 Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
@@ -73,23 +73,6 @@ Route::get('/units-management/{unitId}/phases', function ($unitId) {
     ]);
 })->name('units.phases');
 
-// Route::prefix('unit-payments')->group(function () {
-//     // Unit Payments
-//     Route::post('{unit}/create', [AdminUnitPaymentController::class, 'store']); // Create new payment plan
-//     Route::put('{unitPayment}/update', [AdminUnitPaymentController::class, 'update']); // Update payment plan
-//     Route::delete('{unitPayment}/delete', [AdminUnitPaymentController::class, 'destroy']); // Delete payment plan
-
-//     // Installments
-//     Route::post('{unitPayment}/installments/create', [AdminUnitPaymentInstallmentController::class, 'store']);
-//     Route::put('installments/{installment}/update', [AdminUnitPaymentInstallmentController::class, 'update']);
-//     Route::delete('installments/{installment}/delete', [AdminUnitPaymentInstallmentController::class, 'destroy']);
-
-//     // Invoices
-//     Route::get('installments/{installment}/invoices', [AdminUnitPaymentInstallmentController::class, 'getInvoices']);
-//     Route::post('invoices/{invoice}/confirm', [AdminUnitPaymentInstallmentController::class, 'confirmInvoice']);
-//     Route::post('invoices/{invoice}/reject', [AdminUnitPaymentInstallmentController::class, 'rejectInvoice']);
-// });
-
 
 
 Route::get('/dashboard', function () {
@@ -107,13 +90,13 @@ Route::prefix('language')->group(function () {
         ->whereNumber('id')
         ->name('language-editor');
 
-    Route::get('/languageedit/{id}/{type}', [LanguageController::class, 'editlanguage'])
-        ->whereNumber('id')
-        ->name('languages.file.get');
+    // Route::get('/languageedit/{id}/{type}', [LanguageController::class, 'editlanguage'])
+    //     ->whereNumber('id')
+    //     ->name('languages.file.get');
 
-    Route::post('/updatelanguageValues/{id}/{type}', [LanguageController::class, 'updatelanguageValues'])
-        ->whereNumber('id')
-        ->name('languages.file.update');
+    // Route::post('/updatelanguageValues/{id}/{type}', [LanguageController::class, 'updatelanguageValues'])
+    //     ->whereNumber('id')
+    //     ->name('languages.file.update');
 });
 
 

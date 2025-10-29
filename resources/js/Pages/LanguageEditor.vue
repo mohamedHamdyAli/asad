@@ -1,16 +1,29 @@
 <template>
-      <Head title="Language Editor" />
+  <Head title="Language Editor" />
 
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
       <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-semibold text-dash-title">Translate Language File</h2>
+        <h2 class="text-2xl font-semibold text-dash-title">
+          Translate {{ typeLabel }} Language File
+        </h2>
+
+        <!-- Type Switch Dropdown (NO @change) -->
+        <select
+          v-model="type"
+          class="border border-gray-300 rounded px-3 py-1 text-sm"
+        >
+          <option v-for="t in editTypes" :key="t.type" :value="t.type">
+            {{ t.label }}
+          </option>
+        </select>
       </div>
 
       <div v-if="loadError" class="p-3 bg-red-50 text-red-600 rounded">{{ loadError }}</div>
-      <div v-else-if="loading" class="text-sm text-gray-500">Loading…</div>
+      <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Keep the grid mounted so it doesn't disappear during in-flight requests -->
+      <div v-show="keys.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="key in keys" :key="key">
           <label class="block text-sm font-medium text-gray-600 mb-1">{{ key }}</label>
           <input
@@ -26,7 +39,7 @@
         <button
           :disabled="saving || loading"
           @click="saveTranslations"
-       class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
+          class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
         >
           {{ saving ? 'Saving…' : 'Save' }}
         </button>
@@ -36,64 +49,128 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import http from '@/lib/http'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { Head } from '@inertiajs/vue3'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import http from '@/lib/http' // axios instance
 
-const props = defineProps({ id: [Number, String], type: String })
-function parseFromUrl () {
-  const m = window.location.pathname.match(/\/language\/editor\/(\d+)\/([A-Za-z_]+)/)
-  return m ? { id: m[1], type: m[2] } : { id: null, type: 'all' }
-}
-const parsed = parseFromUrl()
-const id   = props.id   ?? parsed.id
-const type = 'all'
+const props = defineProps({
+  id: [Number, String],
+  type: String,
+})
 
+const id = props.id
+const type = ref(props.type || 'panel')
+
+// State
 const translations = ref({})
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
+const initialized = ref(false)
 
-const fetchedOnce = ref(false)
+// Abort the previous request if a new one starts
+let currentController = null
 
+// Dropdown options
+const editTypes = [
+  { type: 'panel',  label: 'Admin Panel' },
+  { type: 'app',    label: 'User App' },
+  { type: 'vendor', label: 'Vendor Dashboard' },
+  { type: 'web',    label: 'Website' },
+]
+
+const typeLabel = computed(() => {
+  const found = editTypes.find(t => t.type === type.value)
+  return found ? found.label : 'Language'
+})
 const keys = computed(() => Object.keys(translations.value ?? {}))
 
+// --- Fetch translations ---
 async function fetchTranslations() {
-  if (!id) { loadError.value = 'Missing language id.'; return }
+  if (!id) {
+    loadError.value = 'Missing language ID.'
+    return
+  }
+
+  // Abort any in-flight request
+  if (currentController) {
+    try { currentController.abort() } catch (_) {}
+  }
+  currentController = new AbortController()
+
+  // Set flags
   loading.value = true
+  loadError.value = ''
+
   try {
-    const { data } = await http.get(`/language/languageedit/${id}/all`)
-    translations.value = data?.data?.enLabels || {}
+    const res = await http.get(
+      `/api/language/languageedit/${id}/${type.value}`,
+      { signal: currentController.signal }
+    )
+
+    // Safety checks
+    if (!res || !res.data || res.data.status !== 'success') {
+      console.warn('Non-success response, keeping previous translations')
+      return
+    }
+
+    const labels = res.data?.data?.enLabels
+    if (labels && typeof labels === 'object' && Object.keys(labels).length > 0) {
+      translations.value = labels
+    } else {
+      // Keep previous data; don’t blank the UI
+      console.warn('Empty/invalid enLabels; keeping previous translations')
+    }
   } catch (e) {
-    loadError.value = 'Failed to load language data.'
+    // AbortError is expected when switching types fast
+    if (e?.name === 'CanceledError' || e?.message?.includes('canceled')) {
+      // silently ignore
+    } else {
+      console.error(e)
+      loadError.value = 'Failed to load language data.'
+      // IMPORTANT: do NOT clear translations on error
+    }
   } finally {
-    loading.value = false
+    // Only clear loading if this is still the active controller
+    if (currentController && !currentController.signal.aborted) {
+      loading.value = false
+      currentController = null
+    } else {
+      // If aborted, a new request already started; leave loading managed by that one
+    }
   }
 }
 
+// --- Save translations ---
 async function saveTranslations() {
   if (!id) return
   saving.value = true
   try {
-    await http.post(`/language/updatelanguageValues/${id}/all`, {
+    await http.post(`/api/language/updatelanguageValues/${id}/${type.value}`, {
       values: translations.value,
     })
     alert('Translations updated successfully.')
   } catch (e) {
-    alert('Save failed')
+    console.error(e)
+    alert('Save failed.')
   } finally {
     saving.value = false
   }
 }
 
-onMounted(fetchTranslations)
+// --- Initial load ---
+onMounted(async () => {
+  await nextTick()
+  await fetchTranslations()
+  initialized.value = true
+})
 
-watch(
-  () => [props.id, props.type],
-  () => {
-    fetchedOnce.value = false
-    fetchTranslations()
+// --- Refetch ONLY when user changes the dropdown ---
+watch(type, async (newVal, oldVal) => {
+  if (!initialized.value) return
+  if (newVal !== oldVal) {
+    await fetchTranslations()
   }
-)
+})
 </script>
