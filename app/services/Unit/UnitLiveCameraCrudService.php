@@ -19,7 +19,7 @@ class UnitLiveCameraCrudService
                 UnitLiveCamera::create([
                     'unit_id' => $request['unit_id'],
                     'ip_address' => $item['ip_address'],
-                    'camera_link' => $item['camera_link'],
+                    'camera_link' => $item['camera_link'] ?? null,
                 ]);
             }
         });
