@@ -42,7 +42,6 @@ class LanguageController extends Controller
         return response()->json(['status' => 'success', 'data' => $rows]);
     }
 
-    // App\Http\Controllers\Admin\LanguageController.php
 
 public function one($id)
 {
