@@ -1,187 +1,146 @@
 <template>
-    <AuthenticatedLayout>
-        <div class="container mx-auto p-6">
-               <!-- 🔗 Unit navigation -->
+  <AuthenticatedLayout>
+    <div class="container mx-auto p-6">
+      <!-- 🔗 Unit navigation -->
       <UnitNav :unit-id="Number(unitId)" :cols="2" />
-            <!-- Tabs -->
-            <div class="flex border-b mb-6 mt-6 items-center">
-                <button :class="tab === 'payments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
-                    class="px-4 py-2 font-medium" @click="tab = 'payments'">
-                    Payments
-                </button>
-                <button :class="tab === 'installments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
-                    class="px-4 py-2 font-medium" @click="tab = 'installments'">
-                    Installments
-                </button>
+      <!-- Tabs -->
+      <div class="flex border-b mb-6 mt-6 items-center">
+        <button :class="tab === 'payments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-medium" @click="tab = 'payments'">
+          Payments
+        </button>
+        <button :class="tab === 'installments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-medium" @click="tab = 'installments'">
+          Installments
+        </button>
+      </div>
+
+      <!-- Single Payment Display -->
+
+      <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow mt-6">
+        <h3 class="text-lg font-semibold mb-3">Current Payment</h3>
+        <div v-if="loadingPayment" class="text-sm text-gray-500">Loading…</div>
+
+        <div v-else-if="!payment" class="text-center text-gray-500 py-6">
+          No payment created yet.
+        </div>
+
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div><strong>Total Price:</strong> {{ formatPrice(payment.total_price) }}</div>
+          <div><strong>Installments:</strong> {{ payment.installments_count }}</div>
+          <div><strong>Type:</strong> {{ payment.payment_type }}</div>
+          <div><strong>Status:</strong> {{ payment.overall_status }}</div>
+        </div>
+      </div>
+
+
+      <!-- ===================== SINGLE PAYMENT ===================== -->
+      <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow mt-6">
+        <h3 class="text-lg font-semibold mb-4">Unit Payment</h3>
+
+        <!-- 🟢 CASE 1: No payment yet -->
+        <div v-if="!payment">
+          <p class="text-gray-600 mb-4">No payment created yet for this unit.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Total Price *</label>
+              <input v-model.number="newPayment.total_price" type="number"
+                class="form-control w-full border p-2 rounded" />
             </div>
 
-            <!-- Add Payment -->
-            <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow mb-6">
-                <h3 class="text-lg font-semibold mb-4">Add Payment</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Total Price *</label>
-                        <input v-model.number="newPayment.total_price" type="number"
-                            class="form-control w-full border p-2 rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Installments Count *</label>
-                        <input v-model.number="newPayment.installments_count" type="number"
-                            class="form-control w-full border p-2 rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Payment Type *</label>
-                        <select v-model="newPayment.payment_type" class="form-control w-full border p-2 rounded">
-                            <option disabled value="">Select type</option>
-                            <option value="cash">Cash</option>
-                            <option value="installments">Installments</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Overall Status *</label>
-                        <select v-model="newPayment.overall_status" class="form-control w-full border p-2 rounded">
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="overdue">Overdue</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-4 text-right">
-                    <button @click="createPayment" :disabled="creating"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50">
-                        {{ creating ? 'Saving…' : 'Save' }}
-                    </button>
-                </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Installments Count *</label>
+              <input v-model.number="newPayment.installments_count" type="number"
+                class="form-control w-full border p-2 rounded" />
             </div>
 
-            <!-- Payments Table -->
-            <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold">Existing Payments</h3>
-                    <button @click="fetchPayments" class="border px-3 py-1 rounded hover:bg-gray-100">Refresh</button>
-                </div>
-
-                <div v-if="loadingPayments" class="text-sm text-gray-500">Loading…</div>
-                <div v-else-if="!payments.length" class="text-center text-gray-500 py-6">No payments found.</div>
-
-                <div v-else class="overflow-x-auto">
-                    <table class="min-w-full border text-sm">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="p-2 text-left"></th>
-                                <th class="p-2 text-left">Total Price</th>
-                                <th class="p-2 text-left">Installments</th>
-                                <th class="p-2 text-left">Type</th>
-                                <th class="p-2 text-left">Status</th>
-                                <th class="p-2 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(p, i) in payments" :key="p.id" class="border-t">
-                                <td class="p-2">{{ i + 1 }}</td>
-
-                                <td class="p-2">
-                                    <input v-if="p.isEditing" v-model.number="p.editable.total_price" type="number"
-                                        class="w-full border p-1 rounded" />
-                                    <span v-else>{{ formatPrice(p.total_price) }}</span>
-                                </td>
-
-                                <td class="p-2">
-                                    <input v-if="p.isEditing" v-model.number="p.editable.installments_count"
-                                        type="number" class="w-full border p-1 rounded" />
-                                    <span v-else>{{ p.installments_count }}</span>
-                                </td>
-
-                                <td class="p-2">
-                                    <select v-if="p.isEditing" v-model="p.editable.payment_type"
-                                        class="w-full border p-1 rounded">
-                                        <option value="cash">Cash</option>
-                                        <option value="installments">Installments</option>
-                                    </select>
-                                    <span v-else>{{ p.payment_type }}</span>
-                                </td>
-
-                                <td class="p-2">
-                                    <select v-if="p.isEditing" v-model="p.editable.overall_status"
-                                        class="w-full border p-1 rounded">
-                                        <option value="pending">Pending</option>
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="completed">Completed</option>
-                                        <option value="overdue">Overdue</option>
-                                    </select>
-                                    <span v-else>{{ p.overall_status }}</span>
-                                </td>
-
-                                <td class="p-2 text-center">
-                                    <div class="flex justify-center gap-2">
-                                        <template v-if="p.isEditing">
-                                            <button
-                                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded"
-                                                @click="saveEdit(p)">
-                                                Save
-                                            </button>
-                                            <button class="bg-gray-300 hover:bg-gray-400 text-xs px-3 py-1 rounded"
-                                                @click="cancelEdit(p)">
-                                                Cancel
-                                            </button>
-                                        </template>
-                                        <template v-else>
-                                            <button
-                                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded"
-                                                @click="startEdit(p)">
-                                                Edit
-                                            </button>
-                                            <button
-                                                class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded"
-                                                @click="deletePayment(p.id)">
-                                                Delete
-                                            </button>
-                                            <!-- <button class="bg-gray-200 hover:bg-gray-300 text-xs px-3 py-1 rounded"
-                                                @click="openInstallmentsTab(p.id)">
-                                                View Installments
-                                            </button> -->
-                                        </template>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Payment Type *</label>
+              <select v-model="newPayment.payment_type" class="form-control w-full border p-2 rounded">
+                <option value="installments">Installments</option>
+                <option value="cash">Cash</option>
+              </select>
             </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Overall Status *</label>
+              <select v-model="newPayment.overall_status" class="form-control w-full border p-2 rounded">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-4 text-right">
+            <button @click="createPayment" :disabled="creating"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50">
+              {{ creating ? 'Saving…' : 'Create Payment' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 🟣 CASE 2: Payment exists -->
+        <div v-else class="space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <label class="block text-gray-600 text-xs mb-1">Total Price</label>
+              <input v-model.number="payment.editable.total_price" type="number" class="w-full border p-2 rounded" />
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs mb-1">Installments Count</label>
+              <input v-model.number="payment.editable.installments_count" type="number"
+                class="w-full border p-2 rounded" />
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs mb-1">Type</label>
+              <select v-model="payment.editable.payment_type" class="w-full border p-2 rounded">
+                <option value="installments">Installments</option>
+                <option value="cash">Cash</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs mb-1">Status</label>
+              <select v-model="payment.editable.overall_status" class="w-full border p-2 rounded">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <button @click="savePayment" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+              Save Changes
+            </button>
+            <button @click="deletePayment(payment.id)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
 
       <!-- ===================== Installments Tab ===================== -->
       <div v-if="tab === 'installments'" class="space-y-4">
-        <!-- Payment Selector -->
-        <div class="flex gap-3 items-end">
-          <div class="flex-1">
-            <label class="block text-xs text-gray-500 mb-1">Select Payment</label>
-            <select v-model="selectedPaymentId" class="form-input" @change="fetchInstallments">
-              <option value="">-- Choose Payment --</option>
-              <option v-for="p in payments" :key="p.id" :value="p.id">
-                Payment  {{ p.total_price }} EGP
-              </option>
-            </select>
-          </div>
-
-          <button
-            :disabled="!selectedPaymentId"
-            @click="openAddInstallmentModal"
-            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-          >
+        <!-- Single Payment Installments -->
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Installments</h3>
+          <button :disabled="!payment" @click="openAddInstallmentModal"
+            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50">
             + Add Installment
           </button>
         </div>
+
 
         <!-- Installments Table -->
         <div v-if="selectedPaymentId" class="bg-white rounded-xl shadow-sm p-4">
           <div class="flex justify-between items-center mb-3">
             <h3 class="font-semibold text-lg text-gray-800">Installments</h3>
-            <button
-              @click="fetchInstallments"
-              class="px-3 py-1 text-sm border rounded-lg hover:bg-gray-50"
-            >
+            <button @click="fetchInstallments" class="px-3 py-1 text-sm border rounded-lg hover:bg-gray-50">
               Refresh
             </button>
           </div>
@@ -200,11 +159,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="i in installments"
-                :key="i.id"
-                class="hover:bg-gray-50 transition"
-              >
+              <tr v-for="i in installments" :key="i.id" class="hover:bg-gray-50 transition">
                 <td class="p-2 border">{{ i.id }}</td>
                 <td class="p-2 border">{{ i.title_en }}</td>
                 <td class="p-2 border">{{ i.amount }}</td>
@@ -212,34 +167,25 @@
                 <td class="p-2 border">{{ i.status }}</td>
                 <td class="p-2 border">{{ i.due_date || '-' }}</td>
                 <td class="p-2 border text-center">
-                  <button
-                    @click="openInvoicesModal(i)"
-                    class="text-blue-600 underline text-xs hover:text-blue-800"
-                  >
+                  <button @click="openInvoicesModal(i)" class="text-blue-600 underline text-xs hover:text-blue-800">
                     View
                   </button>
                 </td>
                 <td class="p-2 border flex gap-2">
-                  <button
-                    @click="openEditInstallmentModal(i)"
-                    class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
+                  <button @click="openEditInstallmentModal(i)"
+                    class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
                     Edit
                   </button>
-                  <button
-                    @click="deleteInstallment(i.id)"
-                    class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-                  >
+                  <button @click="deleteInstallment(i.id)"
+                    class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">
                     Delete
                   </button>
                   <!-- logs -->
-<button
-  @click="openLogs(i.id)"
-  class="px-3 py-1 text-xs border rounded text-gray-700 border-gray-200 hover:bg-gray-50 flex items-center gap-1"
->
-  <i class="fa fa-clock text-blue-500"></i>
-  Logs
-</button>
+                  <button @click="openLogs(i.id)"
+                    class="px-3 py-1 text-xs border rounded text-gray-700 border-gray-200 hover:bg-gray-50 flex items-center gap-1">
+                    <i class="fa fa-clock text-blue-500"></i>
+                    Logs
+                  </button>
 
                 </td>
               </tr>
@@ -252,42 +198,28 @@
         </div>
       </div>
 
-        </div>
-            <!-- ========== Add/Edit Installment Modal ========== -->
-    <InstallmentModal
-      v-if="showInstallmentModal"
-      :mode="modalMode"
-      :data="selectedInstallment"
-      :paymentId="selectedPaymentId"
-      @close="closeInstallmentModal"
-      @saved="fetchInstallments"
-    />
+    </div>
+    <!-- ========== Add/Edit Installment Modal ========== -->
+    <InstallmentModal v-if="showInstallmentModal" :mode="modalMode" :data="selectedInstallment"
+      :paymentId="selectedPaymentId" @close="closeInstallmentModal" @saved="fetchInstallments" />
 
     <!-- ========== Invoice Modal ========== -->
-    <InvoiceModal
-      v-if="showInvoiceModal"
-      :installment="selectedInvoiceInstallment"
-      @close="closeInvoiceModal"
-    />
+    <InvoiceModal v-if="showInvoiceModal" :installment="selectedInvoiceInstallment" @close="closeInvoiceModal" />
 
-    <PaymentLogsModal
-  v-if="showLogs"
-  :logs="logs"
-  @close="showLogs = false"
-/>
+    <PaymentLogsModal v-if="showLogs" :logs="logs" @close="showLogs = false" />
 
 
-    </AuthenticatedLayout>
+  </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import UnitNav from '@/Components/UnitNav.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import {
-    UnitPaymentsApi,
-    buildUnitPaymentCreateFD,
-    buildUnitPaymentUpdateFD,
+  UnitPaymentsApi,
+  buildUnitPaymentCreateFD,
+  buildUnitPaymentUpdateFD,
 } from '@/Services/unitPayments'
 import { UnitInstallmentsApi } from '@/Services/unitInstallments'
 import { router } from '@inertiajs/vue3'
@@ -299,18 +231,26 @@ import { UnitPaymentLogsApi } from '@/Services/unitPaymentLogs'
 const props = defineProps({ unitId: Number })
 const tab = ref('payments')
 
-const payments = ref([])
+const payment = ref(null)
 const newPayment = ref({
-    total_price: '',
-    installments_count: '',
-    payment_type: '',
-    overall_status: 'pending',
+  total_price: '',
+  installments_count: '',
+  payment_type: 'installments',
+  overall_status: 'pending',
 })
 const creating = ref(false)
-const loadingPayments = ref(false)
+const loadingPayment = ref(false)
+
 const showLogs = ref(false)
 const logs = ref([])
 // const selectedPaymentId = ref(null)
+
+function setEditablePayment(p) {
+  payment.value = {
+    ...p,
+    editable: { ...p },
+  }
+}
 
 async function openLogs(id) {
   selectedPaymentId.value = id
@@ -325,50 +265,64 @@ async function openLogs(id) {
   }
 }
 
-async function fetchPayments() {
-    loadingPayments.value = true
-    try {
-        const res = await UnitPaymentsApi.list(props.unitId)
-        payments.value = res.map(p => ({
-            ...p,
-            total_price: Number(p.total_price) || 0, // ✅ force numeric
-            installments_count: Number(p.installments_count) || 0,
-            isEditing: false,
-            editable: { ...p },
-        }))
-    } finally {
-        loadingPayments.value = false
+async function fetchPayment() {
+  loadingPayment.value = true
+  try {
+    const res = await UnitPaymentsApi.list(props.unitId)
+
+    if (Array.isArray(res) && res.length > 0) {
+      setEditablePayment(res[0])
+    } else if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+      setEditablePayment(res.data[0])
+    } else {
+      payment.value = null
     }
+
+  } catch (e) {
+    console.error("Failed to fetch payment:", e)
+    payment.value = null
+  } finally {
+    loadingPayment.value = false
+  }
 }
+
+
 
 
 async function createPayment() {
-    creating.value = true
-    const fd = buildUnitPaymentCreateFD(props.unitId, [newPayment.value])
-    await UnitPaymentsApi.create(fd)
-    await fetchPayments()
-    newPayment.value = { total_price: '', installments_count: '', payment_type: '', overall_status: 'pending' }
-    creating.value = false
+  creating.value = true
+  const fd = buildUnitPaymentCreateFD(props.unitId, [newPayment.value])
+  await UnitPaymentsApi.create(fd)
+  await fetchPayment()
+  creating.value = false
 }
 
+async function savePayment() {
+  if (!payment.value) return
+  const fd = buildUnitPaymentUpdateFD(payment.value.editable)
+  await UnitPaymentsApi.update(payment.value.id, fd)
+  await fetchPayment()
+}
+
+
 function startEdit(p) {
-    p.isEditing = true
-    p.editable = { ...p }
+  p.isEditing = true
+  p.editable = { ...p }
 }
 function cancelEdit(p) {
-    p.isEditing = false
+  p.isEditing = false
 }
 async function saveEdit(p) {
-    const fd = buildUnitPaymentUpdateFD(p.editable)
-    await UnitPaymentsApi.update(p.id, fd)
-    p.isEditing = false
-    await fetchPayments()
+  const fd = buildUnitPaymentUpdateFD(p.editable)
+  await UnitPaymentsApi.update(p.id, fd)
+  p.isEditing = false
+  await fetchPayments()
 }
 async function deletePayment(id) {
-    if (confirm('Delete this payment?')) {
-        await UnitPaymentsApi.remove(id)
-        await fetchPayments()
-    }
+  if (confirm('Delete this payment?')) {
+    await UnitPaymentsApi.remove(id)
+    await fetchPayments()
+  }
 }
 
 function formatPrice(val) {
@@ -379,12 +333,12 @@ function formatPrice(val) {
 
 
 function openInstallmentsTab(paymentId) {
-    router.visit(route('units.installments', { unitId: props.unitId, unitPaymentId: paymentId }))
+  router.visit(route('units.installments', { unitId: props.unitId, unitPaymentId: paymentId }))
 }
 
 
 /* --------------------- Installments --------------------- */
-const selectedPaymentId = ref('')
+const selectedPaymentId = computed(() => payment.value?.id || null)
 const installments = ref([])
 const loadingInstallments = ref(false)
 
@@ -397,6 +351,7 @@ async function fetchInstallments() {
     loadingInstallments.value = false
   }
 }
+
 
 async function deleteInstallment(id) {
   if (!confirm('Delete this installment?')) return
@@ -439,6 +394,6 @@ function closeInvoiceModal() {
 }
 
 /* Init */
-onMounted(fetchPayments)
+onMounted(fetchPayment)
 
 </script>

@@ -103,84 +103,187 @@
       </div>
 
       <!-- Details Modal -->
-      <div v-if="showDetails" class="fixed inset-0 z-50 modal-top">
-        <div class="absolute inset-0 bg-black/40" @click="closeDetails" />
-        <div class="relative mx-auto w-full max-w-5xl p-4 sm:p-6 h-full flex items-center justify-center">
-          <div class="bg-white rounded-2xl shadow-xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 bg-white border-b px-5 py-3 rounded-t-2xl flex items-center justify-between">
-              <h3 class="text-lg font-bold">Unit Details</h3>
-              <button @click="closeDetails" class="text-gray-500 hover:text-gray-800">✕</button>
+  <div v-if="showDetails" class="fixed inset-0 z-50 modal-top">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeDetails"></div>
+
+  <div
+    class="relative mx-auto w-full max-w-5xl p-6 sm:p-8 h-full flex items-center justify-center"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto transition-all"
+    >
+      <!-- Header -->
+      <div
+        class="sticky top-0 bg-gradient-to-r from-yellow-50 to-yellow-100 border-b px-6 py-4 rounded-t-2xl flex items-center justify-between"
+      >
+        <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          Unit Details
+        </h3>
+        <button
+          @click="closeDetails"
+          class="text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full p-2"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="details.loading" class="p-5 text-sm text-gray-500">Loading…</div>
+
+      <!-- Content -->
+      <div v-else class="p-6 space-y-6">
+        <!-- Cover Section -->
+        <div class="relative rounded-xl overflow-hidden shadow-md h-64 sm:h-72 md:h-80">
+          <img
+            v-if="d.cover_image_url"
+            :src="d.cover_image_url"
+            alt="Unit Cover"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+          <div
+            v-else
+            class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm"
+          >
+            No Cover Image
+          </div>
+
+          <!-- Overlay text -->
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white"
+          >
+            <div class="text-2xl font-bold">
+              {{ d.name_en || 'Unnamed Unit' }}
             </div>
-
-            <div v-if="details.loading" class="p-5 text-sm text-gray-500">Loading…</div>
-
-            <div v-else class="p-5 space-y-5">
-              <div class="grid md:grid-cols-3 gap-4">
-                <div class="md:col-span-2 space-y-3">
-                  <div class="text-xl font-semibold text-gray-900">
-                    {{ d.name_en || '—' }} <span v-if="d.name_ar" class="text-gray-400">/</span>
-                    <span dir="rtl">{{ d.name_ar }}</span>
-                  </div>
-
-                  <div class="text-sm text-gray-600">
-                    <div><span class="font-medium">Location:</span> {{ d.location || '—' }}</div>
-                    <div><span class="font-medium">Period:</span> {{ d.start_date || '—' }} → {{ d.end_date || '—' }}</div>
-                    <div><span class="font-medium">Status:</span> {{ d.status || '—' }}</div>
-                  </div>
-
-                  <div class="space-y-1">
-                    <div class="text-sm text-gray-800 font-semibold">Description (EN)</div>
-                    <div class="text-sm text-gray-700 whitespace-pre-wrap">{{ d.description_en || '—' }}</div>
-                  </div>
-
-                  <div class="space-y-1">
-                    <div class="text-sm text-gray-800 font-semibold">Description (AR)</div>
-                    <div class="text-sm text-gray-700 whitespace-pre-wrap" dir="rtl">{{ d.description_ar || '—' }}</div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2">
-                    <Link :href="docsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Docs</Link>
-                    <Link :href="galleryPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Gallery</Link>
-                    <Link :href="drawingPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Drawing</Link>
-                    <Link :href="reportsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Reports</Link>
-                    <Link :href="phasesPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Phases</Link>
-                    <Link :href="timelinePath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Timeline</Link>
-                    <Link :href="unitContractorsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Assignments</Link>
-                    <Link :href="unitPaymentsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Payments & Installments</Link>
-                  </div>
-                </div>
-
-                <div class="space-y-3">
-                  <div class="aspect-[4/3] bg-gray-50 rounded border relative">
-                    <img v-if="d.cover_image_url" :src="d.cover_image_url" class="absolute inset-0 w-full h-full object-cover rounded" />
-                    <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">No Cover</div>
-                  </div>
-
-                  <div>
-                    <div class="text-sm font-semibold text-gray-800 mb-2">Gallery</div>
-                    <div class="grid grid-cols-3 gap-2">
-                      <div v-for="g in (d.gallery || [])" :key="g.id" class="aspect-[4/3] bg-gray-50 rounded border relative">
-                        <img :src="g.image_url" class="absolute inset-0 w-full h-full object-cover rounded" />
-                      </div>
-                      <div v-if="!(d.gallery && d.gallery.length)" class="text-xs text-gray-500">No images</div>
-                    </div>
-                  </div>
-
-                  <div class="text-xs text-gray-500">
-                    <div><span class="font-medium">Lat:</span> {{ d.lat ?? '—' }}</div>
-                    <div><span class="font-medium">Lng:</span> {{ d.long ?? '—' }}</div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="sticky bottom-0 bg-white border-t px-5 py-3 rounded-b-2xl text-right">
-              <button @click="closeDetails" class="px-3 py-2 border rounded">Close</button>
+            <div
+              v-if="d.name_ar"
+              class="text-sm text-gray-200"
+              dir="rtl"
+            >
+              {{ d.name_ar }}
             </div>
           </div>
         </div>
+
+        <!-- Quick Info -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-gray-50 rounded-lg p-3">
+            <span class="block text-gray-400 text-xs uppercase">Status</span>
+            <span class="font-semibold text-gray-800">{{ d.status || '—' }}</span>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <span class="block text-gray-400 text-xs uppercase">Location</span>
+            <span class="font-semibold text-gray-800">{{ d.location || '—' }}</span>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <span class="block text-gray-400 text-xs uppercase">Duration</span>
+            <span class="font-semibold text-gray-800">
+              {{ d.start_date || '—' }} → {{ d.end_date || '—' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+          <div class="mb-2 text-gray-700 font-semibold text-base">Description (EN)</div>
+          <p class="text-sm text-gray-700 whitespace-pre-wrap mb-4">
+            {{ d.description_en || '—' }}
+          </p>
+
+          <div class="mb-2 text-gray-700 font-semibold text-base">Description (AR)</div>
+          <p class="text-sm text-gray-700 whitespace-pre-wrap" dir="rtl">
+            {{ d.description_ar || '—' }}
+          </p>
+        </div>
+
+        <!-- Gallery -->
+        <div>
+          <div class="text-gray-800 font-semibold mb-3">Gallery</div>
+          <div
+            v-if="d.gallery && d.gallery.length"
+            class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2"
+          >
+            <div
+              v-for="g in d.gallery"
+              :key="g.id"
+              class="aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 border hover:shadow-md transition"
+            >
+              <img
+                :src="g.image_url"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          <div v-else class="text-sm text-gray-500">No images available.</div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 pt-4 border-t"
+        >
+          <Link
+            :href="docsPath(d.id)"
+            class="nav-btn"
+          >
+            📄 Docs
+          </Link>
+          <Link
+            :href="galleryPath(d.id)"
+            class="nav-btn"
+          >
+            🖼️ Gallery
+          </Link>
+          <Link
+            :href="drawingPath(d.id)"
+            class="nav-btn"
+          >
+            ✏️ Drawings
+          </Link>
+          <Link
+            :href="reportsPath(d.id)"
+            class="nav-btn"
+          >
+            📊 Reports
+          </Link>
+          <Link
+            :href="phasesPath(d.id)"
+            class="nav-btn"
+          >
+            🧩 Phases
+          </Link>
+          <Link
+            :href="timelinePath(d.id)"
+            class="nav-btn"
+          >
+            🕒 Timeline
+          </Link>
+          <Link
+            :href="unitContractorsPath(d.id)"
+            class="nav-btn"
+          >
+            👷 Assignments
+          </Link>
+          <Link
+            :href="unitPaymentsPath(d.id)"
+            class="nav-btn"
+          >
+            💰 Payments & Installment
+          </Link>
+        </div>
+
+        <!-- Footer -->
+        <div class="sticky bottom-0 bg-white border-t pt-3 text-right">
+          <button
+            @click="closeDetails"
+            class="px-4 py-2 border rounded-lg hover:bg-gray-100 text-gray-700"
+          >
+            Close
+          </button>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
 
       <!-- Add/Edit Modal (restored) -->
       <div v-if="showModal" class="fixed inset-0 z-50" @keydown.esc="closeModal">
@@ -680,5 +783,10 @@ onMounted(async () => {
 <style scoped>
 .form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500; }
 .back-drop { margin-top: -25px; }
-.modal-top { margin-top: -20px; }
+.modal-top {
+  margin-top: -25px !important;
+}
+.nav-btn {
+  @apply flex items-center justify-center gap-1 px-3 py-2 border rounded-lg text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 hover:shadow transition;
+}
 </style>

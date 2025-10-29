@@ -13,8 +13,8 @@
              flex items-center justify-center gap-2"
       :class="isActive(item) ? 'bg-gray-100 border-gray-300' : 'border-gray-200'"
     >
-      <component v-if="item.icon" :is="item.icon" class="w-4 h-4" />
-      <span class="text-sm font-medium">{{ item.label }}</span>
+      <component v-if="item.icon" :is="item.icon" class="w-4 h-4 text-gray-600" />
+      <span class="text-sm font-medium text-gray-800">{{ item.label }}</span>
     </Link>
   </nav>
 </template>
@@ -22,6 +22,18 @@
 <script setup>
 import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
+
+// ✅ Import icons from lucide-react (these are auto-available in shadcn setup)
+import {
+  FileText,
+  Images,
+  PenTool,
+  BarChart3,
+  Layers,
+  Clock,
+  Users,
+  CreditCard
+} from 'lucide-vue-next'
 
 /**
  * Props
@@ -47,20 +59,22 @@ const hrefs = {
   payments:    id => `/units-management/${id}/payments`,
 }
 
-// labels (you can localize later)
+// ✅ Enhanced with icons
 const items = [
-  { key: 'docs',        label: 'Docs',                 href: hrefs.docs },
-  { key: 'gallery',     label: 'Gallery',              href: hrefs.gallery },
-  { key: 'drawing',     label: 'Drawing',              href: hrefs.drawing },
-  { key: 'reports',     label: 'Reports',              href: hrefs.reports },
-  { key: 'phases',      label: 'Phases',               href: hrefs.phases },
-  { key: 'timeline',    label: 'Timeline',             href: hrefs.timeline },
-  { key: 'assignments', label: 'Assignments',          href: hrefs.assignments },
-  { key: 'payments',    label: 'Payments & Installments', href: hrefs.payments },
+  { key: 'docs',        label: 'Docs',                 href: hrefs.docs,        icon: FileText },
+  { key: 'gallery',     label: 'Gallery',              href: hrefs.gallery,     icon: Images },
+  { key: 'drawing',     label: 'Drawing',              href: hrefs.drawing,     icon: PenTool },
+  { key: 'reports',     label: 'Reports',              href: hrefs.reports,     icon: BarChart3 },
+  { key: 'phases',      label: 'Phases',               href: hrefs.phases,      icon: Layers },
+  { key: 'timeline',    label: 'Timeline',             href: hrefs.timeline,    icon: Clock },
+  { key: 'assignments', label: 'Assignments',          href: hrefs.assignments, icon: Users },
+  { key: 'payments',    label: 'Payments & Installments', href: hrefs.payments, icon: CreditCard },
 ]
 
+// only show selected ones
 const visibleItems = computed(() => items.filter(i => props.show.includes(i.key)))
 
+// responsive columns
 const colsClass = computed(() => {
   const c = props.cols
   if (c === 4) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
@@ -68,12 +82,11 @@ const colsClass = computed(() => {
   return 'grid-cols-1 sm:grid-cols-2' // default 2
 })
 
-// “active” highlight when current URL contains the target path
+// highlight active tab
 const page = usePage()
 function isActive(item) {
   const url = page.url || ''
   const path = item.href(props.unitId)
-  // treat as active if the base segment (without trailing subpaths) matches
   return url.startsWith(path)
 }
 </script>
