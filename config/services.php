@@ -31,4 +31,11 @@ return [
         ],
     ],
 
+'hikvision' => [
+    'username' => env('HIKVISION_USERNAME', 'admin'),
+    'password' => env('HIKVISION_PASSWORD', 'Asad@159'),
+    'port' => env('HIKVISION_PORT', 554),
+],
+
+
 ];
