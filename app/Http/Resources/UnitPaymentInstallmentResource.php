@@ -16,8 +16,8 @@ class UnitPaymentInstallmentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->title,
-            "description" => $this->description ?? null,
+            "title" => getLocalizedValue($this, 'title') ?? $this->title,
+            "description" =>getLocalizedValue($this, 'description') ?? $this->description ?? null,
             "percentage" => $this->percentage,
             "amount" => $this->amount,
             "milestone_date" => $this->milestone_date,
