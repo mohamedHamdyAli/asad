@@ -6,6 +6,9 @@
         <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
 
+      <!-- 🔗 Unit navigation -->
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
+
       <!-- Create (batch) -->
       <div class="bg-white p-4 rounded shadow">
         <h3 class="text-lg font-bold mb-3">Add Reports</h3>
@@ -22,12 +25,7 @@
         </div>
 
         <div class="mt-4">
-          <input
-            type="file"
-            multiple
-            :accept="accepts"
-            @change="onNewFiles"
-          />
+          <input type="file" multiple :accept="accepts" @change="onNewFiles" />
           <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
             {{ newFiles.length }} file(s) selected
           </div>
@@ -64,10 +62,6 @@
             </div>
 
             <div class="p-3 space-y-2 text-sm">
-              <div class="flex items-center justify-between text-xs text-gray-500">
-                <!-- <span>#{{ r.id }}</span> -->
-              </div>
-
               <div>
                 <label class="block text-[11px] text-gray-500">Title (EN)</label>
                 <input v-model="edit[r.id].title.en" class="form-input" type="text" />
@@ -79,11 +73,7 @@
 
               <div class="text-[11px]">
                 <label class="block text-gray-500">Replace File</label>
-                <input
-                  type="file"
-                  :accept="accepts"
-                  @change="onReplaceFile(r.id, $event)"
-                />
+                <input type="file" :accept="accepts" @change="onReplaceFile(r.id, $event)" />
               </div>
 
               <div class="flex gap-2 pt-1">
@@ -109,6 +99,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitReportsApi, buildReportsCreateFD, buildReportsUpdateFD } from '@/Services/unitReports'
 
@@ -116,6 +107,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
+const unitId = computed(() => props.unitId)
 const backToUnits = computed(() => '/units-management')
 
 const accepts =
@@ -126,10 +118,11 @@ const newFiles = ref([])
 const creating = ref(false)
 const createErr = ref('')
 
-const canCreate = computed(() =>
-  !!createForm.value.title.en?.trim() &&
-  !!createForm.value.title.ar?.trim() &&
-  newFiles.value.length > 0
+const canCreate = computed(
+  () =>
+    !!createForm.value.title.en?.trim() &&
+    !!createForm.value.title.ar?.trim() &&
+    newFiles.value.length > 0
 )
 
 function onNewFiles(e) {
@@ -145,7 +138,7 @@ async function createBatch() {
       title: { ...createForm.value.title },
       file: f,
     }))
-    const fd = buildReportsCreateFD(props.unitId, items)
+    const fd = buildReportsCreateFD(unitId.value, items)
     await UnitReportsApi.create(fd)
     await fetchList()
     newFiles.value = []
@@ -166,16 +159,14 @@ const saving = reactive({})
 
 function seedEditState(arr) {
   arr.forEach(r => {
-    edit[r.id] = {
-      title: { en: r.title_en || '', ar: r.title_ar || '' },
-    }
+    edit[r.id] = { title: { en: r.title_en || '', ar: r.title_ar || '' } }
   })
 }
 
 async function fetchList() {
   loading.value = true
   try {
-    const data = await UnitReportsApi.list(props.unitId)
+    const data = await UnitReportsApi.list(unitId.value)
     rows.value = data
     seedEditState(data)
   } finally {
@@ -193,12 +184,8 @@ async function saveOne(id) {
   if (!item) return
   saving[id] = true
   try {
-    const items = [{
-      id,
-      title: item.title,
-      file: pendingFile[id],
-    }]
-    const fd = buildReportsUpdateFD(props.unitId, items)
+    const items = [{ id, title: item.title, file: pendingFile[id] }]
+    const fd = buildReportsUpdateFD(unitId.value, items)
     await UnitReportsApi.update(fd)
     delete pendingFile[id]
     await fetchList()
@@ -215,14 +202,6 @@ async function remove(id) {
   await UnitReportsApi.remove(id)
   await fetchList()
 }
-
-function autoGrow(e) {
-  const el = e?.target
-  if (!el) return
-  el.style.height = 'auto'
-  el.style.height = `${el.scrollHeight}px`
-}
-
 
 onMounted(fetchList)
 </script>

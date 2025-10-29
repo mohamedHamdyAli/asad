@@ -1,8 +1,10 @@
 <template>
     <AuthenticatedLayout>
         <div class="container mx-auto p-6">
+               <!-- 🔗 Unit navigation -->
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
             <!-- Tabs -->
-            <div class="flex border-b mb-6">
+            <div class="flex border-b mb-6 mt-6 items-center">
                 <button :class="tab === 'payments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
                     class="px-4 py-2 font-medium" @click="tab = 'payments'">
                     Payments
@@ -280,6 +282,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, onMounted } from 'vue'
 import {
     UnitPaymentsApi,

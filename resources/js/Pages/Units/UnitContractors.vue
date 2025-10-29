@@ -6,6 +6,7 @@
         <h2 class="text-2xl font-bold text-gray-800">Assign Contractors & Consultants</h2>
         <a :href="backToUnits" class="px-3 py-1 border rounded">← Back to Units</a>
       </div>
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
 
       <!-- Tabs -->
       <div class="flex border-b">
@@ -49,6 +50,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, onMounted, computed } from 'vue'
 import AssignmentsList from './Partials/AssignmentsList.vue'
 import { UnitContractorsApi } from '@/Services/unitContractors'

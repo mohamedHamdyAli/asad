@@ -10,6 +10,10 @@
         </a>
       </div>
 
+       <!-- 🔗 Unit navigation -->
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
+
+
       <!-- Create / Upsert Phase -->
       <div class="bg-white p-6 rounded-2xl shadow space-y-4">
         <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -134,6 +138,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitPhasesApi, buildCreatePayload, buildUpdatePayload } from '@/Services/unitPhases'
 

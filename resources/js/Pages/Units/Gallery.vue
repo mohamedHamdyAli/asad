@@ -6,6 +6,10 @@
         <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
 
+       <!-- 🔗 Unit navigation -->
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
+
+
       <!-- Create (batch) -->
       <div class="bg-white p-4 rounded shadow">
         <h3 class="text-lg font-bold mb-3">Add Images</h3>
@@ -166,6 +170,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitGalleryApi, buildGalleryCreateFD, buildGalleryUpdateFD } from '@/Services/unitGallery'
 import FolderPicker from '@/Components/FolderPicker.vue'

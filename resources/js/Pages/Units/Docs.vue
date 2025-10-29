@@ -5,6 +5,8 @@
         <h2 class="text-2xl font-bold text-dash-title">Unit Documents</h2>
         <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
+ <!-- 🔗 Unit navigation -->
+      <UnitNav :unit-id="Number(unitId)" :cols="2" />
 
       <!-- Create (batch) -->
       <div class="bg-white p-4 rounded shadow">
@@ -185,6 +187,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitDocsApi, buildDocsCreateFD, buildDocsUpdateFD } from '@/Services/unitDocs'
 import FolderPicker from '@/Components/FolderPicker.vue'
