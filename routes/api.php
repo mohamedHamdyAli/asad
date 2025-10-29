@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Controllers\Api\UnitLiveCameraController;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
 use App\Http\Controllers\Admin\AdminUnitPaymentLogController;
@@ -56,6 +57,8 @@ Route::prefix('user')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::post('sendResetLinkEmail', [UserController::class, 'sendResetLinkEmail']);
     Route::post('resetPassword', [UserController::class, 'resetPassword']);
+    // Route::get('/unit-live-camera/{unitId}/live', [UnitLiveCameraController::class, 'getLiveStreamLink']);
+
 
     // Protected routes with middleware
     Route::middleware([CheckUserAuthentication::class])->group(function () {

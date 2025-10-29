@@ -18,7 +18,7 @@ class UnitLiveCameraRequest extends FormRequest
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',
             'data.*.ip_address' => 'required|ip',
-            'data.*.camera_link' => 'required|url',
+            'data.*.camera_link' => 'nullable|url',
         ] : [
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',

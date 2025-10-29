@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('Languages', function (Blueprint $table) {
+        Schema::table('languages', function (Blueprint $table) {
              $table->string('web_file')->after('vendor_file')->nullable();
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('Languages', function (Blueprint $table) {
+        Schema::table('languages', function (Blueprint $table) {
             $table->dropColumn('web_file');
         });
     }
