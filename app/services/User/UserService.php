@@ -3,6 +3,8 @@
 namespace App\services\User;
 
 use App\Http\Resources\RegisterResource;
+use App\Http\Resources\SettingResource;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,5 +118,9 @@ class UserService
                     : 'Failed to reset password.'
             ),
         };
+    }
+
+    public function setting(){
+        return successReturnData(new SettingResource(Setting::all()), 'data sent successfully');
     }
 }

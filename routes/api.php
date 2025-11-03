@@ -57,6 +57,7 @@ Route::prefix('user')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::post('sendResetLinkEmail', [UserController::class, 'sendResetLinkEmail']);
     Route::post('resetPassword', [UserController::class, 'resetPassword']);
+    Route::get('setting', [UserController::class, 'setting']);
     // Route::get('/unit-live-camera/{unitId}/live', [UnitLiveCameraController::class, 'getLiveStreamLink']);
 
 
