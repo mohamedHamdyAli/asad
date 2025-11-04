@@ -9,6 +9,7 @@ use App\Http\Middleware\CheckUserAuthentication;
 use App\Http\Controllers\Api\UnitLiveCameraController;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminUnitPaymentLogController;
 use App\Http\Controllers\Admin\UnitPaymentInstallmentController;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
@@ -339,4 +340,11 @@ Route::prefix('unit-payments')->group(function () {
 
     Route::get('/installment/{installmentId}/logs', [AdminUnitPaymentLogController::class, 'getInstallmentLogs'])
         ->name('unit-payment.logs.installment');
+});
+
+Route::group(['prefix' => 'notifications'], static function () {
+    Route::get('/', [AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/create', [AdminNotificationController::class, 'store'])->name('notifications.store');
+    Route::get('/show/{id}', [AdminNotificationController::class, 'show'])->name('notifications.show');
+    Route::delete('/delete/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.delete');
 });

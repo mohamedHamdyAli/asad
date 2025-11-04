@@ -34,12 +34,18 @@ trait NotificationTrait
         $title = $data['title'];
         $body  = $data['message'];
         $user  = $data['user'];
+
         $arr = [
-            'user_id'     => $user->id,
-            // 'type'   => $user->role,
-            'title'         => $title,
-            'body'          => $body,
+            'user_id' => $user->id,
+            'title'   => $title,
+            'body'    => $body,
         ];
+
+
+        // restrict guest type
+        if (!empty($user->role) && $user->role !== 'guest') {
+            $arr['type'] = $user->role;
+        }
 
         $notification = Notification::create($arr);
         $this->devicesFcm($notification, $data);
@@ -52,14 +58,14 @@ trait NotificationTrait
         $user  = $data['user'];
         $arr = [
             'user_id'     => $user->id,
-            // 'type'   => $user->role,
+            'type'   => $user->role,
             'title'         => $title,
             'body'          => $body,
         ];
 
         $notification = Notification::updateOrCreate([
             'user_id'     => $user->id,
-            // 'type'   => $user->role,
+            'type'   => $user->role,
             'title'         => $title,
             'body'          => $body,
         ], [$arr]);
