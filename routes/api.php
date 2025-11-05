@@ -41,11 +41,7 @@ use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsult
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
-
-
-
-
-
+use App\Http\Controllers\Api\NotificationsController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -60,6 +56,7 @@ Route::prefix('user')->group(function () {
     Route::post('resetPassword', [UserController::class, 'resetPassword']);
     Route::get('setting', [UserController::class, 'setting']);
     // Route::get('/unit-live-camera/{unitId}/live', [UnitLiveCameraController::class, 'getLiveStreamLink']);
+
 
 
     // Protected routes with middleware
@@ -81,6 +78,12 @@ Route::prefix('user')->group(function () {
         Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
         Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
 
+
+        // nontfication routes
+        Route::post('send-device-info', [NotificationsController::class, 'sendDeviceInfo']);
+        Route::post('delete-notification', [NotificationsController::class, 'deleteNotification']);
+        Route::post('seen-notification', [NotificationsController::class, 'seenNotification']);
+        Route::get('get-user-notification', [NotificationsController::class, 'getUserNotification']);
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
@@ -98,7 +101,7 @@ Route::prefix('user')->group(function () {
 
 Route::group(['prefix' => 'language'], static function () {
     Route::get('/list', [AdminLanguageController::class, 'index'])->name('language.index');
-     Route::get('/one/{id}', [AdminLanguageController::class, 'one'])->name('language.one');
+    Route::get('/one/{id}', [AdminLanguageController::class, 'one'])->name('language.one');
     Route::post('/create', [AdminLanguageController::class, 'store'])->name('language.store');
     Route::post('/update/{id}', [AdminLanguageController::class, 'update'])->name('language.update');
     Route::get('/show/{id}', [AdminLanguageController::class, 'show'])->name('language.show');
