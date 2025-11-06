@@ -4,7 +4,7 @@ namespace App\services\Notifications;
 
 use App\Models\User;
 use App\Models\Notification;
-use App\Trait\Notifications\NotificationTrait;
+use App\Trait\notifications\NotificationTrait;
 use Illuminate\Support\Facades\DB;
 
 class NotificationsCrudService
