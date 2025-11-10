@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\UnitLiveCameraController;
+use App\Http\Controllers\Admin\UnitPhaseNoteController;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
 use App\Http\Controllers\Admin\AdminNotificationController;
@@ -41,7 +43,6 @@ use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsult
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
-use App\Http\Controllers\Api\NotificationsController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -300,6 +301,15 @@ Route::prefix('unit-quote-responses')->group(function () {
     Route::get('/show/{id}', [AdminUnitQuoteResponseController::class, 'show'])->name('unit-quote-responses.show');
     Route::post('/update/{id}', [AdminUnitQuoteResponseController::class, 'update'])->name('unit-quote-responses.update');
     Route::delete('/delete/{id}', [AdminUnitQuoteResponseController::class, 'destroy'])->name('unit-quote-responses.delete');
+});
+
+
+Route::prefix('unit-phase-notes')->group(function () {
+    Route::get('/', [UnitPhaseNoteController::class, 'index'])->name('unit-phase-notes.index');
+    Route::post('/create', [UnitPhaseNoteController::class, 'store'])->name('unit-phase-notes.store');
+    Route::get('/show/{id}', [UnitPhaseNoteController::class, 'show'])->name('unit-phase-notes.show');
+    Route::post('/update/{id}', [UnitPhaseNoteController::class, 'update'])->name('unit-phase-notes.update');
+    Route::delete('/delete/{id}', [UnitPhaseNoteController::class, 'destroy'])->name('unit-phase-notes.delete');
 });
 
 
