@@ -32,6 +32,10 @@ class UserController extends Controller
     {
        return $this->userService->resetPassword($request->validated());
     }
+    public function profile()
+    {
+       return $this->userService->UserProfile();
+    }
     public function setting()
     {
        return $this->userService->setting();

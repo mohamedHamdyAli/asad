@@ -3,6 +3,7 @@
 namespace App\services\Unit;
 
 use App\Models\Unit;
+use App\Models\UnitIssue;
 use App\Models\UnitPhaseNote;
 use App\Models\UnitContractor;
 use App\Http\Resources\UnitPhaseResource;
@@ -196,5 +197,25 @@ class UnitApiService
         }
 
         return successReturnData(ConsultantResource::collection($consultants), 'Data Fetched Successfully');
+    }
+
+
+    public function reportUnitIssue($request)
+    {
+        $user = userAuth();
+        $unit = Unit::find($request['unit_id']);
+
+        if (!$unit) {
+            return failReturnMsg('Unit not found');
+        }
+
+        $issue = UnitIssue::create([
+            'user_id' => $user->id,
+            'unit_id' => $unit->id,
+            'title' => $request['title'],
+            'description' => $request['description'],
+        ]);
+
+        return  returnSuccessMsg('Issue reported successfully');
     }
 }

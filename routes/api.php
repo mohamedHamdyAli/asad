@@ -78,7 +78,11 @@ Route::prefix('user')->group(function () {
         Route::get('get-all-installments', [PaymentController::class, 'allInstallments']);
         Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
         Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
+        Route::post('report-unit-issue', [ApiUnitController::class, 'reportUnitIssue']);
 
+
+        // profile
+        Route::get('profile', [UserController::class, 'profile']);
 
         // nontfication routes
         Route::post('send-device-info', [NotificationsController::class, 'sendDeviceInfo']);

@@ -8,6 +8,7 @@ use App\Http\Requests\Api\UnitIdRequest;
 use App\Http\Requests\Api\UserIdRequest;
 use App\Http\Requests\Api\PhaseNoteRequest;
 use App\Http\Resources\UnitDetailsResource;
+use App\Http\Requests\Api\ReportIssueRequest;
 use App\Http\Resources\FolderWithDocumentsResource;
 
 class UnitController extends Controller
@@ -67,5 +68,10 @@ class UnitController extends Controller
     public function getUnitConsultants(UnitIdRequest $request)
     {
         return $this->unitService->getUnitConsultants($request->validated());
+    }
+
+    public function reportUnitIssue(ReportIssueRequest $request)
+    {
+        return $this->unitService->reportUnitIssue($request->validated());
     }
 }
