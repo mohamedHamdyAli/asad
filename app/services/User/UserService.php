@@ -2,19 +2,20 @@
 
 namespace App\services\User;
 
-use App\Http\Resources\RegisterResource;
-use App\Http\Resources\SettingResource;
-use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Setting;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
+use App\Http\Resources\SettingResource;
+use App\Http\Resources\RegisterResource;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 
 class UserService
 {
@@ -118,6 +119,11 @@ class UserService
                     : 'Failed to reset password.'
             ),
         };
+    }
+
+    public function UserProfile(){
+        $user = userAuth();
+        return successReturnData(new UserResource($user), 'profile fetched successfully');
     }
 
     public function setting(){
