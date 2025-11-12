@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\services\User\UserService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ForgotPasswordRequest;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Requests\Api\ResetPasswordRequest;
-use App\services\User\UserService;
+use App\Http\Requests\Api\UpdateProfileRequest;
+use App\Http\Requests\Api\ForgotPasswordRequest;
 
 class UserController extends Controller
 {
@@ -30,14 +31,20 @@ class UserController extends Controller
     }
     public function resetPassword(ResetPasswordRequest $request)
     {
-       return $this->userService->resetPassword($request->validated());
+        return $this->userService->resetPassword($request->validated());
     }
     public function profile()
     {
-       return $this->userService->UserProfile();
+        return $this->userService->UserProfile();
     }
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        return $this->userService->updateProfile($request->validated());
+    }
+
     public function setting()
     {
-       return $this->userService->setting();
+        return $this->userService->setting();
     }
 }

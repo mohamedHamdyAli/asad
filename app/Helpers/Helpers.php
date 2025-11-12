@@ -2,6 +2,7 @@
 
 use App\Models\Folder;
 use App\Models\Setting;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Storage;
 
@@ -221,6 +222,20 @@ if (!function_exists('getFolderName')) {
         $name = Folder::where('id', $id)->first()->name->en ?? null;
 
         return $name ? preg_replace('/\s+/', '', $name) : null;
+    }
+}
+
+if (!function_exists('uploadOrUpdateImage')) {
+    function uploadOrUpdateImage(?UploadedFile $image, string $directory, ?string $existingImagePath = null): ?string
+    {
+        if ($image) {
+            if ($existingImagePath && Storage::disk('public')->exists($existingImagePath)) {
+                Storage::disk('public')->delete($existingImagePath);
+            }
+            return $image->store($directory, 'public');
+        }
+
+        return $existingImagePath;
     }
 }
 

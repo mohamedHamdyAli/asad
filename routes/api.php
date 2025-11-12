@@ -83,6 +83,8 @@ Route::prefix('user')->group(function () {
 
         // profile
         Route::get('profile', [UserController::class, 'profile']);
+        Route::post('update-profile', [UserController::class, 'updateProfile']);
+
 
         // nontfication routes
         Route::post('send-device-info', [NotificationsController::class, 'sendDeviceInfo']);

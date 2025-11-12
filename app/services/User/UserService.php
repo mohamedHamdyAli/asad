@@ -121,12 +121,36 @@ class UserService
         };
     }
 
-    public function UserProfile(){
+    public function UserProfile()
+    {
         $user = userAuth();
         return successReturnData(new UserResource($user), 'profile fetched successfully');
     }
 
-    public function setting(){
+    public function updateProfile($data)
+    {
+        $user = userAuth();
+
+        return DB::transaction(function () use ($user, $data) {
+            $filteredData = array_filter($data, function ($value) {
+                return !is_null($value);
+            });
+            if (isset($filteredData['profile_image'])) {
+                $filteredData['profile_image'] = uploadOrUpdateImage(
+                    $filteredData['profile_image'],
+                    'users/profile_images/',
+                    $user->profile_image
+                );
+            }
+
+            $user->update($filteredData);
+            return successReturnData(new UserResource($user), 'Profile updated successfully');
+        });
+    }
+
+
+    public function setting()
+    {
         return successReturnData(new SettingResource(Setting::all()), 'data sent successfully');
     }
 }
