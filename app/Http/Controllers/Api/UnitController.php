@@ -74,4 +74,12 @@ class UnitController extends Controller
     {
         return $this->unitService->reportUnitIssue($request->validated());
     }
+
+    public function getUnitData(UnitIdRequest $request)
+{
+    $type = request('type'); 
+
+    return $this->unitService->getUnitData($request->validated(), $type);
+}
+
 }

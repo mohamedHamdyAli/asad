@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsult
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
+use App\Http\Controllers\Admin\UnitIssueController as AdminUnitIssueController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -79,6 +80,8 @@ Route::prefix('user')->group(function () {
         Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
         Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
         Route::post('report-unit-issue', [ApiUnitController::class, 'reportUnitIssue']);
+        Route::get('my-requests', [ApiUnitController::class, 'getUnitData']);
+
 
 
         // profile
@@ -317,6 +320,15 @@ Route::prefix('unit-phase-notes')->group(function () {
     Route::post('/update/{id}', [UnitPhaseNoteController::class, 'update'])->name('unit-phase-notes.update');
     Route::delete('/delete/{id}', [UnitPhaseNoteController::class, 'destroy'])->name('unit-phase-notes.delete');
 });
+
+Route::prefix('unit-issues')->group(function () {
+    Route::get('/', [AdminUnitIssueController::class, 'index'])->name('unit-issues.index');
+    Route::post('/create', [AdminUnitIssueController::class, 'store'])->name('unit-issues.store');
+    Route::get('/show/{id}', [AdminUnitIssueController::class, 'show'])->name('unit-issues.show');
+    Route::post('/update/{id}', [AdminUnitIssueController::class, 'update'])->name('unit-issues.update');
+    Route::delete('/delete/{id}', [AdminUnitIssueController::class, 'destroy'])->name('unit-issues.delete');
+});
+
 
 
 

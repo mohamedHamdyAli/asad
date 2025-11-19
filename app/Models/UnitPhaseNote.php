@@ -9,7 +9,7 @@ class UnitPhaseNote extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['unit_id', 'user_id', 'note'];
+    protected $fillable = ['unit_id', 'user_id', 'note' ,'status'];
 
     public function unit()
     {
