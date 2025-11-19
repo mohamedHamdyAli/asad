@@ -5,13 +5,11 @@ namespace App\services\Unit;
 use App\Models\Unit;
 use App\Models\UnitIssue;
 use App\Models\UnitPhaseNote;
-use App\Models\UnitContractor;
-use App\Http\Resources\UnitPhaseResource;
+use App\Http\Resources\UnitNoteResource;
+use App\Http\Resources\UnitIssueResource;
 use App\Http\Resources\ConsultantResource;
 use App\Http\Resources\ContractorResource;
-use App\Http\Resources\UnitDetailsResource;
 use App\Http\Resources\UnitDocumentResource;
-use App\Http\Resources\UnitPhaseNoteResource;
 use App\Http\Resources\FolderWithDocumentsResource;
 
 class UnitApiService
@@ -217,5 +215,37 @@ class UnitApiService
         ]);
 
         return  returnSuccessMsg('Issue reported successfully');
+    }
+
+
+    public function getUnitData($request, $type)
+    {
+        $unitId = $request['unit_id'];
+
+        if (!in_array($type, ['issues', 'notes'])) {
+            return failReturnMsg('Invalid type. Allowed: issues, notes', 422);
+        }
+
+        if ($type === 'notes') {
+            $notes = UnitPhaseNote::where('unit_id', $unitId)
+                ->with(['user:id,name'])
+                ->get();
+
+            return successReturnData([
+                'type' => 'notes',
+                'items' => UnitNoteResource::collection($notes)
+            ], 'Notes fetched successfully');
+        }
+
+        if ($type === 'issues') {
+            $issues = UnitIssue::where('unit_id', $unitId)
+                ->with(['user:id,name'])
+                ->get();
+
+            return successReturnData([
+                'type' => 'issues',
+                'items' => UnitIssueResource::collection($issues)
+            ], 'Issues fetched successfully');
+        }
     }
 }

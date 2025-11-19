@@ -14,6 +14,7 @@ class UnitIssue extends Model
         'unit_id',
         'title',
         'description',
+        'status',
     ];
     public function user()
     {

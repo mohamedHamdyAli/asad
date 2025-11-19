@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Route;
 
-class UnitPhaseNoteRequest extends FormRequest
+class UnitIssueRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,12 +15,13 @@ class UnitPhaseNoteRequest extends FormRequest
 
     public function rules(): array
     {
-        if (Route::is('unit-phase-notes.store')) {
+        if (Route::is('unit-issues.store')) {
             return [
                 'data' => 'required|array',
                 'data.unit_id' => 'required|exists:units,id',
                 'data.user_id' => 'required|exists:users,id',
-                'data.note'    => 'required|string',
+                'data.title' => 'required|string',
+                'data.description' => 'required|string',
                 'data.status' => 'nullable|string|in:open,close',
             ];
         }
@@ -29,7 +30,8 @@ class UnitPhaseNoteRequest extends FormRequest
             'data' => 'required|array',
             'data.unit_id' => 'nullable|exists:units,id',
             'data.user_id' => 'nullable|exists:users,id',
-            'data.note'    => 'nullable|string',
+            'data.title' => 'nullable|string',
+            'data.description' => 'nullable|string',
             'data.status' => 'nullable|string|in:open,close',
         ];
     }
