@@ -222,29 +222,37 @@ class UnitApiService
     {
         $unitId = $request['unit_id'];
 
+        $user = userAuth();
+
+        if (! $user) {
+            return failReturnMsg('Unauthenticated', 401);
+        }
+
         if (!in_array($type, ['issues', 'notes'])) {
             return failReturnMsg('Invalid type. Allowed: issues, notes', 422);
         }
 
         if ($type === 'notes') {
             $notes = UnitPhaseNote::where('unit_id', $unitId)
+                ->where('user_id', $user->id)
                 ->with(['user:id,name'])
                 ->get();
 
             return successReturnData([
-                'type' => 'notes',
-                'items' => UnitNoteResource::collection($notes)
+                'type'  => 'notes',
+                'items' => UnitNoteResource::collection($notes),
             ], 'Notes fetched successfully');
         }
 
         if ($type === 'issues') {
             $issues = UnitIssue::where('unit_id', $unitId)
+                ->where('user_id', $user->id)
                 ->with(['user:id,name'])
                 ->get();
 
             return successReturnData([
-                'type' => 'issues',
-                'items' => UnitIssueResource::collection($issues)
+                'type'  => 'issues',
+                'items' => UnitIssueResource::collection($issues),
             ], 'Issues fetched successfully');
         }
     }

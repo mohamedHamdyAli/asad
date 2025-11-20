@@ -76,10 +76,9 @@ class UnitController extends Controller
     }
 
     public function getUnitData(UnitIdRequest $request)
-{
-    $type = request('type'); 
+    {
+        $type = request('type'); 
 
-    return $this->unitService->getUnitData($request->validated(), $type);
-}
-
+        return $this->unitService->getUnitData($request->validated(), $type);
+    }
 }
