@@ -108,7 +108,7 @@
         <hr class="my-6 border-gray-200" />
 
         <!-- Admin Approval Step -->
-        <div class="space-y-4">
+        <!-- <div class="space-y-4">
           <h4 class="font-semibold text-gray-800 text-base">Admin Invoice Approval</h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="flex items-center gap-2">
@@ -136,7 +136,7 @@
               ></textarea>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Footer -->
         <div class="flex justify-end mt-6 gap-3">

@@ -215,7 +215,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import UnitNav from '@/Components/UnitNav.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import {
   UnitPaymentsApi,
   buildUnitPaymentCreateFD,
@@ -265,26 +265,29 @@ async function openLogs(id) {
   }
 }
 
+
 async function fetchPayment() {
   loadingPayment.value = true
   try {
     const res = await UnitPaymentsApi.list(props.unitId)
 
-    if (Array.isArray(res) && res.length > 0) {
-      setEditablePayment(res[0])
-    } else if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-      setEditablePayment(res.data[0])
+    if (res?.data?.length > 0 || res?.length > 0) {
+      const p = res.data ? res.data[0] : res[0]
+      setEditablePayment(p)
+      selectedPaymentId.value = p.id 
     } else {
       payment.value = null
+      selectedPaymentId.value = null
     }
+    if (tab.value === 'installments') {
+  await fetchInstallments()
+}
 
-  } catch (e) {
-    console.error("Failed to fetch payment:", e)
-    payment.value = null
   } finally {
     loadingPayment.value = false
   }
 }
+
 
 
 
@@ -316,12 +319,12 @@ async function saveEdit(p) {
   const fd = buildUnitPaymentUpdateFD(p.editable)
   await UnitPaymentsApi.update(p.id, fd)
   p.isEditing = false
-  await fetchPayments()
+  await fetchPayment()
 }
 async function deletePayment(id) {
   if (confirm('Delete this payment?')) {
     await UnitPaymentsApi.remove(id)
-    await fetchPayments()
+    await fetchPayment()
   }
 }
 
@@ -338,7 +341,8 @@ function openInstallmentsTab(paymentId) {
 
 
 /* --------------------- Installments --------------------- */
-const selectedPaymentId = computed(() => payment.value?.id || null)
+// const selectedPaymentId = computed(() => payment.value?.id || null)
+const selectedPaymentId = ref(null)
 const installments = ref([])
 const loadingInstallments = ref(false)
 
@@ -356,6 +360,7 @@ async function fetchInstallments() {
 async function deleteInstallment(id) {
   if (!confirm('Delete this installment?')) return
   await UnitInstallmentsApi.remove(id)
+  await fetchPayment()
   await fetchInstallments()
 }
 
@@ -395,5 +400,12 @@ function closeInvoiceModal() {
 
 /* Init */
 onMounted(fetchPayment)
+
+watch(tab, async (newVal) => {
+  if (newVal === 'installments' && selectedPaymentId.value) {
+    await fetchInstallments()
+  }
+})
+
 
 </script>
