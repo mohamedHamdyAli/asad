@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\services\Unit\UnitApiService;
 use App\Http\Requests\Api\UnitIdRequest;
 use App\Http\Requests\Api\UserIdRequest;
 use App\Http\Requests\Api\PhaseNoteRequest;
 use App\Http\Resources\UnitDetailsResource;
-use App\Http\Resources\FolderWithDocumentsResource;
+use App\Http\Requests\Api\ReportIssueRequest;
 
 class UnitController extends Controller
 {
@@ -67,5 +68,16 @@ class UnitController extends Controller
     public function getUnitConsultants(UnitIdRequest $request)
     {
         return $this->unitService->getUnitConsultants($request->validated());
+    }
+
+    public function reportUnitIssue(ReportIssueRequest $request)
+    {
+        return $this->unitService->reportUnitIssue($request->validated());
+    }
+
+    public function getUnitData(Request $request)
+    {
+        $type = $request->type;
+        return $this->unitService->getUnitData([], $type);
     }
 }

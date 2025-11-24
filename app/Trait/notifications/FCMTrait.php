@@ -55,12 +55,15 @@ trait FCMTrait
 
     private function checkType($token, $data, $types, $lang)
     {
+        $title = $data['title'] ?? '';
+        $body  = $data['body'] ?? ($data['message'] ?? '');
+
         $fixedData = [
             "message" => [
                 "token" => $token,
                 "notification" => [
-                    "title" => $data['title'],
-                    "body"  => $data['body'],
+                    "title" => $title,
+                    "body"  => $body,
                 ],
             ]
         ];
@@ -92,7 +95,7 @@ trait FCMTrait
 
     public function getAccessToken()
     {
-        $serviceAccountFile = storage_path('iplace-firebase.json');
+        $serviceAccountFile = storage_path('firebase-asad.json');
         $client = new Google_Client();
         $client->setAuthConfig($serviceAccountFile);
         $client->addScope('https://www.googleapis.com/auth/firebase.messaging');

@@ -6,9 +6,12 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Middleware\CheckUserAuthentication;
+use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\UnitLiveCameraController;
+use App\Http\Controllers\Admin\UnitPhaseNoteController;
 use App\Http\Middleware\CheckUserAndGuestAuthentication;
 use App\Http\Controllers\Admin\AdminUnitPaymentController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminUnitPaymentLogController;
 use App\Http\Controllers\Admin\UnitPaymentInstallmentController;
 use App\Http\Controllers\Api\UnitController as ApiUnitController;
@@ -40,11 +43,7 @@ use App\Http\Controllers\Admin\Unit\UnitConsultantController as AdminUnitConsult
 use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContractorController;
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
-
-
-
-
-
+use App\Http\Controllers\Admin\UnitIssueController as AdminUnitIssueController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -57,7 +56,9 @@ Route::prefix('user')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::post('sendResetLinkEmail', [UserController::class, 'sendResetLinkEmail']);
     Route::post('resetPassword', [UserController::class, 'resetPassword']);
+    Route::get('setting', [UserController::class, 'setting']);
     // Route::get('/unit-live-camera/{unitId}/live', [UnitLiveCameraController::class, 'getLiveStreamLink']);
+
 
 
     // Protected routes with middleware
@@ -78,7 +79,21 @@ Route::prefix('user')->group(function () {
         Route::get('get-all-installments', [PaymentController::class, 'allInstallments']);
         Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
         Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
+        Route::post('report-unit-issue', [ApiUnitController::class, 'reportUnitIssue']);
+        Route::get('my-requests', [ApiUnitController::class, 'getUnitData']);
 
+
+
+        // profile
+        Route::get('profile', [UserController::class, 'profile']);
+        Route::post('update-profile', [UserController::class, 'updateProfile']);
+
+
+        // nontfication routes
+        Route::post('send-device-info', [NotificationsController::class, 'sendDeviceInfo']);
+        Route::post('delete-notification', [NotificationsController::class, 'deleteNotification']);
+        Route::post('seen-notification', [NotificationsController::class, 'seenNotification']);
+        Route::get('get-user-notification', [NotificationsController::class, 'getUserNotification']);
     });
 
     Route::middleware([CheckUserAndGuestAuthentication::class])->group(function () {
@@ -96,7 +111,7 @@ Route::prefix('user')->group(function () {
 
 Route::group(['prefix' => 'language'], static function () {
     Route::get('/list', [AdminLanguageController::class, 'index'])->name('language.index');
-     Route::get('/one/{id}', [AdminLanguageController::class, 'one'])->name('language.one');
+    Route::get('/one/{id}', [AdminLanguageController::class, 'one'])->name('language.one');
     Route::post('/create', [AdminLanguageController::class, 'store'])->name('language.store');
     Route::post('/update/{id}', [AdminLanguageController::class, 'update'])->name('language.update');
     Route::get('/show/{id}', [AdminLanguageController::class, 'show'])->name('language.show');
@@ -298,6 +313,24 @@ Route::prefix('unit-quote-responses')->group(function () {
 });
 
 
+Route::prefix('unit-phase-notes')->group(function () {
+    Route::get('/', [UnitPhaseNoteController::class, 'index'])->name('unit-phase-notes.index');
+    Route::post('/create', [UnitPhaseNoteController::class, 'store'])->name('unit-phase-notes.store');
+    Route::get('/show/{id}', [UnitPhaseNoteController::class, 'show'])->name('unit-phase-notes.show');
+    Route::post('/update/{id}', [UnitPhaseNoteController::class, 'update'])->name('unit-phase-notes.update');
+    Route::delete('/delete/{id}', [UnitPhaseNoteController::class, 'destroy'])->name('unit-phase-notes.delete');
+});
+
+Route::prefix('unit-issues')->group(function () {
+    Route::get('/', [AdminUnitIssueController::class, 'index'])->name('unit-issues.index');
+    Route::post('/create', [AdminUnitIssueController::class, 'store'])->name('unit-issues.store');
+    Route::get('/show/{id}', [AdminUnitIssueController::class, 'show'])->name('unit-issues.show');
+    Route::post('/update/{id}', [AdminUnitIssueController::class, 'update'])->name('unit-issues.update');
+    Route::delete('/delete/{id}', [AdminUnitIssueController::class, 'destroy'])->name('unit-issues.delete');
+});
+
+
+
 
 Route::prefix('unit-payments')->group(function () {
     // Unit Payments
@@ -338,4 +371,11 @@ Route::prefix('unit-payments')->group(function () {
 
     Route::get('/installment/{installmentId}/logs', [AdminUnitPaymentLogController::class, 'getInstallmentLogs'])
         ->name('unit-payment.logs.installment');
+});
+
+Route::group(['prefix' => 'notifications'], static function () {
+    Route::get('/', [AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/create', [AdminNotificationController::class, 'store'])->name('notifications.store');
+    Route::get('/show/{id}', [AdminNotificationController::class, 'show'])->name('notifications.show');
+    Route::delete('/delete/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.delete');
 });
