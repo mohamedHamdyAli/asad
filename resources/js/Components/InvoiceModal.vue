@@ -1,9 +1,11 @@
 <template>
   <Teleport to="body">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-6 relative animate-fadeIn"
-      >
+   <div
+  class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-6 relative animate-fadeIn
+         max-h-[90vh] overflow-y-auto"
+>
+
         <!-- Close -->
         <button
           @click="$emit('close')"
@@ -227,4 +229,23 @@ function closeImage() {
 .fade-leave-to {
   opacity: 0;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
 </style>

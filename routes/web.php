@@ -73,6 +73,10 @@ Route::get('/units-management/{unitId}/phases', function ($unitId) {
     ]);
 })->name('units.phases');
 
+Route::get('/units-management/{id}/details', function ($id) {
+    return Inertia::render('Units/Details', ['id' => (int) $id]);
+});
+
 
 
 Route::get('/dashboard', function () {

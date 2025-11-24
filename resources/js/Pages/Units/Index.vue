@@ -60,7 +60,17 @@
                 </span>
               </td>
               <td class="px-4 py-2 space-x-2">
-                <button class="px-2 py-1.5 border rounded hover:bg-gray-50" @click="openDetails(u)">Details</button>
+                <!-- <button class="px-2 py-1.5 border rounded hover:bg-gray-50" @click="openDetails(u)">Details</button> -->
+           <a
+  :href="detailsPath(u.id)"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="px-2 py-1.5 border rounded hover:bg-gray-50"
+>
+  Details
+</a>
+
+
                 <button class="px-2 py-1.5 border rounded hover:bg-gray-50" @click="openEdit(u)">Edit</button>
                 <button class="px-2 py-1.5 border rounded text-red-600 hover:bg-red-50" @click="remove(u)">
                   Delete
@@ -86,11 +96,8 @@
               Prev
             </button>
             <span class="text-sm">Page {{ page }}</span>
-            <button
-              class="px-3 py-1.5 border rounded disabled:opacity-50"
-              :disabled="page * pageSize >= filtered.length"
-              @click="page++"
-            >
+            <button class="px-3 py-1.5 border rounded disabled:opacity-50"
+              :disabled="page * pageSize >= filtered.length" @click="page++">
               Next
             </button>
             <select v-model.number="pageSize" class="form-input w-24">
@@ -103,186 +110,129 @@
       </div>
 
       <!-- Details Modal -->
-  <div v-if="showDetails" class="fixed inset-0 z-50 modal-top">
-  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeDetails"></div>
+      <div v-if="showDetails" class="fixed inset-0 z-50 modal-top">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeDetails"></div>
 
-  <div
-    class="relative mx-auto w-full max-w-5xl p-6 sm:p-8 h-full flex items-center justify-center"
-  >
-    <div
-      class="bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto transition-all"
-    >
-      <!-- Header -->
-      <div
-        class="sticky top-0 bg-gradient-to-r from-yellow-50 to-yellow-100 border-b px-6 py-4 rounded-t-2xl flex items-center justify-between"
-      >
-        <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-          Unit Details
-        </h3>
-        <button
-          @click="closeDetails"
-          class="text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full p-2"
-        >
-          ✕
-        </button>
-      </div>
-
-      <!-- Loading -->
-      <div v-if="details.loading" class="p-5 text-sm text-gray-500">Loading…</div>
-
-      <!-- Content -->
-      <div v-else class="p-6 space-y-6">
-        <!-- Cover Section -->
-        <div class="relative rounded-xl overflow-hidden shadow-md h-64 sm:h-72 md:h-80">
-          <img
-            v-if="d.cover_image_url"
-            :src="d.cover_image_url"
-            alt="Unit Cover"
-            class="absolute inset-0 w-full h-full object-cover"
-          />
-          <div
-            v-else
-            class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm"
-          >
-            No Cover Image
-          </div>
-
-          <!-- Overlay text -->
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white"
-          >
-            <div class="text-2xl font-bold">
-              {{ d.name_en || 'Unnamed Unit' }}
-            </div>
+        <div class="relative mx-auto w-full max-w-5xl p-6 sm:p-8 h-full flex items-center justify-center">
+          <div class="bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto transition-all">
+            <!-- Header -->
             <div
-              v-if="d.name_ar"
-              class="text-sm text-gray-200"
-              dir="rtl"
-            >
-              {{ d.name_ar }}
+              class="sticky top-0 bg-gradient-to-r from-yellow-50 to-yellow-100 border-b px-6 py-4 rounded-t-2xl flex items-center justify-between">
+              <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                Unit Details
+              </h3>
+              <button @click="closeDetails"
+                class="text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full p-2">
+                ✕
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div v-if="details.loading" class="p-5 text-sm text-gray-500">Loading…</div>
+
+            <!-- Content -->
+            <div v-else class="p-6 space-y-6">
+              <!-- Cover Section -->
+              <div class="relative rounded-xl overflow-hidden shadow-md h-64 sm:h-72 md:h-80">
+                <img v-if="d.cover_image_url" :src="d.cover_image_url" alt="Unit Cover"
+                  class="absolute inset-0 w-full h-full object-cover" />
+                <div v-else class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
+                  No Cover Image
+                </div>
+
+                <!-- Overlay text -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
+                  <div class="text-2xl font-bold">
+                    {{ d.name_en || 'Unnamed Unit' }}
+                  </div>
+                  <div v-if="d.name_ar" class="text-sm text-gray-200" dir="rtl">
+                    {{ d.name_ar }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Info -->
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <span class="block text-gray-400 text-xs uppercase">Status</span>
+                  <span class="font-semibold text-gray-800">{{ d.status || '—' }}</span>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <span class="block text-gray-400 text-xs uppercase">Location</span>
+                  <span class="font-semibold text-gray-800">{{ d.location || '—' }}</span>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <span class="block text-gray-400 text-xs uppercase">Duration</span>
+                  <span class="font-semibold text-gray-800">
+                    {{ d.start_date || '—' }} → {{ d.end_date || '—' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="bg-white border rounded-xl p-5 shadow-sm">
+                <div class="mb-2 text-gray-700 font-semibold text-base">Description (EN)</div>
+                <p class="text-sm text-gray-700 whitespace-pre-wrap mb-4">
+                  {{ d.description_en || '—' }}
+                </p>
+
+                <div class="mb-2 text-gray-700 font-semibold text-base">Description (AR)</div>
+                <p class="text-sm text-gray-700 whitespace-pre-wrap" dir="rtl">
+                  {{ d.description_ar || '—' }}
+                </p>
+              </div>
+
+              <!-- Gallery -->
+              <div>
+                <div class="text-gray-800 font-semibold mb-3">Gallery</div>
+                <div v-if="d.gallery && d.gallery.length" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                  <div v-for="g in d.gallery" :key="g.id"
+                    class="aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 border hover:shadow-md transition">
+                    <img :src="g.image_url" class="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div v-else class="text-sm text-gray-500">No images available.</div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 pt-4 border-t">
+                <Link :href="docsPath(d.id)" class="nav-btn">
+                📄 Docs
+                </Link>
+                <Link :href="galleryPath(d.id)" class="nav-btn">
+                🖼️ Gallery
+                </Link>
+                <Link :href="drawingPath(d.id)" class="nav-btn">
+                ✏️ Drawings
+                </Link>
+                <Link :href="reportsPath(d.id)" class="nav-btn">
+                📊 Reports
+                </Link>
+                <Link :href="phasesPath(d.id)" class="nav-btn">
+                🧩 Phases
+                </Link>
+                <Link :href="timelinePath(d.id)" class="nav-btn">
+                🕒 Timeline
+                </Link>
+                <Link :href="unitContractorsPath(d.id)" class="nav-btn">
+                👷 Assignments
+                </Link>
+                <Link :href="unitPaymentsPath(d.id)" class="nav-btn">
+                💰 Payments & Installment
+                </Link>
+              </div>
+
+              <!-- Footer -->
+              <div class="sticky bottom-0 bg-white border-t pt-3 text-right">
+                <button @click="closeDetails" class="px-4 py-2 border rounded-lg hover:bg-gray-100 text-gray-700">
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-
-        <!-- Quick Info -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          <div class="bg-gray-50 rounded-lg p-3">
-            <span class="block text-gray-400 text-xs uppercase">Status</span>
-            <span class="font-semibold text-gray-800">{{ d.status || '—' }}</span>
-          </div>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <span class="block text-gray-400 text-xs uppercase">Location</span>
-            <span class="font-semibold text-gray-800">{{ d.location || '—' }}</span>
-          </div>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <span class="block text-gray-400 text-xs uppercase">Duration</span>
-            <span class="font-semibold text-gray-800">
-              {{ d.start_date || '—' }} → {{ d.end_date || '—' }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="bg-white border rounded-xl p-5 shadow-sm">
-          <div class="mb-2 text-gray-700 font-semibold text-base">Description (EN)</div>
-          <p class="text-sm text-gray-700 whitespace-pre-wrap mb-4">
-            {{ d.description_en || '—' }}
-          </p>
-
-          <div class="mb-2 text-gray-700 font-semibold text-base">Description (AR)</div>
-          <p class="text-sm text-gray-700 whitespace-pre-wrap" dir="rtl">
-            {{ d.description_ar || '—' }}
-          </p>
-        </div>
-
-        <!-- Gallery -->
-        <div>
-          <div class="text-gray-800 font-semibold mb-3">Gallery</div>
-          <div
-            v-if="d.gallery && d.gallery.length"
-            class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2"
-          >
-            <div
-              v-for="g in d.gallery"
-              :key="g.id"
-              class="aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 border hover:shadow-md transition"
-            >
-              <img
-                :src="g.image_url"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <div v-else class="text-sm text-gray-500">No images available.</div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 pt-4 border-t"
-        >
-          <Link
-            :href="docsPath(d.id)"
-            class="nav-btn"
-          >
-            📄 Docs
-          </Link>
-          <Link
-            :href="galleryPath(d.id)"
-            class="nav-btn"
-          >
-            🖼️ Gallery
-          </Link>
-          <Link
-            :href="drawingPath(d.id)"
-            class="nav-btn"
-          >
-            ✏️ Drawings
-          </Link>
-          <Link
-            :href="reportsPath(d.id)"
-            class="nav-btn"
-          >
-            📊 Reports
-          </Link>
-          <Link
-            :href="phasesPath(d.id)"
-            class="nav-btn"
-          >
-            🧩 Phases
-          </Link>
-          <Link
-            :href="timelinePath(d.id)"
-            class="nav-btn"
-          >
-            🕒 Timeline
-          </Link>
-          <Link
-            :href="unitContractorsPath(d.id)"
-            class="nav-btn"
-          >
-            👷 Assignments
-          </Link>
-          <Link
-            :href="unitPaymentsPath(d.id)"
-            class="nav-btn"
-          >
-            💰 Payments & Installment
-          </Link>
-        </div>
-
-        <!-- Footer -->
-        <div class="sticky bottom-0 bg-white border-t pt-3 text-right">
-          <button
-            @click="closeDetails"
-            class="px-4 py-2 border rounded-lg hover:bg-gray-100 text-gray-700"
-          >
-            Close
-          </button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
 
       <!-- Add/Edit Modal (restored) -->
@@ -316,12 +266,14 @@
                   </div>
                   <div class="md:col-span-2">
                     <label class="block text-xs text-gray-500 mb-1">Description (EN)*</label>
-                    <textarea :class="inputClass('description.en')" v-model="form.description.en" :required="!editingId"/>
+                    <textarea :class="inputClass('description.en')" v-model="form.description.en"
+                      :required="!editingId" />
                     <p v-if="err('description.en')" class="mt-1 text-xs text-red-600">{{ err('description.en') }}</p>
                   </div>
                   <div class="md:col-span-2">
                     <label class="block text-xs text-gray-500 mb-1">Description (AR)*</label>
-                    <textarea :class="inputClass('description.ar')" v-model="form.description.ar" :required="!editingId"/>
+                    <textarea :class="inputClass('description.ar')" v-model="form.description.ar"
+                      :required="!editingId" />
                     <p v-if="err('description.ar')" class="mt-1 text-xs text-red-600">{{ err('description.ar') }}</p>
                   </div>
                 </div>
@@ -329,28 +281,33 @@
                 <!-- map + coords -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
-                    <MapPicker label="Pick on map" v-model:lat="form.lat" v-model:lng="form.long" v-model:address="form.location" />
+                    <MapPicker label="Pick on map" v-model:lat="form.lat" v-model:lng="form.long"
+                      v-model:address="form.location" />
                   </div>
 
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Location*</label>
-                    <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId" disabled />
+                    <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId"
+                      disabled />
                     <p v-if="err('location')" class="mt-1 text-xs text-red-600">{{ err('location') }}</p>
                   </div>
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
-                    <input :class="inputClass('lat')" v-model.number="form.lat" type="number" step="any" min="-90" max="90" :required="!editingId" disabled />
+                    <input :class="inputClass('lat')" v-model.number="form.lat" type="number" step="any" min="-90"
+                      max="90" :required="!editingId" disabled />
                     <p v-if="err('lat')" class="mt-1 text-xs text-red-600">{{ err('lat') }}</p>
                   </div>
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Longitude (-180..180)*</label>
-                    <input :class="inputClass('long')" v-model.number="form.long" type="number" step="any" min="-180" max="180" :required="!editingId" disabled />
+                    <input :class="inputClass('long')" v-model.number="form.long" type="number" step="any" min="-180"
+                      max="180" :required="!editingId" disabled />
                     <p v-if="err('long')" class="mt-1 text-xs text-red-600">{{ err('long') }}</p>
                   </div>
 
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
-                    <input :class="inputClass('start_date')" v-model="form.start_date" type="date" :required="!editingId" />
+                    <input :class="inputClass('start_date')" v-model="form.start_date" type="date"
+                      :required="!editingId" />
                     <p v-if="err('start_date')" class="mt-1 text-xs text-red-600">{{ err('start_date') }}</p>
                   </div>
                   <div>
@@ -399,12 +356,15 @@
                     <label class="block text-xs text-gray-500 mb-1">
                       Cover Image* {{ editingId ? '(optional to replace)' : '' }}
                     </label>
-                    <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover" :required="!editingId" />
+                    <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover"
+                      :required="!editingId" />
                     <p v-if="err('cover_image')" class="mt-1 text-xs text-red-600">{{ err('cover_image') }}</p>
 
                     <div v-if="coverPreview" class="mt-2 relative inline-block">
                       <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
-                      <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600" @click="removeCover">
+                      <button type="button"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600"
+                        @click="removeCover">
                         ✕
                       </button>
                     </div>
@@ -412,14 +372,17 @@
 
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
-                    <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery" :required="!editingId" />
+                    <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery"
+                      :required="!editingId" />
                     <p v-if="err('gallery')" class="mt-1 text-xs text-red-600">{{ err('gallery') }}</p>
 
                     <!-- Existing gallery -->
                     <div v-if="existingGallery.length" class="mt-2 flex flex-wrap gap-2">
                       <div v-for="g in existingGallery" :key="g.id" class="relative inline-block">
                         <img :src="g.image_url" class="w-24 h-16 object-cover rounded border" />
-                        <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600" @click="removeGalleryImage(g.id)">
+                        <button type="button"
+                          class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600"
+                          @click="removeGalleryImage(g.id)">
                           ✕
                         </button>
                       </div>
@@ -429,7 +392,9 @@
                     <div v-if="galleryPreviews.length" class="mt-2 flex flex-wrap gap-2">
                       <div v-for="(src, i) in galleryPreviews" :key="i" class="relative inline-block">
                         <img :src="src" class="w-24 h-16 object-cover rounded border" />
-                        <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600" @click="galleryPreviews.splice(i, 1)">
+                        <button type="button"
+                          class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow hover:bg-red-600"
+                          @click="galleryPreviews.splice(i, 1)">
                           ✕
                         </button>
                       </div>
@@ -447,7 +412,8 @@
             <!-- Footer -->
             <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
               <div class="px-5 py-3 flex items-center gap-3">
-                <button :disabled="saving" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60" @click="submit">
+                <button :disabled="saving" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
+                  @click="submit">
                   {{ saving ? 'Saving…' : (editingId ? 'Update' : 'Create') }}
                 </button>
                 <button type="button" class="px-3 py-2 border rounded" @click="closeModal">Cancel</button>
@@ -491,13 +457,13 @@ const filtered = computed(() => {
   }
   if (filters.status) r = r.filter(x => x.status === filters.status)
   if (filters.from) r = r.filter(x => !x.start_date || x.start_date >= filters.from)
-  if (filters.to)   r = r.filter(x => !x.end_date || x.end_date <= filters.to)
+  if (filters.to) r = r.filter(x => !x.end_date || x.end_date <= filters.to)
   return r
 })
 
 const startIndex = computed(() => (page.value - 1) * pageSize.value)
-const endIndex   = computed(() => Math.min(startIndex.value + pageSize.value, filtered.value.length))
-const paginated  = computed(() => filtered.value.slice(startIndex.value, endIndex.value))
+const endIndex = computed(() => Math.min(startIndex.value + pageSize.value, filtered.value.length))
+const paginated = computed(() => filtered.value.slice(startIndex.value, endIndex.value))
 
 watch([() => filters.q, () => filters.status, () => filters.from, () => filters.to, pageSize], () => {
   page.value = 1
@@ -607,6 +573,11 @@ function unitContractorsPath(id) {
 function unitPaymentsPath(id) {
   return `/units-management/${id}/payments`
 }
+
+function detailsPath(id) {
+  return `/units-management/${id}/details`
+}
+
 
 function scrollToFirstError() {
   const modalBody = document.querySelector('.max-h-\\[min\\(88vh\\,900px\\)\\]')
@@ -781,11 +752,18 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500; }
-.back-drop { margin-top: -25px; }
+.form-input {
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+
+.back-drop {
+  margin-top: -25px;
+}
+
 .modal-top {
   margin-top: -25px !important;
 }
+
 .nav-btn {
   @apply flex items-center justify-center gap-1 px-3 py-2 border rounded-lg text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 hover:shadow transition;
 }
