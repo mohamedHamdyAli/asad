@@ -17,7 +17,11 @@
 
       <!-- Single Payment Display -->
 
-      <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow mt-6">
+      <div v-if="tab === 'payments'" class="p-6 rounded shadow mt-6">
+
+                <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Payment</h3>
+        </div>
         <h3 class="text-lg font-semibold mb-3">Current Payment</h3>
         <div v-if="loadingPayment" class="text-sm text-gray-500">Loading…</div>
 
@@ -244,6 +248,8 @@ const loadingPayment = ref(false)
 const showLogs = ref(false)
 const logs = ref([])
 // const selectedPaymentId = ref(null)
+
+
 
 function setEditablePayment(p) {
   payment.value = {
