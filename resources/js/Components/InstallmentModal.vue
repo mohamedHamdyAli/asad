@@ -89,14 +89,14 @@
             </div>
 
             <!-- Status -->
-            <div>
+            <!-- <div>
               <label class="block text-xs text-gray-500 mb-1">Status</label>
               <Field name="status" as="select" class="form-input">
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>
                 <option value="overdue">Overdue</option>
               </Field>
-            </div>
+            </div> -->
           </div>
 
           <!-- Footer -->
@@ -169,7 +169,7 @@ const schema = yup.object({
   submission_date: yup.string().nullable(),
   consultant_approval_date: yup.string().nullable(),
   due_date: yup.string().nullable(),
-  status: yup.string().required(),
+  // status: yup.string().required(),
 })
 
 /* ----------------------- INITIAL VALUES ----------------------- */
@@ -194,7 +194,7 @@ const initialValues = {
   submission_date: props.data?.submission_date ?? '',
   consultant_approval_date: props.data?.consultant_approval_date ?? '',
   due_date: props.data?.due_date ?? '',
-  status: props.data?.status ?? 'pending',
+  // status: props.data?.status ?? 'pending',
 }
 
 /* ----------------------- SUBMIT HANDLER ----------------------- */
