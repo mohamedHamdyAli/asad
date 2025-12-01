@@ -18,7 +18,7 @@
         </h3>
 
         <!-- FORM (Vee Validate Form) -->
-        <Form @submit="handleSubmit" :validation-schema="schema">
+        <Form @submit="handleSubmit"  :initial-values="initialValues" :validation-schema="schema">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref , watch} from 'vue'
 import * as yup from 'yup'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 
@@ -185,7 +185,7 @@ function normalize(obj, fallback) {
   return obj
 }
 
-const initialValues = {
+const initialValues =ref({
   title: normalize(props.data?.title, { en: '', ar: '' }),
   description: normalize(props.data?.description, { en: '', ar: '' }),
   amount: props.data?.amount ?? '',
@@ -195,7 +195,28 @@ const initialValues = {
   consultant_approval_date: props.data?.consultant_approval_date ?? '',
   due_date: props.data?.due_date ?? '',
   // status: props.data?.status ?? 'pending',
-}
+})
+
+watch(
+  () => props.data,
+  (v) => {
+    if (!v) return;
+
+    initialValues.value = {
+      title: normalize(v.title, { en: '', ar: '' }),
+      description: normalize(v.description, { en: '', ar: '' }),
+      amount: v.amount ?? '',
+      percentage: v.percentage ?? '',
+      milestone_date: v.milestone_date ?? '',
+      submission_date: v.submission_date ?? '',
+      consultant_approval_date: v.consultant_approval_date ?? '',
+      due_date: v.due_date ?? '',
+      status: v.status ?? 'pending',
+    };
+  },
+  { immediate: true }
+);
+
 
 /* ----------------------- SUBMIT HANDLER ----------------------- */
 async function handleSubmit(values) {

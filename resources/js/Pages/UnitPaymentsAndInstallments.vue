@@ -165,7 +165,7 @@
             <tbody>
               <tr v-for="i in installments" :key="i.id" class="hover:bg-gray-50 transition">
                 <td class="p-2 border">{{ i.id }}</td>
-                <td class="p-2 border">{{ i.title_en }}</td>
+                <td class="p-2 border">{{ i.title.en }}</td>
                 <td class="p-2 border">{{ i.amount }}</td>
                 <td class="p-2 border">{{ i.percentage }}</td>
                 <td class="p-2 border">{{ i.status }}</td>
@@ -267,7 +267,8 @@ async function openLogs(id) {
     logs.value = res
   } catch {
     logs.value = []
-    alert('Failed to fetch logs')
+    // alert('Failed to fetch logs')
+    console.log('No logs found')
   }
 }
 
