@@ -118,4 +118,9 @@ class Unit extends Model
     {
         return $this->hasMany(UnitPayment::class, 'unit_id');
     }
+    
+    public function extensionDates()
+    {
+        return $this->hasMany(ExtensionDate::class);
+    }
 }

@@ -48,6 +48,8 @@ class UnitRequest extends FormRequest
             'user_id'     => 'nullable|exists:users,id',
             'vendor_id'   => 'nullable|exists:users,id',
             'status'      => 'nullable|in:under_construction,completed',
+            'extension_dates' => 'nullable|array',
+            'extension_dates.*' => 'required|date|after_or_equal:start_date',
         ];
 
         return $rules;

@@ -24,6 +24,13 @@ class ContractorRequest extends FormRequest
                 'data.*.description.*' => 'required|string|max:255',
                 'data.*.image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'data.*.email' => 'required|email|max:255|unique:contractors,email',
+                'data.*.company_phone' => 'nullable|string',
+                'data.*.representative_phone' => 'nullable|string',
+                'data.*.company_address' => 'nullable|array',
+                'data.*.company_address.*' => 'nullable|string|max:255',
+                'data.*.representative_name' => 'nullable|array',
+                'data.*.representative_name.*' => 'nullable|string|max:255',
+
 
             ];
         }
@@ -35,6 +42,13 @@ class ContractorRequest extends FormRequest
             'data.description.*' => 'nullable|string|max:255',
             'data.image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'data.email' => 'nullable|email|max:255|unique:contractors,email,' . $this->route('id'),
+            'data.company_phone' => 'nullable|string',
+            'data.representative_phone' => 'nullable|string',
+            'data.company_address' => 'nullable|array',
+            'data.company_address.*' => 'nullable|string|max:255',
+            'data.representative_name' => 'nullable|array',
+            'data.representative_name.*' => 'nullable|string|max:255',
+
         ];
     }
 

@@ -26,13 +26,20 @@ class ContractorService
             foreach ($request['data'] as $item) {
                 $title = json_encode($item['title'], JSON_UNESCAPED_UNICODE);
                 $description = json_encode($item['description'], JSON_UNESCAPED_UNICODE);
+                $representative_name = json_encode($item['representative_name'], JSON_UNESCAPED_UNICODE);
+                $company_address = json_encode($item['company_address'], JSON_UNESCAPED_UNICODE);
                 $image = FileService::upload($item['image'], $this->uploadFolder);
 
                 Contractor::create([
                     'title' => $title,
                     'description' => $description,
                     'image' => $image,
-                    'email' => $item['email'] ?? null
+                    'email' => $item['email'] ?? null,
+                    'company_address' => $company_address,
+                    'company_phone' => $item['company_phone'] ?? null,
+                    'representative_name' => $representative_name,
+                    'representative_phone' => $item['representative_phone'] ?? null
+
                 ]);
             }
 
@@ -67,15 +74,41 @@ class ContractorService
                 $request['description'] = json_encode($request['description'], JSON_UNESCAPED_UNICODE);
             }
 
+            if (!empty($request['company_address']) && (is_array($request['company_address']) || is_object($request['company_address']))) {
+                $request['company_address'] = (string) json_encode($request['company_address'], JSON_UNESCAPED_UNICODE);
+            }
+
+
+            if (!empty($request['representative_name']) && (is_array($request['representative_name']) || is_object($request['representative_name']))) {
+                $request['representative_name'] = (string) json_encode($request['representative_name'], JSON_UNESCAPED_UNICODE);
+            }
+
+            if (isset($request['representative_phone'])) {
+                $contractor->representative_phone = $request['representative_phone'];
+            }
+
+            if (isset($request['company_phone'])) {
+                $contractor->company_phone = $request['company_phone'];
+            }
+
             if (isset($request['email'])) {
                 $contractor->email = $request['email'];
             }
-            $contractor->update($request);
+            $contractor->update([
+                'title' => $request['title'] ?? $contractor->getRawOriginal('title'),
+                'description' => $request['description'] ?? $contractor->getRawOriginal('description'),
+                'company_address' => $request['company_address'] ?? $contractor->getRawOriginal('company_address'),
+                'representative_name' => $request['representative_name'] ?? $contractor->getRawOriginal('representative_name'),
+                'image' => $request['image'] ?? $contractor->getRawOriginal('image'),
+                'company_phone' => $request['company_phone'] ?? $contractor->company_phone,
+                'representative_phone' => $request['representative_phone'] ?? $contractor->representative_phone,
+                'email' => $request['email'] ?? $contractor->email,
+            ]);
+
+
             return true;
         });
     }
-
-
 
     public function deleteContractor(int $id): bool
     {

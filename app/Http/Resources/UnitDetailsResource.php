@@ -26,7 +26,13 @@ class UnitDetailsResource extends JsonResource
             "start_date" => Carbon::parse($this->start_date)->format('d M Y, h:i A'),
             "end_date" => Carbon::parse($this->end_date)->format('d M Y, h:i A'),
             "status" => $this->status,
-            "galleryHome" => getImageassetUrl($this->homeUnitGallery()->pluck('image')->toArray())
+            "galleryHome" => getImageassetUrl($this->homeUnitGallery()->pluck('image')->toArray()),
+            'extension_dates' => $this->extensionDates->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'extended_date' => \Carbon\Carbon::parse($item->extended_date)->format('d M Y, h:i A'),
+                ];
+            })->toArray(),
         ];
     }
 }
