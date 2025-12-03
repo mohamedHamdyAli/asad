@@ -80,6 +80,15 @@ class UnitCrudService
             }
 
             $unit->update($request);
+            if (!empty($request['extension_dates']) && is_array($request['extension_dates'])) {
+                foreach ($request['extension_dates'] as $date) {
+                    if (!$unit->extensionDates()->where('extended_date', $date)->exists()) {
+                        $unit->extensionDates()->create([
+                            'extended_date' => $date
+                        ]);
+                    }
+                }
+            }
 
             if (!empty($request['gallery']) && is_array($request['gallery'])) {
                 foreach ($request['gallery'] as $image) {
@@ -108,33 +117,32 @@ class UnitCrudService
     }
 
     public function deleteCoverImage($id)
-{
-    return DB::transaction(function () use ($id) {
-        $unit = Unit::find($id);
-        if (!$unit) return false;
+    {
+        return DB::transaction(function () use ($id) {
+            $unit = Unit::find($id);
+            if (!$unit) return false;
 
-        FileService::delete($unit->getRawOriginal('cover_image'));
+            FileService::delete($unit->getRawOriginal('cover_image'));
 
-        $unit->update(['cover_image' => null]);
+            $unit->update(['cover_image' => null]);
 
-        return true;
-    });
-}
+            return true;
+        });
+    }
 
-public function deleteGalleryImage($unitId, $imageId)
-{
-    return DB::transaction(function () use ($unitId, $imageId) {
-        $unit = Unit::find($unitId);
-        if (!$unit) return false;
+    public function deleteGalleryImage($unitId, $imageId)
+    {
+        return DB::transaction(function () use ($unitId, $imageId) {
+            $unit = Unit::find($unitId);
+            if (!$unit) return false;
 
-        $image = $unit->homeUnitGallery()->find($imageId);
-        if (!$image) return false;
+            $image = $unit->homeUnitGallery()->find($imageId);
+            if (!$image) return false;
 
-        FileService::delete($image->getRawOriginal('image'));
-        $image->delete();
+            FileService::delete($image->getRawOriginal('image'));
+            $image->delete();
 
-        return true;
-    });
-}
-
+            return true;
+        });
+    }
 }
