@@ -39,8 +39,103 @@ class FileService
     public static function upload($requestFile, $folder)
     {
         $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
+        $path = $folder . '/' . $file_name;
+
         $requestFile->storeAs($folder, $file_name, 'public');
-        return $folder . '/' . $file_name;
+
+        $fullPath = storage_path('app/public/' . $path);
+        $ext = strtolower($requestFile->getClientOriginalExtension());
+
+        if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+            return $path;
+        }
+
+        switch ($ext) {
+            case 'jpg':
+            case 'jpeg':
+                $img = imagecreatefromjpeg($fullPath);
+                break;
+            case 'png':
+                $img = imagecreatefrompng($fullPath);
+                imagesavealpha($img, true);
+                break;
+        }
+
+        if (!$img) return $path;
+
+        $width  = imagesx($img);
+        $height = imagesy($img);
+
+        $watermarkPath = public_path('staticImage/watermark/watermark.png');
+        if (!file_exists($watermarkPath)) {
+            return $path;
+        }
+
+        $watermark = imagecreatefrompng($watermarkPath);
+        imagesavealpha($watermark, true);
+
+        $wmW = imagesx($watermark);
+        $wmH = imagesy($watermark);
+
+        $scale = max($width, $height) / $wmW;
+
+        $newW = $wmW * $scale * 0.7;
+        $newH = $wmH * $scale * 0.7;
+
+        $resized = imagecreatetruecolor($newW, $newH);
+        imagesavealpha($resized, true);
+        imagealphablending($resized, false);
+
+        $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+        imagefill($resized, 0, 0, $transparent);
+
+        imagecopyresampled(
+            $resized,
+            $watermark,
+            0,
+            0,
+            0,
+            0,
+            $newW,
+            $newH,
+            $wmW,
+            $wmH
+        );
+
+        imagedestroy($watermark);
+
+
+        $rotated = imagerotate($resized, 45, $transparent);
+        imagedestroy($resized);
+
+
+        $rw = imagesx($rotated);
+        $rh = imagesy($rotated);
+
+        imagecopymerge(
+            $img,
+            $rotated,
+            ($width - $rw) / 2,
+            ($height - $rh) / 2,
+            0,
+            0,
+            $rw,
+            $rh,
+            35
+        );
+
+        imagedestroy($rotated);
+
+
+        if ($ext === 'png') {
+            imagepng($img, $fullPath);
+        } else {
+            imagejpeg($img, $fullPath, 90);
+        }
+
+        imagedestroy($img);
+
+        return $path;
     }
 
     /**

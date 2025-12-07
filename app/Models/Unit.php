@@ -118,9 +118,22 @@ class Unit extends Model
     {
         return $this->hasMany(UnitPayment::class, 'unit_id');
     }
-    
+
     public function extensionDates()
     {
         return $this->hasMany(ExtensionDate::class);
     }
+// public function getCoverImageAttribute($value)
+// {
+//     if (!$value) {
+//         return asset('storage/default.png');
+//     }
+
+//     if (str_starts_with($value, 'http')) {
+//         return $value;
+//     }
+
+//     return url('storage/' . $value);
+// }
+
 }
