@@ -1,15 +1,18 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminUnitPaymentController;
-use App\Http\Controllers\Admin\AdminUnitPaymentInstallmentController;
-use App\Http\Controllers\Admin\IntroController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => inertia('Auth/Login'))->name('login');
+Route::get('/', fn() => view('home.home'));
+Route::get('/about', fn() => view('about.about'));
+Route::get('/contact', fn() => view('contact.contact'));
+Route::get('/project', fn() => view('portfolio.portfolio'));
+Route::get('/project-details', fn() => view('portfolio.project-details.project-details'));
+
+
+Route::get('/login', fn() => inertia('Auth/Login'))->name('login');
 
 
 Route::get('/settings', fn() => inertia('Settings'))->name('settings');
