@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title', __('Home'))
 
 @section('content')
     <main class="main-area fix">
@@ -19,8 +19,6 @@
         {{-- Company --}}
         @include('home.parts.company')
 
-        {{-- Blog --}}
-        @include('home.parts.blog')
 
         {{-- Brands --}}
         @include('home.parts.brands')

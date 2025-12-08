@@ -17,11 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\SetLocalePanel::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->api(append: [
-            \App\Http\Middleware\SetLocale::class, // Add SetLocale middleware to API
+            \App\Http\Middleware\SetLocale::class,
         ]);
 
         //

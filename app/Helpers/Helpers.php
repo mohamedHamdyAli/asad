@@ -5,6 +5,7 @@ use App\Models\Setting;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 
 if (!function_exists('getImageDashboardUrl')) {
@@ -54,17 +55,58 @@ if (!function_exists('failedValidation')) {
         throw new HttpResponseException($response);
     }
 }
-
-if (!function_exists('getLocalizedValue')) {
-    function getLocalizedValue($model, $attribute)
+if (!function_exists('getLocalizedValueDashboard')) {
+    /**
+     * Get localized attribute for dashboard (default language).
+     */
+    function getLocalizedValueDashboard($model, string $attribute): string
     {
         if (!$model || !$model->{$attribute}) {
-            return __('siteTrans.no_data_found');
+            return '-';
         }
 
-        $locale = request()->header('lang') ?? app()->getLocale();
+        $locale = Session::get('language', 'en');
 
-        return $model->{$attribute}->{$locale} ?? $model->{$attribute}->ar;
+
+        $value = null;
+        $attr = $model->{$attribute};
+
+        if (is_array($attr)) {
+            $value = $attr[$locale] ?? null;
+        } elseif (is_object($attr)) {
+            $value = $attr->{$locale} ?? null;
+        } else {
+            $value = (string)$attr;
+        }
+
+        if (is_string($value) && $value !== '') {
+            return $value;
+        }
+
+        if (is_scalar($value)) {
+            return (string)$value;
+        }
+
+        return '-';
+    }
+}
+if (!function_exists('getLocalizedSettingValue')) {
+    function getLocalizedSettingValue(string $baseKey)
+    {
+        $locale = app()->getLocale();
+        $setting = getSettingValue($baseKey);
+
+        if (!$setting) {
+            return null;
+        }
+
+        $decoded = json_decode($setting, true);
+
+        if (is_array($decoded)) {
+            return $decoded[$locale] ?? reset($decoded);
+        }
+
+        return $setting;
     }
 }
 
@@ -238,4 +280,3 @@ if (!function_exists('uploadOrUpdateImage')) {
         return $existingImagePath;
     }
 }
-

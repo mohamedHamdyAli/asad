@@ -3,8 +3,8 @@
         <div class="row justify-content-center">
             <div class="col-xl-9 col-lg-10">
                 <div class="section__title section__title-three text-center mb-60">
-                    <span class="sub-title">Watch Our Video</span>
-                    <h2 class="title">We help our clients realize their business ideas and achieve great results</h2>
+                    <span class="sub-title">{{ __('Watch_Our_Video') }}</span>
+                    <h2 class="title">{{ __('Watch_Our_Video_Desc') }}</h2>
                 </div>
             </div>
         </div>
