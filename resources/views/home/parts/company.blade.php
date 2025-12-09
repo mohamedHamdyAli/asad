@@ -11,18 +11,18 @@
             <div class="col-lg-5">
                 <div class="company__content">
                     <div class="section__title section__title-three white-title mb-25">
-                        <span class="sub-title">Great Company Backup</span>
-                        <h2 class="title">We Are Professional Factory Experts</h2>
+                        <span class="sub-title">{{ __('Great_Company_Backup') }}</span>
+                        <h2 class="title">{{ __('We_Are_Professional_Factory_Experts') }}</h2>
                     </div>
-                    <p>Factory companies are an important part of the global economy, as they produce the goods that are used by people around the world. However the impact of factory companies on the environment.</p>
+                    <p>{{ __('Great_Company_Backup_desc') }}</p>
                     <div class="company__list-wrap">
                         <div class="company__list-item">
                             <div class="icon">
                                 <i class="renova-idea-2"></i>
                             </div>
                             <div class="content">
-                                <h4 class="title">Innovative Solution</h4>
-                                <p>Class ad porta tempus per him accumsan posuer felis sollicitudin primis malesuada</p>
+                                <h4 class="title">{{ __('Innovative Solution') }}</h4>
+                                <p>{{ __('Innovative_Solution_Desc') }}</p>
                             </div>
                         </div>
                         <div class="company__list-item">
@@ -30,8 +30,8 @@
                                 <i class="renova-user-rating-2"></i>
                             </div>
                             <div class="content">
-                                <h4 class="title">Experienced Team</h4>
-                                <p>Class ad porta tempus per him accumsan posuer felis sollicitudin primis malesuada</p>
+                                <h4 class="title">{{ __('Experienced Team') }}</h4>
+                                <p>{{ __('Experienced_Team_Desc') }}</p>
                             </div>
                         </div>
                     </div>
