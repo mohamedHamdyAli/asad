@@ -55,4 +55,12 @@ return [
     'Looking for qualified professionals to do renovations to your existing home in Los Angeles?' => 'Looking for qualified professionals to do renovations to your existing home in Los Angeles?',
     'View Our Services' => 'View Our Services',
     'Watch Our Story' => 'Watch Our Story',
+    'Get In Touch' => 'Get In Touch',
+    'Needs Help? Let’s Get in Touch' => 'Needs Help? Let’s Get in Touch',
+    'Send Message' => 'Send Message',
+    'Service Station' => 'Service Station',
+    '258D Mark Avenue Berlin.' => '258D Mark Avenue Berlin.',
+    'Make A Quote' => 'Make A Quote',
+    'Call Us 24/7' => 'Call Us 24/7',
+    'Contact Us' => 'Contact Us',
 ];

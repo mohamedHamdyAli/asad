@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Contact')
+@section('title', __('Contact'))
 
 @section('content')
     <main class="main-area fix">

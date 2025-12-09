@@ -1,5 +1,5 @@
 @php
-    $sliders = collect(\App\Models\Banner::getSliders( 'home', 'get'));
+    $sliders = collect(\App\Models\Banner::getSliders( 'home', 'first'));
 @endphp
 
 <!-- slider-area -->
