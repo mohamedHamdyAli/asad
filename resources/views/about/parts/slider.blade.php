@@ -1,9 +1,8 @@
 @php
-    $slider = collect(\App\Models\Banner::getSliders( 'about', 'get'));
+    $slider = \App\Models\Banner::getSliders( 'about', 'first');
 @endphp
-
 <!-- breadcrumb-area -->
-<div class="breadcrumb__area breadcrumb__bg" data-background="{{ getImageassetUrl($slider->image) }}">
+<div class="breadcrumb__area breadcrumb__bg" data-background="{{ $slider ? getImageassetUrl($slider->image) : asset('assets/img/bg/breadcrumb_bg.jpg') }}">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
