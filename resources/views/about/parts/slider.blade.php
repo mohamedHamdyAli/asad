@@ -1,16 +1,20 @@
+@php
+    $slider = collect(\App\Models\Banner::getSliders( 'about', 'get'));
+@endphp
+
 <!-- breadcrumb-area -->
-<div class="breadcrumb__area breadcrumb__bg" data-background="{{ asset('assets/img/bg/breadcrumb_bg.jpg') }}">
+<div class="breadcrumb__area breadcrumb__bg" data-background="{{ getImageassetUrl($slider->image) }}">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="breadcrumb__content">
-                    <h2 class="title">About Us</h2>
+                    <h2 class="title">{{ __('About Us') }}</h2>
                     <nav class="breadcrumb">
                         <span property="itemListElement" typeof="ListItem">
-                            <a href="{{ url('/') }}">Home</a>
+                            <a href="{{ url('/') }}">{{ __('Home') }}</a>
                         </span>
                         <span class="breadcrumb-separator">/</span>
-                        <span property="itemListElement" typeof="ListItem">About Us</span>
+                        <span property="itemListElement" typeof="ListItem">{{ __('About Us') }}</span>
                     </nav>
                 </div>
             </div>

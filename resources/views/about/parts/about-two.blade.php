@@ -9,30 +9,30 @@
             <div class="col-lg-6">
                 <div class="about__content-three">
                     <div class="section__title section__title-three mb-30">
-                        <span class="sub-title">More About Us</span>
-                        <h2 class="title">Wonderful visionary dream we see for our client’s</h2>
+                        <span class="sub-title">{{ __('More About Us') }}</span>
+                        <h2 class="title">{{ __('Wonderful visionary dream we see for our client’s') }}</h2>
                     </div>
-                    <p>Nec platea est metus imperdiet litora natoque eros posuere ac venenatis...</p>
+                    <p>{{ __('Nec platea est metus imperdiet litora natoque eros posuere ac venenatis...') }}</p>
                     <div class="counter__item-wrap-two">
                         <div class="counter__item-two">
                             <h2 class="count"><span class="odometer" data-count="216"></span>+</h2>
                             <div class="icon"><i class="renova-glove"></i></div>
-                            <h4 class="title">Global Country</h4>
+                            <h4 class="title">{{ __('Global Country') }}</h4>
                         </div>
                         <div class="counter__item-two">
                             <h2 class="count"><span class="odometer" data-count="692"></span>+</h2>
                             <div class="icon"><i class="renova-rank"></i></div>
-                            <h4 class="title">Company Growth</h4>
+                            <h4 class="title">{{ __('Company Growth') }}</h4>
                         </div>
                         <div class="counter__item-two">
                             <h2 class="count"><span class="odometer" data-count="12"></span>K</h2>
                             <div class="icon"><i class="renova-feedback"></i></div>
-                            <h4 class="title">Satisfied Customers</h4>
+                            <h4 class="title">{{ __('Satisfied Customers') }}</h4>
                         </div>
                         <div class="counter__item-two">
                             <h2 class="count"><span class="odometer" data-count="99"></span>%</h2>
                             <div class="icon"><i class="renova-happy"></i></div>
-                            <h4 class="title">Customer Rating</h4>
+                            <h4 class="title">{{ __('Customer Rating') }}</h4>
                         </div>
                     </div>
                 </div>
