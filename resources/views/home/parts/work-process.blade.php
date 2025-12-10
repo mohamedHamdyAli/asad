@@ -1,3 +1,6 @@
+
+
+
 <!-- work-area -->
 <section class="work__area-two section-pt-120 section-pb-90">
     <div class="container">
@@ -14,22 +17,22 @@
                 @php
                     $work_steps = [
                         [
-                            'icon' => 'renova-note',
+                            'icon' => 'asad-note',
                             'title' => __('Project_Research'),
                             'text' => __('Project_Research_desc'),
                         ],
                         [
-                            'icon' => 'renova-construction',
+                            'icon' => 'asad-construction',
                             'title' => __('Development'),
                             'text' => __('Development_desc'),
                         ],
                         [
-                            'icon' => 'renova-unity',
+                            'icon' => 'asad-unity',
                             'title' => __('Team_Works'),
                             'text' => __('Team_Works_desc'),
                         ],
                         [
-                            'icon' => 'renova-rocket-2',
+                            'icon' => 'asad-rocket-2',
                             'title' => __('Quality_Finished'),
                             'text' => __('Quality_Finished_desc'),
                         ],
@@ -47,7 +50,7 @@
                                 <h4 class="title"><a href="{{ url('contact') }}">{{ $step['title'] }}</a></h4>
                                 <p>{{ $step['text'] }}</p>
                                 <a href="{{ url('contact') }}" class="link-btn">Learn More <i
-                                        class="renova-right-arrow-2"></i></a>
+                                        class="asad-right-arrow-2"></i></a>
                             </div>
                             <div class="work__arrow">
                                 <img src="{{ asset('assets/img/icons/right_arrow02.svg') }}" alt=""

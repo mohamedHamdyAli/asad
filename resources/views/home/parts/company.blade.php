@@ -18,7 +18,7 @@
                     <div class="company__list-wrap">
                         <div class="company__list-item">
                             <div class="icon">
-                                <i class="renova-idea-2"></i>
+                                <i class="asad-idea-2"></i>
                             </div>
                             <div class="content">
                                 <h4 class="title">{{ __('Innovative Solution') }}</h4>
@@ -27,7 +27,7 @@
                         </div>
                         <div class="company__list-item">
                             <div class="icon">
-                                <i class="renova-user-rating-2"></i>
+                                <i class="asad-user-rating-2"></i>
                             </div>
                             <div class="content">
                                 <h4 class="title">{{ __('Experienced Team') }}</h4>

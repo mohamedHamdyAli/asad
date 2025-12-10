@@ -27,9 +27,9 @@
                         <h4 class="footer__widget-title">Useful Links</h4>
                         <div class="footer__widget-link">
                             <ul class="list-wrap">
-                                <li><a href="{{ url('about') }}"><i class="renova-right-arrow"></i><span>About Us</span></a></li>
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Our Projects</span></a></li>
-                                <li><a href="{{ url('contact') }}"><i class="renova-right-arrow"></i><span>Contact Us</span></a></li>
+                                <li><a href="{{ url('about') }}"><i class="asad-right-arrow"></i><span>About Us</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>Our Projects</span></a></li>
+                                <li><a href="{{ url('contact') }}"><i class="asad-right-arrow"></i><span>Contact Us</span></a></li>
                             </ul>
                         </div>
                     </div>
@@ -40,11 +40,11 @@
                         <h4 class="footer__widget-title">Our Services</h4>
                         <div class="footer__widget-link">
                             <ul class="list-wrap">
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Renovation</span></a></li>
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Construction</span></a></li>
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Architectural</span></a></li>
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Development</span></a></li>
-                                <li><a href="{{ url('services') }}"><i class="renova-right-arrow"></i><span>Building</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>asadtion</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>Construction</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>Architectural</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>Development</span></a></li>
+                                <li><a href="{{ url('services') }}"><i class="asad-right-arrow"></i><span>Building</span></a></li>
                             </ul>
                         </div>
                     </div>
@@ -55,11 +55,11 @@
                         <h4 class="footer__widget-title">Quick Info</h4>
                         <div class="footer__widget-link">
                             <ul class="list-wrap">
-                                <li><a href="{{ url('about') }}"><i class="renova-right-arrow"></i><span>Our Story</span></a></li>
-                                <li><a href="{{ url('appointment') }}"><i class="renova-right-arrow"></i><span>Appointment</span></a></li>
-                                <li><a href="{{ url('contact') }}"><i class="renova-right-arrow"></i><span>Terms & Condition</span></a></li>
-                                <li><a href="{{ url('contact') }}"><i class="renova-right-arrow"></i><span>Get in touch</span></a></li>
-                                <li><a href="{{ url('project') }}"><i class="renova-right-arrow"></i><span>Project Showcase</span></a></li>
+                                <li><a href="{{ url('about') }}"><i class="asad-right-arrow"></i><span>Our Story</span></a></li>
+                                <li><a href="{{ url('appointment') }}"><i class="asad-right-arrow"></i><span>Appointment</span></a></li>
+                                <li><a href="{{ url('contact') }}"><i class="asad-right-arrow"></i><span>Terms & Condition</span></a></li>
+                                <li><a href="{{ url('/qhse-policy') }}"><i class="asad-right-arrow"></i><span>qhse policy</span></a></li>
+                                <li><a href="{{ url('project') }}"><i class="asad-right-arrow"></i><span>Project Showcase</span></a></li>
                             </ul>
                         </div>
                     </div>
