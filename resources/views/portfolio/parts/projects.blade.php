@@ -24,7 +24,7 @@
                             <span>December 2023 - March 2024</span>
                         </div>
                         <div class="project__icon-two">
-                            <a href="project-details.html"><i class="renova-plus"></i></a>
+                            <a href="project-details.html"><i class="asad-plus"></i></a>
                         </div>
                     </div>
                 </div>
