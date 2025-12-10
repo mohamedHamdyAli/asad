@@ -14798,3 +14798,10 @@ section.qhse-body .row ul.col-lg-6 li {
     color: #333;
     margin-bottom: 2%;
 }
+
+section.project__area.project__bg {
+    background-image: url(../img/bg/project__bg.jpg) !important;
+}
+section.project__area.project__bg {
+    padding: 2% 2%;
+}
