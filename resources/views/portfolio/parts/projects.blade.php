@@ -21,7 +21,7 @@
                         </div>
                         <div class="project__content-two">
                             <h2 class="title"><a href="project-details.html">Service Company Building</a></h2>
-                            <span>December 2023 - March 2024</span>
+                            <span>December 2025 - March 2026</span>
                         </div>
                         <div class="project__icon-two">
                             <a href="project-details.html"><i class="asad-plus"></i></a>
