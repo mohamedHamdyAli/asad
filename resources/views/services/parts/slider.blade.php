@@ -1,5 +1,5 @@
 @php
-    $slider = \App\Models\Banner::getSliders( 'about', 'first');
+    $slider = \App\Models\Banner::getSliders( 'our-services', 'first');
 @endphp
 <!-- breadcrumb-area -->
 <div class="breadcrumb__area breadcrumb__bg" data-background="{{ $slider ? getImageassetUrl($slider->image) : asset('assets/img/bg/breadcrumb_bg.jpg') }}">

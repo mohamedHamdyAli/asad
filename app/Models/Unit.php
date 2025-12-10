@@ -97,6 +97,14 @@ class Unit extends Model
         return $this->hasMany(HomeUnitGallery::class, 'unit_id');
     }
 
+    public static function allUnit( $status = null)
+    {
+        $query = self::query();
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+        return $query->paginate(9);
+    }
     public static function allUserUnit($userId, $status = null)
     {
         $query = self::where('user_id', $userId);

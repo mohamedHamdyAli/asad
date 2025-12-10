@@ -34,9 +34,9 @@ class Banner extends Model
     public static function allActive($isEnable = false)
     {
         if ($isEnable === true) {
-            return self::where('is_enabled', 1)->get();
+            return self::where('page','application')->where('is_enabled', 1)->get();
         }
-        return self::get();
+        return self::where('page','application')->get();
     }
 
     public static function getSliders($page, $typeOfQuery = 'get', ...$params)
