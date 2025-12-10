@@ -69,4 +69,9 @@ return [
     'Make A Quote' => 'Make A Quote',
     'Call Us 24/7' => 'Call Us 24/7',
     'Contact Us' => 'Contact Us',
+    'Project Information' => 'Project Information',
+    'Clients' => 'Clients',
+    'Status' => 'Status',
+    'Address' => 'Address',
+    'No images available' => 'No images available',
 ];

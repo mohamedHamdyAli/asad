@@ -32,7 +32,7 @@ class UnitDetailsResource extends JsonResource
         'extension_dates' => $this->extensionDates->map(function ($item) {
             return [
                 'id' => $item->id,
-                'extended_date' => \Carbon\Carbon::parse($item->extended_date)->format('d M Y, h:i A'),
+                'extended_date' => Carbon::parse($item->extended_date)->format('d M Y, h:i A'),
             ];
         })->toArray(),
     ];
