@@ -4,9 +4,9 @@
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-6 col-md-10">
                 <div class="about__img-wrap-two">
-                    <img src="{{ asset('assets/img/images/inner_about01.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                    <img src="{{ asset('assets/img/images/inner_about02.jpg') }}" alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                    <img src="{{ asset('assets/img/images/inner_about03.jpg') }}" alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s" data-wow-delay="0.6s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about01')) ?? asset('assets/img/images/inner_about01.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about02')) ?? asset('assets/img/images/inner_about02.jpg') }}" alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s" data-wow-delay="0.4s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about03')) ?? asset('assets/img/images/inner_about03.jpg') }}" alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s" data-wow-delay="0.6s">
                 </div>
             </div>
             <div class="col-lg-6">
@@ -34,10 +34,10 @@
                         <div class="about__customer-box">
                             <h4 class="title">{{ __('7.2M+ User') }}</h4>
                             <ul class="list-wrap customer">
-                                <li><img src="{{ asset('assets/img/images/author01.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author02.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author03.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author04.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client01')) ?? asset('assets/img/images/author01.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client02')) ?? asset('assets/img/images/author02.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client03')) ?? asset('assets/img/images/author03.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client04')) ?? asset('assets/img/images/author04.png') }}" alt="img"></li>
                             </ul>
                         </div>
                         <a href="{{ url('services') }}" class="btn btn-two">{{ __('Book Your Service') }}</a>

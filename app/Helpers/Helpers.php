@@ -34,6 +34,19 @@ if (!function_exists('getImageassetUrl')) {
         return is_array($urls) ? array_map($buildUrl, (array) $urls) : $buildUrl($urls);
     }
 }
+if (!function_exists('getImageassetWebsiteUrl')) {
+    function getImageassetWebsiteUrl($urls)
+    {
+        $buildUrl = function ($url) {
+            if (empty($url)) {
+                return null;
+            }
+            return asset("storage/$url");
+        };
+
+        return is_array($urls) ? array_map($buildUrl, (array) $urls) : $buildUrl($urls);
+    }
+}
 
 if (!function_exists('resetCode')) {
     function resetCode()

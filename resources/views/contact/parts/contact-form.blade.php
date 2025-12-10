@@ -3,7 +3,7 @@
         <span class="sub-title">{{ __('Get In Touch') }}</span>
         <h2 class="title">{{ __('Needs Help? Let’s Get in Touch') }}</h2>
     </div>
-    <form id="contact-form" action="{{ asset('assets/mail.php') }}" method="post" class="contact__form">
+    <form id="contact-form" action="" method="post" class="contact__form">
         <div class="row gutter-20">
             <div class="col-md-6">
                 <div class="form-grp">

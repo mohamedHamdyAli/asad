@@ -61,6 +61,24 @@ class SettingSeeder extends Seeder
         // App config
         $this->create_new_config('currency', 'KWD');
 
+        // website Images
+        // About Page
+        $this->create_new_config('about_inner_about01', Null);
+        $this->create_new_config('about_inner_about02', Null);
+        $this->create_new_config('about_inner_about03', Null);
+        $this->create_new_config('about_inner_client01', Null);
+        $this->create_new_config('about_more_about_us', Null);
+        $this->create_new_config('about_banner', Null);
+
+        // Contact Page
+        $this->create_new_config('contact_service_station', Null);
+        $this->create_new_config('contact_make_quote', Null);
+        $this->create_new_config('contact_call_us', Null);
+
+        // Home Page
+        $this->create_new_config('home_Great_Company_Backup01', Null);
+        $this->create_new_config('home_Great_Company_Backup02', Null);
+        $this->create_new_config('home_Great_Company_Backup03', Null);
 
     }
 

@@ -2,7 +2,7 @@
     <div class="contact__info-wrap">
         <div class="contact__info-item">
             <div class="contact__info-thumb">
-                <img src="{{ asset('assets/img/images/contact_img01.jpg') }}" alt="img">
+                <img src="{{ getImageassetWebsiteUrl(getSettingValue('contact_service_station')) ?? asset('assets/img/images/contact_img01.jpg') }}" alt="img">
             </div>
             <div class="contact__info-content">
                 <div class="icon"><i class="renova-map"></i></div>
@@ -15,7 +15,7 @@
 
         <div class="contact__info-item">
             <div class="contact__info-thumb">
-                <img src="{{ asset('assets/img/images/contact_img02.jpg') }}" alt="img">
+                <img src="{{ getImageassetWebsiteUrl(getSettingValue('contact_make_quote')) ?? asset('assets/img/images/contact_img02.jpg') }}" alt="img">
             </div>
             <div class="contact__info-content">
                 <div class="icon"><i class="renova-envelope-open"></i></div>
@@ -28,7 +28,7 @@
 
         <div class="contact__info-item">
             <div class="contact__info-thumb">
-                <img src="{{ asset('assets/img/images/contact_img03.jpg') }}" alt="img">
+                <img src="{{ getImageassetWebsiteUrl(getSettingValue('contact_call_us')) ?? asset('assets/img/images/contact_img03.jpg') }}" alt="img">
             </div>
             <div class="contact__info-content">
                 <div class="icon"><i class="renova-headphone"></i></div>
