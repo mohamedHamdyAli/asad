@@ -14775,3 +14775,26 @@ section.diagram {
     display: flex;
     align-items: center;
 }
+
+section.qhse-body {
+    padding: 3% 0;
+}
+
+
+section.qhse-body p {
+    font-size: 18px;
+    color: #000;
+}
+
+ 
+section.qhse-body .row ul.col-lg-6 {
+    padding: 0 5%;
+    margin-top: 2%;
+}
+li::marker {
+    color: #f0c75c;
+}
+section.qhse-body .row ul.col-lg-6 li {
+    color: #333;
+    margin-bottom: 2%;
+}

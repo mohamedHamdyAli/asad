@@ -58,7 +58,7 @@
                                 <li><a href="{{ url('about') }}"><i class="asad-right-arrow"></i><span>Our Story</span></a></li>
                                 <li><a href="{{ url('appointment') }}"><i class="asad-right-arrow"></i><span>Appointment</span></a></li>
                                 <li><a href="{{ url('contact') }}"><i class="asad-right-arrow"></i><span>Terms & Condition</span></a></li>
-                                <li><a href="{{ url('contact') }}"><i class="asad-right-arrow"></i><span>Get in touch</span></a></li>
+                                <li><a href="{{ url('/qhse-policy') }}"><i class="asad-right-arrow"></i><span>qhse policy</span></a></li>
                                 <li><a href="{{ url('project') }}"><i class="asad-right-arrow"></i><span>Project Showcase</span></a></li>
                             </ul>
                         </div>
