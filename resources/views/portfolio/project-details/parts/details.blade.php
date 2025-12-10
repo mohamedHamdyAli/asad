@@ -61,7 +61,7 @@
             <div class="row">
                 @forelse ($unit->homeUnitGallery as $gallery)
                     <div class="col-33">
-                        <img src="{{ getImageassetUrl($gallery->image) }}" alt="img">
+                        <img src="{{ getImageassetWebsiteUrl($gallery->image) }}" alt="img">
                     </div>
                 @empty
                     <p>{{ __('No images available') }}</p>

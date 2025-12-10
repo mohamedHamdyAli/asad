@@ -1,5 +1,5 @@
 <!-- breadcrumb-area -->
-<div class="breadcrumb__area breadcrumb__bg" data-background="{{ getImageassetUrl($unit->cover_image) }}">
+<div class="breadcrumb__area breadcrumb__bg" data-background="{{ getImageassetWebsiteUrl($unit->cover_image) }}">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">

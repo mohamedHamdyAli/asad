@@ -10,7 +10,7 @@
                     <div class="project__item-two">
                         <div class="project__thumb-two">
                             <a href="{{ url("project-details/{$unit->id}") }}">
-                                <img src="{{ getImageassetUrl($unit->cover_image) }}" alt="img">
+                                <img src="{{ getImageassetWebsiteUrl($unit->cover_image) }}" alt="img">
                             </a>
                             <span class="shape"></span>
                         </div>

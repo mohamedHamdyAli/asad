@@ -37,16 +37,26 @@ if (!function_exists('getImageassetUrl')) {
 if (!function_exists('getImageassetWebsiteUrl')) {
     function getImageassetWebsiteUrl($urls)
     {
-        $buildUrl = function ($url) {
+        $defaultImage = asset('storage/default.png');
+
+        $buildUrl = function ($url) use ($defaultImage) {
+
             if (empty($url)) {
-                return null;
+                return $defaultImage;
             }
+
+            // Check if file exists in storage/app/public/
+            if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($url)) {
+                return $defaultImage;
+            }
+
             return asset("storage/$url");
         };
 
         return is_array($urls) ? array_map($buildUrl, (array) $urls) : $buildUrl($urls);
     }
 }
+
 
 if (!function_exists('resetCode')) {
     function resetCode()
