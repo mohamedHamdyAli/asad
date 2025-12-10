@@ -15,11 +15,11 @@
                             <span class="shape"></span>
                         </div>
                         <div class="project__content-two">
-                            <h2 class="title"><a href="project-details.html">Service Company Building</a></h2>
-                            <span>December 2023 - March 2024</span>
+                            <h2 class="title"><a href="{{ url("project-details/{$unit->id}") }}">{{ __('Service Company Building') }}</a></h2>
+                            <span>{{ \Carbon\Carbon::parse($unit->start_date)->format('F Y') }} - {{  \Carbon\Carbon::parse($unit->end_date)->format('F Y')}}</span>
                         </div>
                         <div class="project__icon-two">
-                            <a href="project-details.html"><i class="renova-plus"></i></a>
+                            <a href="{{ url("project-details/{$unit->id}") }}"><i class="renova-plus"></i></a>
                         </div>
                     </div>
                 </div>
