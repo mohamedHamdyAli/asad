@@ -90,6 +90,22 @@ if (!function_exists('getLocalizedValueDashboard')) {
         return '-';
     }
 }
+
+
+if (!function_exists('getLocalizedValue')) {
+    function getLocalizedValue($model, $attribute)
+    {
+        if (!$model || !$model->{$attribute}) {
+            return __('siteTrans.no_data_found');
+        }
+
+        $locale = request()->header('lang') ?? app()->getLocale();
+
+        return $model->{$attribute}->{$locale} ?? $model->{$attribute}->ar;
+    }
+}
+
+
 if (!function_exists('getLocalizedSettingValue')) {
     function getLocalizedSettingValue(string $baseKey)
     {
