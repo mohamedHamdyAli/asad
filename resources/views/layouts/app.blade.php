@@ -20,7 +20,7 @@
 
     <!-- Scroll-top -->
     <button class="scroll__top scroll-to-target" data-target="html">
-        <i class="renova-up-arrow"></i>
+        <i class="asad-up-arrow"></i>
     </button>
     <!-- Scroll-top-end-->
 

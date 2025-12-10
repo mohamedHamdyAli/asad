@@ -38,13 +38,17 @@
                                 <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client01')) ?? asset('assets/img/images/author01.png') }}"
                                         alt="img"></li>
                             </ul>
+                            <div class="about__customer-contentarea">
                             <h4 class="title">{{ __('Loyal_Customer') }}</h4>
+                            
+                             <span>{{ __('Customer_Posation') }}</span>  
+</div>
                         </div>
                         <a href="{{ url('about') }}" class="btn btn-two">{{ __('More_About_Us') }}
                             <img src="{{ asset('assets/img/icons/right_arrow.svg') }}" alt=""
                                 class="injectable">
                         </a>
-                        <span>{{ __('Customer_Posation') }}</span>
+                      
 
                     </div>
                 </div>
