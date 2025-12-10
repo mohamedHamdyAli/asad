@@ -28,6 +28,7 @@
                                     <li><a href="{{ url('/about') }}">About Us</a></li>
                                     <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                                     <li><a href="{{ url('/project') }}">Portfolio</a></li>
+                                    <li><a href="{{ url('/our-services') }}">Our Services</a></li>
                                 </ul>
                             </div>
 
