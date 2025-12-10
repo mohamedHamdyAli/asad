@@ -35,7 +35,7 @@
                             <div class="tgmenu__action">
                                 <ul class="list-wrap">
                                     <li class="header-btn">
-                                        <a href="{{ url('/appointment') }}" class="btn border-btn">Book Your
+                                        <a href="{{ url('/contact') }}" class="btn border-btn">Book Your
                                             Service</a>
                                     </li>
                                 </ul>
