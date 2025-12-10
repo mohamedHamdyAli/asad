@@ -11,6 +11,7 @@ Route::get('/contact', fn() => view('contact.contact'));
 Route::get('/project', fn() => view('portfolio.portfolio'));
 Route::get('/project-details', fn() => view('portfolio.project-details.project-details'));
 Route::get('/our-services', fn() => view('services.services'));
+Route::get('/qhse-policy', fn() => view('qhse_policy.qhsePolicy'));
 
 
 Route::get('/login', fn() => inertia('Auth/Login'))->name('login');
