@@ -33,10 +33,6 @@
                                         <a href="{{ url('/about') }}">{{ __('About Us') }}</a>
                                     </li>
 
-                                    <li class="{{ Request::is('contact') ? 'active' : '' }}">
-                                        <a href="{{ url('/contact') }}">{{ __('Contact Us') }}</a>
-                                    </li>
-
                                     <li class="{{ Request::is('project') ? 'active' : '' }}">
                                         <a href="{{ url('/project') }}">{{ __('Portfolio') }}</a>
                                     </li>
@@ -44,6 +40,11 @@
                                     <li class="{{ Request::is('our-services') ? 'active' : '' }}">
                                         <a href="{{ url('/our-services') }}">{{ __('Our Services') }}</a>
                                     </li>
+
+                                    <li class="{{ Request::is('contact') ? 'active' : '' }}">
+                                        <a href="{{ url('/contact') }}">{{ __('Contact Us') }}</a>
+                                    </li>
+
                                 </ul>
                             </div>
 

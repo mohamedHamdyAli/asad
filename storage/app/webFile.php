@@ -193,6 +193,7 @@ return [
     'Office_Address' => 'Office Address',
     'Phone_Number' => 'Phone Number',
     'Email_Address' => 'Email Address',
+    'Unit_Gallery' => 'Unit Gallery',
 
 
 
