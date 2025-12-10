@@ -4,11 +4,18 @@
         <div class="row gutter-24 align-items-center justify-content-center">
             <div class="col-lg-6 col-md-9">
                 <div class="about__img-wrap-five">
-                    <img src="{{ asset('assets/img/images/h3_about_img01.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                    <img src="{{ asset('assets/img/images/h3_about_img02.jpg') }}" alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                    <img src="{{ asset('assets/img/images/h3_about_img03.jpg') }}" alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s" data-wow-delay="0.6s">
-                    <div class="experience__box-two wow img-custom-anim-top animated" data-wow-duration="1.5s" data-wow-delay="0.8s">
-                        <h2 class="title">{{ __('25') }}</h2>
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about01')) ?? asset('assets/img/images/inner_about01.jpg') }}"
+                        alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.2s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about02')) ?? asset('assets/img/images/inner_about02.jpg') }}"
+                        alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.4s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about03')) ?? asset('assets/img/images/inner_about03.jpg') }}"
+                        alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.6s">
+                    <div class="experience__box-two wow img-custom-anim-top animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.8s">
+                        <h2 class="title">{{ __('number_of_Experience') }}</h2>
                         <span>{{ __('Years') }} <br> {{ __('Of Experience') }}</span>
                     </div>
                 </div>
@@ -28,16 +35,17 @@
                     <div class="about__content-bottom about__content-bottom-two">
                         <div class="about__customer-box">
                             <ul class="list-wrap customer">
-                                <li><img src="{{ asset('assets/img/images/author01.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author02.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author03.png') }}" alt="img"></li>
-                                <li><img src="{{ asset('assets/img/images/author04.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client01')) ?? asset('assets/img/images/author01.png') }}"
+                                        alt="img"></li>
                             </ul>
                             <h4 class="title">{{ __('Loyal_Customer') }}</h4>
                         </div>
                         <a href="{{ url('about') }}" class="btn btn-two">{{ __('More_About_Us') }}
-                            <img src="{{ asset('assets/img/icons/right_arrow.svg') }}" alt="" class="injectable">
+                            <img src="{{ asset('assets/img/icons/right_arrow.svg') }}" alt=""
+                                class="injectable">
                         </a>
+                        <span>{{ __('Customer_Posation') }}</span>
+
                     </div>
                 </div>
             </div>

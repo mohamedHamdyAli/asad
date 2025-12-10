@@ -3,9 +3,9 @@
         <div class="row gutter-24 align-items-center justify-content-center">
             <div class="col-lg-7 col-md-10 order-0 order-lg-2">
                 <div class="company__img">
-                    <img src="{{ asset('assets/img/images/company_img01.jpg') }}" alt="img">
-                    <img src="{{ asset('assets/img/images/company_img02.jpg') }}" alt="img">
-                    <img src="{{ asset('assets/img/images/company_img03.jpg') }}" alt="img">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('home_Great_Company_Backup01')) ?? asset('assets/img/images/company_img01.jpg') }}" alt="img">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('home_Great_Company_Backup02')) ?? asset('assets/img/images/company_img02.jpg') }}" alt="img">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('home_Great_Company_Backup03')) ?? asset('assets/img/images/company_img03.jpg') }}" alt="img">
                 </div>
             </div>
             <div class="col-lg-5">

@@ -3,7 +3,7 @@
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-6 col-md-9 order-0 order-lg-2">
                 <div class="about__img-three">
-                    <img src="{{ asset('assets/img/images/inner_about04.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_more_about_us')) ?? asset('assets/img/images/inner_about04.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
                 </div>
             </div>
             <div class="col-lg-6">

@@ -2,16 +2,22 @@
 return [
     // Home Page
     'Home' => 'Home',
-    '25' => '25',
+    'number_of_Experience' => '10 +',
     'Years' => 'Years',
     'Of Experience' => 'Of Experience',
     'About Our Company' => 'About Our Company',
     'About_Title' => 'Awesome services from industrial company',
-    'About_Desc' => 'A factory is a business that produces goods or products. These goods can range from consumer products such as clothing and electronics to industrial products such as machinery and equipment. Factories are typically large buildings or complexes that are equipped. Factory companies employ a large number of people, from factory workers and supervisors to managers and executives.',
-    'Point1' => '5 Year Warranty on Workmanship',
-    'Point2' => 'Every Project is Run by a Team of Experts',
-    'Point3' => 'We Save You Time, Money, and Space',
-    'Loyal_Customer' => '15k Loyal Customer',
+
+    'About_Desc' => 'When I founded ASAD 10 years ago, I was driven by my ambition to develop an insightful success story through contributing to the construction development on the land of Kuwait by providing high-level services in accordance to quality, security and safety standards.',
+
+    'Point1' => 'Through our willpower and adherence to our values, we have successfully expanded our services to satisfy the demands of the construction market in both public and private sectors to exceed our clients\' expectations.',
+
+    'Point2' => 'This is the story of ASAD, but it is only the beginning. We are ideally situated to engage new prospects in the upcoming years, encouraged by the unmatched aspiration and determination towards distinction in everything we do. As we write the next chapter of ASAD, we look forward to sharing our success with you',
+
+    'Point3' => 'Our commitments extends beyond the boundaries of commercial and contractual interests to achieve a sustainable value through our accountable leadership and innovative practices that aim to create an imprint as a national company which shoulders its social responsibilities towards society and environment in which it operates.',
+
+    'Loyal_Customer' => 'Eng. Wael Soliman',
+    'Customer_Posation' => 'FOUNDER & CEO',
     'More_About_Us' => 'More About Us',
     'work_process_title' => 'We strive to be a step ahead',
     'work_process_desc' => 'The four steps working process to get amazing works',
