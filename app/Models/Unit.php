@@ -121,7 +121,7 @@ class Unit extends Model
 
     public function extensionDates()
     {
-        return $this->hasMany(ExtensionDate::class);
+        return $this->hasMany(ExtensionDate::class , 'unit_id');
     }
 // public function getCoverImageAttribute($value)
 // {
