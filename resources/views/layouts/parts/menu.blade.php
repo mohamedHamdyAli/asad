@@ -19,16 +19,31 @@
                     <div class="tgmenu__wrap">
                         <nav class="tgmenu__nav">
                             <div class="logo">
-                                <a href="{{ url('/') }}"><img src="{{ asset('assets/img/logo/logo-asad.svg') }}" alt="Logo"></a>
+                                <a href="{{ url('/') }}"><img src="{{ asset('assets/img/logo/logo-asad.svg') }}"
+                                        alt="Logo"></a>
                             </div>
 
                             <div class="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex">
                                 <ul class="navigation">
-                                    <li class="active "><a href="{{ url('/') }}">Home</a></li>
-                                    <li><a href="{{ url('/about') }}">About Us</a></li>
-                                    <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                                    <li><a href="{{ url('/project') }}">Portfolio</a></li>
-                                    <li><a href="{{ url('/our-services') }}">Our Services</a></li>
+                                    <li class="{{ Request::is('/') ? 'active' : '' }}">
+                                        <a href="{{ url('/') }}">{{ __('Home') }}</a>
+                                    </li>
+
+                                    <li class="{{ Request::is('about') ? 'active' : '' }}">
+                                        <a href="{{ url('/about') }}">{{ __('About Us') }}</a>
+                                    </li>
+
+                                    <li class="{{ Request::is('contact') ? 'active' : '' }}">
+                                        <a href="{{ url('/contact') }}">{{ __('Contact Us') }}</a>
+                                    </li>
+
+                                    <li class="{{ Request::is('project') ? 'active' : '' }}">
+                                        <a href="{{ url('/project') }}">{{ __('Portfolio') }}</a>
+                                    </li>
+
+                                    <li class="{{ Request::is('our-services') ? 'active' : '' }}">
+                                        <a href="{{ url('/our-services') }}">{{ __('Our Services') }}</a>
+                                    </li>
                                 </ul>
                             </div>
 

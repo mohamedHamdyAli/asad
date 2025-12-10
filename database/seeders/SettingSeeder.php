@@ -13,20 +13,21 @@ class SettingSeeder extends Seeder
     public function run()
     {
 
-        $loream = 'It is in fact part of the Latin gibberish that printers use to fill in space in a layout temporarily whilst awaiting the arrival of the
+        $loreamEn = 'It is in fact part of the Latin gibberish that printers use to fill in space in a layout temporarily whilst awaiting the arrival of the
         final text, so that the client can have an idea in advance of what the finished page will look like!';
+        $loreamDe = 'Es handelt sich dabei um lateinische Wörter, die Drucker verwenden, um Lücken im Layout vorübergehend zu füllen, bis der endgültige Text vorliegt,
+ damit der Kunde eine Vorstellung davon bekommt, wie die fertige Seite aussehen wird!';
+
+        $locationEn = '6th of October City';
+        $locationAr = 'مدينة 6 أكتوبر،.';
 
         $this->create_new_config('APP_NAME', 'ASAD');
 
-        $this->create_new_config('APP_DESC', $loream);
+        $this->create_new_config('About', json_encode(['en' => $loreamEn, 'ar' => $loreamDe], JSON_UNESCAPED_UNICODE));
+        $this->create_new_config('Location', json_encode(['en' => $locationEn, 'ar' => $locationAr], JSON_UNESCAPED_UNICODE));
 
-        $this->create_new_config('ADDREESS', $loream);
-
-        $this->create_new_config('PRIVACY_POLICY', $loream);
-
-        $this->create_new_config('TERMS', $loream);
-
-        $this->create_new_config('ABOUT', $loream);
+        $this->create_new_config('Privacy_Policy', json_encode(['en' => $loreamEn, 'ar' => $loreamDe], JSON_UNESCAPED_UNICODE));
+        $this->create_new_config('Terms', json_encode(['en' => $loreamEn, 'ar' => $loreamDe], JSON_UNESCAPED_UNICODE));
 
         $this->create_new_config('MOBILE', Null);
         $this->create_new_config('WHATS_APP_NUMBER', Null);
@@ -52,6 +53,9 @@ class SettingSeeder extends Seeder
         $this->create_new_config('YOUTUBE_URL', 'https://www.youtube.com');
         $this->create_new_config('SNAPCHAT_URL', 'https://www.snapchat.com/en-GB');
         $this->create_new_config('GMAIL_URL', 'https://gmail.com');
+
+        $this->create_new_config('Phone', '+201555880688');
+        $this->create_new_config('Email', 'nahrPhpTeam@nahrPhpTeam.com');
 
         $this->create_new_config('SMS_PROVIDER_TYPE', Null);
         $this->create_new_config('SMS_PROVIDER_SENDER', Null);
@@ -79,7 +83,10 @@ class SettingSeeder extends Seeder
         $this->create_new_config('home_Great_Company_Backup01', Null);
         $this->create_new_config('home_Great_Company_Backup02', Null);
         $this->create_new_config('home_Great_Company_Backup03', Null);
-
+        $this->create_new_config('home_Services_Banner', Null);
+        $this->create_new_config('home_cirtifaction01', Null);
+        $this->create_new_config('home_cirtifaction02', Null);
+        $this->create_new_config('home_cirtifaction03', Null);
     }
 
     public function create_new_config($key, $value)

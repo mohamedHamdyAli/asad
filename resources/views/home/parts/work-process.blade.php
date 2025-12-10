@@ -49,12 +49,6 @@
                             <div class="work__content-two">
                                 <h4 class="title"><a href="{{ url('contact') }}">{{ $step['title'] }}</a></h4>
                                 <p>{{ $step['text'] }}</p>
-                                <a href="{{ url('contact') }}" class="link-btn">Learn More <i
-                                        class="asad-right-arrow-2"></i></a>
-                            </div>
-                            <div class="work__arrow">
-                                <img src="{{ asset('assets/img/icons/right_arrow02.svg') }}" alt=""
-                                    class="injectable">
                             </div>
                         </div>
                     </div>

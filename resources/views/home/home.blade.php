@@ -13,12 +13,18 @@
         {{-- Work Process --}}
         @include('home.parts.work-process')
 
+        {{-- Services --}}
+        @include('home.parts.services')
+
         {{-- Video --}}
         @include('home.parts.video')
 
         {{-- Company --}}
         @include('home.parts.company')
 
+
+        {{-- Cirtifaction --}}
+        @include('home.parts.cirtifaction')
 
         {{-- Brands --}}
         @include('home.parts.brands')

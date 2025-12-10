@@ -16,20 +16,13 @@
         </div>
         <div class="social-links">
             <ul class="list-wrap">
-                <li>
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <li><a href="{{ getSettingValue('Facebook_Url') }}" target="_blank"><i
+                            class="fab fa-facebook-f"></i></a></li>
+                <li><a href="{{ getSettingValue('Twitter_Url') }}" target="_blank"><i class="fab fa-twitter"></i></a>
                 </li>
-                <li>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                <li><a href="{{ getSettingValue('LinkedIn_Url') }}" target="_blank"><i
+                            class="fab fa-linkedin-in"></i></a></li>
+                <li><a href="{{ getSettingValue('Instagram_Url') }}" target="_blank"><i class="fab fa-youtube"></i></a>
                 </li>
             </ul>
         </div>
@@ -88,32 +81,28 @@
         <button><i class="far fa-window-close"></i></button>
     </div>
     <div class="offCanvas__logo mb-30">
-        <a href="index.html"><img src="assets/img/logo/logo-asad.svg" alt="Logo" /></a>
+        <a href="index.html"><img src="{{ asset('assets/img/logo/w_logo-asad.svg') }}" alt="Logo" /></a>
     </div>
     <div class="offCanvas__side-info mb-30">
         <div class="contact-list mb-30">
-            <h4>Office Address</h4>
+            <h4>{{ __('Office_Address') }}</h4>
             <p>
-                123/A, Miranda City Likaoli <br />
-                Prikano, Dope
+                {{ getLocalizedSettingValue('Location') }}
             </p>
         </div>
         <div class="contact-list mb-30">
-            <h4>Phone Number</h4>
-            <p>+0989 7876 9865 9</p>
-            <p>+(090) 8765 86543 85</p>
+            <h4>{{ __('Phone_Number') }}</h4>
+            <p>{{ getLocalizedSettingValue('Phone') }}</p>
         </div>
         <div class="contact-list mb-30">
-            <h4>Email Address</h4>
-            <p>info@example.com</p>
-            <p>example.mail@hum.com</p>
+            <h4>{{ __(key: 'Email_Address') }}</h4>
+            <p>{{ getLocalizedSettingValue('Email') }}</p>
         </div>
     </div>
     <div class="offCanvas__social-icon mt-30">
-        <a href="javascript:void(0)"><i class="fab fa-facebook-f"></i></a>
-        <a href="javascript:void(0)"><i class="fab fa-twitter"></i></a>
-        <a href="javascript:void(0)"><i class="fab fa-google-plus-g"></i></a>
-        <a href="javascript:void(0)"><i class="fab fa-instagram"></i></a>
+        <a href="{{ getSettingValue('Facebook_Url') }}"><i class="fab fa-facebook-f"></i></a>
+        <a href="{{ getSettingValue('Twitter_Url') }}"><i class="fab fa-twitter"></i></a>
+        <a href="{{ getSettingValue('Instagram_Url') }}"><i class="fab fa-instagram"></i></a>
     </div>
 </div>
 <div class="offCanvas__overly"></div>
