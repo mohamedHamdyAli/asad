@@ -1,46 +1,55 @@
 <!-- about-area -->
-<section class="about__area-two section-py-120">
+<section class="about__area-five grey-bg-two section-py-120">
     <div class="container">
-        <div class="row align-items-center justify-content-center">
-            <div class="col-lg-6 col-md-10">
-                <div class="about__img-wrap-two">
-                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about01')) ?? asset('assets/img/images/inner_about01.jpg') }}" alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about02')) ?? asset('assets/img/images/inner_about02.jpg') }}" alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about03')) ?? asset('assets/img/images/inner_about03.jpg') }}" alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s" data-wow-delay="0.6s">
+        <div class="row gutter-24 align-items-center justify-content-center">
+            <div class="col-lg-6 col-md-9">
+                <div class="about__img-wrap-five">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about01')) ?? asset('assets/img/images/inner_about01.jpg') }}"
+                        alt="img" class="wow img-custom-anim-right animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.2s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about02')) ?? asset('assets/img/images/inner_about02.jpg') }}"
+                        alt="img" class="wow img-custom-anim-left animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.4s">
+                    <img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_about03')) ?? asset('assets/img/images/inner_about03.jpg') }}"
+                        alt="img" class="wow img-custom-anim-top animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.6s">
+                    <div class="experience__box-two wow img-custom-anim-top animated" data-wow-duration="1.5s"
+                        data-wow-delay="0.8s">
+                        <h2 class="title">{{ __('number_of_Experience') }}</h2>
+                        <span>{{ __('Years') }} <br> {{ __('Of Experience') }}</span>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="about__content-two">
-                    <div class="section__title section__title-three mb-25">
-                        <span class="sub-title">{{ __('More About Us') }}</span>
-                        <h2 class="title">{{ __('Our mission is save people from pollution') }}</h2>
+                <div class="about__content-five">
+                    <div class="section__title section__title-three mb-30">
+                        <span class="sub-title">{{ __('About Our Company') }}</span>
+                        <h2 class="title">{{ __('About_Title') }}</h2>
                     </div>
-                    <p>{{ __('Consequat risus cum congue facilisis in egestas etiam senectus...') }}</p>
-                    <div class="experience__wrap">
-                        <div class="experience__box">
-                            <h3 class="title">{{ __('25+') }}</h3>
-                            <span>{{ __('Years') }} <br> {{ __('Experience') }}</span>
-                        </div>
-                        <div class="about__list-box-two">
-                            <ul class="list-wrap">
-                                <li>{{ __('Eamlessly conceptualize go forward total linkage') }}</li>
-                                <li>{{ __('Whiteboard multifuional applications rather than') }}</li>
-                                <li>{{ __('Applications rather than lived reliable functionale') }}</li>
-                                <li>{{ __('Leverage other quality ideas synestic outsourcing') }}</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="about__content-bottom">
+                    <p>{{ __('About_Desc') }}</p>
+                    <ul class="list-wrap banner__list-box">
+                        <li><i class="fas fa-check"></i>{{ __('Point1') }}</li>
+                        <li><i class="fas fa-check"></i>{{ __('Point2') }}</li>
+                        <li><i class="fas fa-check"></i>{{ __('Point3') }}</li>
+                    </ul>
+                    <div class="about__content-bottom about__content-bottom-two">
                         <div class="about__customer-box">
-                            <h4 class="title">{{ __('7.2M+ User') }}</h4>
                             <ul class="list-wrap customer">
-                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client01')) ?? asset('assets/img/images/author01.png') }}" alt="img"></li>
-                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client02')) ?? asset('assets/img/images/author02.png') }}" alt="img"></li>
-                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client03')) ?? asset('assets/img/images/author03.png') }}" alt="img"></li>
-                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client04')) ?? asset('assets/img/images/author04.png') }}" alt="img"></li>
+                                <li><img src="{{ getImageassetWebsiteUrl(getSettingValue('about_inner_client01')) ?? asset('assets/img/images/author01.png') }}"
+                                        alt="img"></li>
                             </ul>
+                            <div class="about__customer-contentarea">
+                                <h4 class="title">{{ __('Loyal_Customer') }}</h4>
+
+                                <span>{{ __('Customer_Posation') }}</span>
+                            </div>
                         </div>
-                        <a href="{{ url('services') }}" class="btn btn-two">{{ __('Book Your Service') }}</a>
+                        <a href="{{ url('about') }}" class="btn btn-two">{{ __('More_About_Us') }}
+                            <img src="{{ asset('assets/img/icons/right_arrow.svg') }}" alt=""
+                                class="injectable">
+                        </a>
+
+
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@
         @include('about.parts.slider')
         @include('about.parts.about-one')
         @include('about.parts.about-two')
+        @include('about.parts.choose')
         @include('about.parts.cta')
         @include('about.parts.video')
     </main>

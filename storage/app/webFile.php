@@ -38,6 +38,15 @@ return [
     'Innovative_Solution_Desc' => 'Class ad porta tempus per him accumsan posuer felis sollicitudin primis malesuada',
     'Experienced Team' => 'Experienced Team',
     'Experienced_Team_Desc' => 'Class ad porta tempus per him accumsan posuer felis sollicitudin primis malesuada',
+    'ISO CERTIFICATIONS' => 'ISO CERTIFICATIONS',
+    'International Standards Organization' => 'International Standards Organization',
+    'ISO 9001_title' => 'ISO 9001:2015',
+    'ISO_9001_Desc' => 'ISO 9001 is a standard that sets out the requirements for a quality management system. It helps businesses and organizations to be more e cient and improve consumer satisfaction.',
+    'OHSAS 18001_title' => 'OHSAS 18001:2007',
+    'OHSAS_18001_Desc' => 'ISO 18001 is an internationally agreed Occupational Health and Safety Management Certification which provides a framework to identify, control and decrease the risks associated with health and safety within the workplace. Implementing the standard will send a clear signal to stakeholders that the company views employee’s health and safety as a priority within the company.',
+    'ISO 14001_title' => 'ISO 14001:2015',
+    'ISO_14001_Desc' => 'ISO 14001 is an internationally agreed standard that sets out the requirements for an environmental management system. It helps organizations improve their environmental through more e cient use of resources and reduction of waste, gaining a competitive advantage and the trust of stakeholders.',
+    'services_title' => 'ASAD has successfully completed projects in many different disciplines and has strong capabilities to deliver projects in the following sectors',
 
     // About Page
     'About Us' => 'About Us',
@@ -74,4 +83,117 @@ return [
     'Status' => 'Status',
     'Address' => 'Address',
     'No images available' => 'No images available',
+    'Mission, vision and Values' => 'Mission, vision and Values',
+    'Our' => 'Our',
+    'VISION' => 'VISION',
+    'Be the MENA’s premier engineering, construction and project Management Company' => 'Be the MENA’s premier engineering, construction and project Management Company.',
+    'MISSION' => 'MISSION',
+    'Add value for all our stakeholders' => 'Add value for all our stakeholders.',
+    'Attain astonishing outcomes for our clients' => 'Attain astonishing outcomes for our clients.',
+    'Build satisfying careers for our people' => 'Build satisfying careers for our people.',
+    'Earn a fair return on the value we provide' => 'Earn a fair return on the value we provide.',
+    'Values' => 'Values',
+    'Ethics' => 'Ethics',
+    'Safety & Health' => 'Safety & Health',
+    'Quality' => 'Quality',
+    'People' => 'People',
+    'Culture' => 'Culture',
+    'Relationships' => 'Relationships',
+    'Innovation' => 'Innovation',
+    'Sustainability' => 'Sustainability',
+
+    'Why Choose Us' => 'Why Choose Us',
+    'Wherever we go and whatever we do:' => 'Wherever we go and whatever we do:',
+
+    'Demonstrate Integrity:' => 'Demonstrate Integrity:',
+    'Exercise the highest level of professional and ethical behavior.' => 'Exercise the highest level of professional and ethical behavior.',
+
+    'Learn It, Do It, Share It:' => 'Learn It, Do It, Share It:',
+    'Be curious. Seek, share and build upon experiences and lessons learned.' => 'Be curious. Seek, share and build upon experiences and lessons learned.',
+
+    'Are Respectful:' => 'Are Respectful:',
+    'Treat people with respect and dignity. Listen actively. Communicate in a timely and forthright manner. Never undermine colleagues.' => 'Treat people with respect and dignity. Listen actively. Communicate in a timely and forthright manner. Never undermine colleagues.',
+
+    'Live Our Culture:' => 'Live Our Culture:',
+    'Embrace, embody and actively contribute to our Vision, Values & Missions. Develop a proud legacy.' => 'Embrace, embody and actively contribute to our Vision, Values & Missions. Develop a proud legacy.',
+
+    'Collaborate:' => 'Collaborate:',
+    'Ask for and welcome help; offer and give it freely. Mutually resolve ambiguity and conflict.' => 'Ask for and welcome help; offer and give it freely. Mutually resolve ambiguity and conflict.',
+
+    'Compete Fittingly:' => 'Compete Fittingly:',
+    'The ability to compete selectively focusing on projects with the best balance between available resources and risk/reward profile.' => 'The ability to compete selectively focusing on projects with the best balance between available resources and risk/reward profile.',
+
+    'Build Trust:' => 'Build Trust:',
+    'Make commitments responsibly and always keep our word. Be candid while building shared understanding.' => 'Make commitments responsibly and always keep our word. Be candid while building shared understanding.',
+
+    'Hold Solid Financial Structure:' => 'Hold Solid Financial Structure:',
+    'Strong commitment to grow while maintaining supportive financial resources. Highly liquid balance sheet. Low net debt/equity ratio. Efficient use of capital. Bank facilities.' => 'Strong commitment to grow while maintaining supportive financial resources. Highly liquid balance sheet. Low net debt/equity ratio. Efficient use of capital. Bank facilities.',
+
+    'Deliver:' => 'Deliver:',
+    'Set high aspirations, plan reliably and honor all commitments.' => 'Set high aspirations, plan reliably and honor all commitments.',
+
+    'Build Our Future:' => 'Build Our Future:',
+    'Able to penetrate new markets in GCC. A very strong focus on market opportunities while managing risk.' => 'Able to penetrate new markets in GCC. A very strong focus on market opportunities while managing risk.',
+
+    'STRUCTURE' => 'STRUCTURE',
+
+    'GOSSOR UNITED GROUP PROJECT MANAGEMENT' => 'GOSSOR UNITED GROUP PROJECT MANAGEMENT',
+
+    'ASAD UNITED GROUP GENERAL TRADING & CONTRACTING' => 'ASAD UNITED GROUP GENERAL TRADING & CONTRACTING',
+
+    'ASAD CONSTRUCTION' => 'ASAD CONSTRUCTION',
+
+    'ASAD INFRASTRUCTURE' => 'ASAD INFRASTRUCTURE',
+
+    'ASAD ELECTROMECHANICAL' => 'ASAD ELECTROMECHANICAL',
+    'Civil, Infrastructure and electromechanical Works' => 'Civil, Infrastructure and electromechanical Works',
+
+    'Large scale residential developments' => 'Large scale residential developments',
+
+    'Residential and commercial high-rise towers' => 'Residential and commercial high-rise towers',
+
+    'Luxurious villas' => 'Luxurious villas',
+
+    'Hospitals and clinics' => 'Hospitals and clinics',
+
+    'Hotels and hotel apartments' => 'Hotels and hotel apartments',
+
+    'Mosques' => 'Mosques',
+
+    'Retail and commercial fit-out' => 'Retail and commercial fit-out',
+
+    'Development for Existing building, Extensions and renovations.' => 'Development for Existing building, Extensions and renovations.',
+
+    'Value engineering solutions' => 'Value engineering solutions',
+
+    'Construction program efficiencies' => 'Construction program efficiencies',
+
+    'Cost planning' => 'Cost planning',
+
+    'Construction management' => 'Construction management',
+
+    'Project funding assistance' => 'Project funding assistance',
+
+    'Project feasibility studies' => 'Project feasibility studies',
+
+    'Design and build' => 'Design and build',
+
+    'Modeling and Simulation of construction operations' => 'Modeling and Simulation of construction operations',
+
+    'Machine learning applications in construction industry' => 'Machine learning applications in construction industry',
+    'Useful Links' => 'Useful Links',
+    'Our Projects' => 'Our Projects',
+    'Our Services' => 'Our Services',
+    'Newsletter' => 'Newsletter',
+    'Subscribe' => 'Subscribe',
+    'Email Address' => 'Email Address',
+    'Aplications prodize before front end ortals visualize front end' => 'Aplications prodize before front end ortals visualize front end',
+    'rights_reserved' => '© 2026 ASAD . All rights reserved powered by',
+    'nahrdev' => 'nahrdev',
+    'Office_Address' => 'Office Address',
+    'Phone_Number' => 'Phone Number',
+    'Email_Address' => 'Email Address',
+
+
+
 ];

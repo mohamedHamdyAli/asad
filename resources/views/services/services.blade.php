@@ -5,5 +5,6 @@
 @section('content')
 <main class="main-area fix">
         @include('services.parts.slider')
+        @include('services.parts.services')
     </main>
 @endsection
