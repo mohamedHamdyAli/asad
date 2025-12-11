@@ -319,3 +319,4 @@ if (!function_exists('uploadOrUpdateImage')) {
         return $existingImagePath;
     }
 }
+

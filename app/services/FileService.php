@@ -180,40 +180,93 @@ class FileService
         return $filename;
     }
 
-    public static function generateJsonLanguageFile($code, $file)
+    // public static function generateJsonLanguageFile($code, $file)
+    // {
+    //     $sourcePath = base_path("storage/app/$file.php");
+    //     $langDir = base_path("resources/lang");
+    //     $filename = "$code.json";
+    //     $path = "$langDir/$filename";
+
+    //     if (!File::exists($sourcePath)) {
+    //         throw new Exception("Source translation file not found: $sourcePath");
+    //     }
+
+    //     $translations = include $sourcePath;
+    //     if (!is_array($translations)) {
+    //         throw new Exception("Invalid translation file format: $sourcePath must return an array.");
+    //     }
+
+    //     if (!File::exists($langDir)) {
+    //         File::makeDirectory($langDir, 0777, true, true);
+    //     } else {
+    //         @chmod($langDir, 0777);
+    //     }
+
+    //     $content = json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+    //     if (File::exists($path)) {
+    //         File::delete($path);
+    //     }
+
+    //     File::put($path, $content);
+
+    //     @chmod($path, 0777);
+
+    //     return $filename;
+    // }
+
+
+    public static function generateJsonLanguageFile($code)
     {
-        $sourcePath = base_path("storage/app/$file.php");
+        $files = [
+            'panel'  => 'adminDashboardFile',
+            'vendor' => 'vendorDashboardFile',
+            'web'    => 'webFile',
+            'app'    => 'userAppFile',
+        ];
+
         $langDir = base_path("resources/lang");
-        $filename = "$code.json";
-        $path = "$langDir/$filename";
-
-        if (!File::exists($sourcePath)) {
-            throw new Exception("Source translation file not found: $sourcePath");
-        }
-
-        $translations = include $sourcePath;
-        if (!is_array($translations)) {
-            throw new Exception("Invalid translation file format: $sourcePath must return an array.");
-        }
-
         if (!File::exists($langDir)) {
             File::makeDirectory($langDir, 0777, true, true);
-        } else {
-            @chmod($langDir, 0777);
         }
 
-        $content = json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $merged = [];
 
-        if (File::exists($path)) {
-            File::delete($path);
+        foreach ($files as $key => $fileName) {
+
+            $sourcePath = base_path("storage/app/$fileName.php");
+
+            if (!File::exists($sourcePath)) {
+                throw new Exception("Source translation file not found: $sourcePath");
+            }
+
+            $translations = include $sourcePath;
+
+            if (!is_array($translations)) {
+                throw new Exception("Invalid translation array in: $sourcePath");
+            }
+
+            // save each file individually: en_panel.json – en_vendor.json – etc
+            $filePath = "$langDir/{$code}_{$key}.json";
+            File::put($filePath, json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            // add to merged array
+            $merged = array_merge($merged, $translations);
         }
 
-        File::put($path, $content);
+        // save merged file: en.json
+        $defaultPath = "$langDir/$code.json";
+        File::put($defaultPath, json_encode($merged, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        @chmod($path, 0777);
-
-        return $filename;
+        return [
+            'panel_file'   => "{$code}_panel.json",
+            'vendor_file'  => "{$code}_vendor.json",
+            'web_file'     => "{$code}_web.json",
+            'app_file'     => "{$code}_app.json",
+            'default_file' => "$code.json",
+        ];
     }
+
 
 
     /**
