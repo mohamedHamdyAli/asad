@@ -194,7 +194,5 @@ return [
     'Phone_Number' => 'Phone Number',
     'Email_Address' => 'Email Address',
     'Unit_Gallery' => 'Unit Gallery',
-
-
-
+    'Portfolio' => 'Portfolio',
 ];

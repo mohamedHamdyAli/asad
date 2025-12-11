@@ -77,6 +77,7 @@ class LanguageHelperFunctionService
             if (!empty($language)) {
                 session(['locale' => $language->code]);
                 session(['locale_name' => $language->name]);
+                session(['locale_flag' => $language->icon]);
                 return true;
             }
             return false;

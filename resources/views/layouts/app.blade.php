@@ -1,5 +1,13 @@
+    @php
+        $languages = \App\Models\Language::getLanguageList();
+        $firstLanguage = $languages->first();
+        $locale = Session::get('locale');
+        $locale_name = Session::get('locale_name');
+        $locale_flag = Session::get('locale_flag');
+    @endphp
+
 <!doctype html>
-<html class="no-js" lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     @include('layouts.parts.head-css')
