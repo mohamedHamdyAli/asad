@@ -330,6 +330,12 @@ textarea {
     .container {
         max-width: 100%;
     }
+        nav.tgmenu__nav li.menu-item-has-children {
+    display: block;
+}
+.tgmobile__menu .navigation li a:after {
+    display: none;
+}
 }
 
 @media only screen and (min-width: 576px) and (max-width: 767px) {
@@ -14820,4 +14826,8 @@ section.company__area.company__bg {
 
 .tgmenu__navbar-wrap.tgmenu__main-menu.d-none.d-xl-flex.lang-selector ul.navigation {
     margin-right: 0;
+}
+
+nav.tgmenu__nav li.menu-item-has-children {
+    display: none;
 }

@@ -330,6 +330,40 @@ textarea {
     .container {
         max-width: 100%;
     }
+    nav.tgmenu__nav li.menu-item-has-children {
+    display: block;
+}
+li.menu-item-has-children {
+    direction: rtl;
+}
+.tgmobile__menu .navigation li.menu-item-has-children .dropdown-btn {
+    position: absolute;
+    left: 20px !important;
+    top: 6px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    font-size: 16px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tg-heading-color);
+    background: var(--tg-color-gray-1);
+    cursor: pointer;
+    border-radius: 0;
+    -webkit-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
+    z-index: 5;
+    right: unset !important;
+}
+.tgmobile__menu .navigation li a:after {
+    display: none;
+}
 }
 
 @media only screen and (min-width: 576px) and (max-width: 767px) {
@@ -14842,4 +14876,7 @@ section.slider__area-two .container {
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
+}
+nav.tgmenu__nav li.menu-item-has-children {
+    display: none;
 }
