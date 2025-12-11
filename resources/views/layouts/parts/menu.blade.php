@@ -44,8 +44,14 @@
                                     <li class="{{ Request::is('contact') ? 'active' : '' }}">
                                         <a href="{{ url('/contact') }}">{{ __('Contact Us') }}</a>
                                     </li>
-                                    {{-- language switcher --}}
-                                    {{-- <li class="nav-item dropdown">
+                                 
+                                </ul>
+                            </div>
+ 
+      <div class="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex lang-selector">
+                                <ul class="navigation">
+                                       {{-- language switcher --}}
+                                    <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                                             href="#" id="langDropdown" role="button" data-bs-toggle="dropdown"
                                             aria-expanded="false">
@@ -80,12 +86,13 @@
                                                 </li>
                                             @endforeach
                                         </ul>
-                                    </li> --}}
+                                    </li>
                                 </ul>
-                            </div>
 
+</div>
                             <div class="tgmenu__action">
                                 <ul class="list-wrap">
+                                 
                                     <li class="header-btn">
                                         <a href="{{ url('/contact') }}"
                                             class="btn border-btn">{{ __('Book Your Service') }}</a>

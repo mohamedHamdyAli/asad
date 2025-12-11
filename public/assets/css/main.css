@@ -2679,7 +2679,7 @@ textarea {
     -moz-transform: translateX(8px);
     -ms-transform: translateX(8px);
     -o-transform: translateX(8px);
-    transform: translateX(8px);
+    transform: translateX(0px);
 }
 
 .tgmenu__navbar-wrap ul li:hover>.sub-menu {
@@ -14808,4 +14808,16 @@ section.project__area.project__bg {
 
 section.project__area.project__bg {
     padding: 2% 2%;
+}
+ section.video__area-two {
+    display: none;
+}
+
+section.company__area.company__bg {
+    margin-top: 2%;
+    padding-top: 7%;
+}
+
+.tgmenu__navbar-wrap.tgmenu__main-menu.d-none.d-xl-flex.lang-selector ul.navigation {
+    margin-right: 0;
 }

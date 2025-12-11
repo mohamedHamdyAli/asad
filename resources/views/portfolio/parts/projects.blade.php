@@ -19,7 +19,7 @@
                             <span>{{ \Carbon\Carbon::parse($unit->start_date)->format('F Y') }} - {{  \Carbon\Carbon::parse($unit->end_date)->format('F Y')}}</span>
                         </div>
                         <div class="project__icon-two">
-                            <a href="{{ url("project-details/{$unit->id}") }}"><i class="renova-plus"></i></a>
+                            <a href="{{ url("project-details/{$unit->id}") }}"><i class="asad-plus"></i></a>
                         </div>
                     </div>
                 </div>
