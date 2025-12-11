@@ -16,19 +16,19 @@ class SetLocalePanel
      */
     public function handle(Request $request, Closure $next)
     {
-        // $defaultLanguage = (new Language())->getDefaultLanguage();
+        $defaultLanguage = (new Language())->getDefaultLanguage();
 
-        // $currentLanguage = Session::get('language', $defaultLanguage);
+        $currentLanguage = Session::get('locale', $defaultLanguage);
 
-        // App::setLocale($currentLanguage->code);
+        App::setLocale($currentLanguage);
 
-        // $file = $request->is('admin/*') ? 'panel' : 'web';
-        // $path = resource_path("lang/{$currentLanguage->code}_{$file}.json");
+        $file = $request->is('admin/*') ? 'panel' : 'web';
+        $path = resource_path("lang/{$currentLanguage}_{$file}.json");
 
-        // if (File::exists($path)) {
-        //     $translations = json_decode(File::get($path), true);
-        //     app('translator')->setLoaded([$currentLanguage->code => $translations]);
-        // }
+        if (File::exists($path)) {
+            $translations = json_decode(File::get($path), true);
+            app('translator')->setLoaded([$currentLanguage => $translations]);
+        }
 
         return $next($request);
     }

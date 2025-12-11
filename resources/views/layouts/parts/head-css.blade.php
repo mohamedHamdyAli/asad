@@ -1,6 +1,8 @@
 <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<title>ASAD</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<title>{{ config('app.name', 'ASAD') }}</title>
 <meta name="description" content="ASAD">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,4 +21,9 @@
 <link rel="stylesheet" href="{{ asset('assets/css/jquery-ui.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/tg-cursor.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+@if ($locale == 'en')
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+@else
+    <link rel="stylesheet" href="{{ asset('assets/css/main_rtl.css') }}">
+
+@endif

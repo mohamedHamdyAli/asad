@@ -44,15 +44,51 @@
                                     <li class="{{ Request::is('contact') ? 'active' : '' }}">
                                         <a href="{{ url('/contact') }}">{{ __('Contact Us') }}</a>
                                     </li>
+                                    {{-- language switcher --}}
+                                    {{-- <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                                            href="#" id="langDropdown" role="button" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
 
+                                            <img src="{{ getImageassetUrl($locale_flag ?? $firstLanguage->icon) }}"
+                                                class="lang-flag"
+                                                alt="{{ $locale_name ?? $firstLanguage->name }}"
+                                                style="width:20px;">
+
+                                            <span class="lang-text">
+                                                {{ $locale_name ?? $firstLanguage->name }}
+                                            </span>
+
+                                        </a>
+
+                                        <ul class="sub-menu dropdown-menu" aria-labelledby="langDropdown" style="min-width: 180px;">
+
+                                            @foreach ($languages as $language)
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center gap-2 @if ($locale && $locale === $language->code) active-language @endif"
+                                                        href="{{ url("lang/{$language->code}") }}">
+
+                                                        <img src="{{ getImageassetUrl($language->icon) }}"
+                                                            style="width:20px;" alt="{{ $language->name }}">
+
+                                                        {{ $language->name }}
+
+                                                        @if ($locale && $locale === $language->code)
+                                                            <span class="ms-auto text-success fw-bold">✔</span>
+                                                        @endif
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li> --}}
                                 </ul>
                             </div>
 
                             <div class="tgmenu__action">
                                 <ul class="list-wrap">
                                     <li class="header-btn">
-                                        <a href="{{ url('/contact') }}" class="btn border-btn">Book Your
-                                            Service</a>
+                                        <a href="{{ url('/contact') }}"
+                                            class="btn border-btn">{{ __('Book Your Service') }}</a>
                                     </li>
                                 </ul>
                             </div>

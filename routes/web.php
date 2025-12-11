@@ -12,6 +12,7 @@ Route::get('/project', fn() => view('portfolio.portfolio'));
 Route::get('/project-details/{id}', fn($id) => view('portfolio.project-details.project-details', ['id' => $id]));
 Route::get('/our-services', fn() => view('services.services'));
 Route::get('/qhse-policy', fn() => view('qhse_policy.qhsePolicy'));
+Route::get('lang/{locale}', [LanguageController::class, 'setLanguage']);
 
 
 Route::get('/login', fn() => inertia('Auth/Login'))->name('login');

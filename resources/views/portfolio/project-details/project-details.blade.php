@@ -9,6 +9,6 @@
     <main class="main-area fix">
         @include('portfolio.project-details.parts.slider')
         @include('portfolio.project-details.parts.details')
-        @include('portfolio.project-details.parts.tabs')
+        {{-- @include('portfolio.project-details.parts.tabs') --}}
     </main>
 @endsection
