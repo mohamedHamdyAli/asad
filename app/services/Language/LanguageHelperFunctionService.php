@@ -15,21 +15,37 @@ class LanguageHelperFunctionService
     {
         $this->uploadFolder = "language";
     }
+    // public function createLanguage($request)
+    // {
+    //     return DB::transaction(function () use ($request) {
+    //         if (isset($request['icon'])) {
+    //             $request['icon'] = FileService::upload($request['icon'], $this->uploadFolder);
+    //         }
+    //         $request['panel_file'] = FileService::generateJsonLanguageFile("{$request['code']}_panel", 'adminDashboardFile');
+    //         $request['app_file'] = FileService::generateJsonLanguageFile("{$request['code']}_app", 'userAppFile');
+    //         $request['vendor_file'] = FileService::generateJsonLanguageFile("{$request['code']}_vendor", 'vendorDashboardFile');
+    //         $request['web_file'] = FileService::generateJsonLanguageFile("{$request['code']}_web", 'webFile');
+
+    //         Language::create($request);
+    //         return true;
+    //     });
+    // }
+
     public function createLanguage($request)
     {
         return DB::transaction(function () use ($request) {
-            if (isset($request['icon'])) {
+
+            if (!empty($request['icon'])) {
                 $request['icon'] = FileService::upload($request['icon'], $this->uploadFolder);
             }
-            $request['panel_file'] = FileService::generateJsonLanguageFile("{$request['code']}_panel", 'adminDashboardFile');
-            $request['app_file'] = FileService::generateJsonLanguageFile("{$request['code']}_app", 'userAppFile');
-            $request['vendor_file'] = FileService::generateJsonLanguageFile("{$request['code']}_vendor", 'vendorDashboardFile');
-            $request['web_file'] = FileService::generateJsonLanguageFile("{$request['code']}_web", 'webFile');
 
+            $files = FileService::generateJsonLanguageFile($request['code']);
+            $request = array_merge($request, $files);
             Language::create($request);
             return true;
         });
     }
+
     public function updateLanguageData($request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
@@ -156,85 +172,149 @@ class LanguageHelperFunctionService
     //     });
     // }
 
-public function getLanguageData($id = null, $type = null)
-{
-    $data = [];
-    if (!$id) return $data;
+    public function getLanguageData($id = null, $type = null)
+    {
+        $data = [];
+        if (!$id) return $data;
 
-    $language = Language::findOrFail($id);
-    $data['row'] = $language;
+        $language = Language::findOrFail($id);
+        $data['row'] = $language;
 
-    if (!$type) return $data;
+        if (!$type) return $data;
 
-    $languageCode = $language->code ?? 'en';
+        $languageCode = $language->code ?? 'en';
 
-    $defaults = [
-        'panel'  => base_path('resources/lang/en_panel.json'),
-        'app'    => base_path('resources/lang/en_app.json'),
-        'vendor' => base_path('resources/lang/en_vendor.json'),
-        'web'    => base_path('resources/lang/en_web.json'),
-    ];
+        $defaults = [
+            'panel'  => base_path('resources/lang/en_panel.json'),
+            'app'    => base_path('resources/lang/en_app.json'),
+            'vendor' => base_path('resources/lang/en_vendor.json'),
+            'web'    => base_path('resources/lang/en_web.json'),
+        ];
 
-    $files = [
-        'panel'  => $language->panel_file ?: "{$languageCode}_panel.json",
-        'app'    => $language->app_file ?: "{$languageCode}_app.json",
-        'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
-        'web'    => $language->web_file ?: "{$languageCode}_web.json",
-    ];
+        $files = [
+            'panel'  => $language->panel_file ?: "{$languageCode}_panel.json",
+            'app'    => $language->app_file ?: "{$languageCode}_app.json",
+            'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
+            'web'    => $language->web_file ?: "{$languageCode}_web.json",
+        ];
 
-    $paths = [];
-    foreach ($files as $key => $file) {
-        $paths[$key] = base_path("resources/lang/{$file}");
-    }
-
-    // Ensure files exist ONLY (write once if missing)
-    foreach ($defaults as $key => $defaultPath) {
-        $targetPath = $paths[$key];
-        if (!File::exists($targetPath)) {
-            $defaultContent = File::exists($defaultPath) ? File::get($defaultPath) : json_encode([]);
-            File::put($targetPath, $defaultContent);
-            // DO NOT $language->save() here — GET should be read-only
+        $paths = [];
+        foreach ($files as $key => $file) {
+            $paths[$key] = base_path("resources/lang/{$file}");
         }
-    }
 
-    if ($type === 'all') {
-        $all = [];
-        foreach ($paths as $key => $path) {
-            $all[$key] = File::exists($path) ? json_decode(File::get($path), true) : [];
+        // Ensure files exist ONLY (write once if missing)
+        foreach ($defaults as $key => $defaultPath) {
+            $targetPath = $paths[$key];
+            if (!File::exists($targetPath)) {
+                $defaultContent = File::exists($defaultPath) ? File::get($defaultPath) : json_encode([]);
+                File::put($targetPath, $defaultContent);
+                // DO NOT $language->save() here — GET should be read-only
+            }
         }
-        $mergedKeys = array_unique(array_merge(...array_map('array_keys', $all)));
-        $merged = [];
-        foreach ($mergedKeys as $k) {
-            $merged[$k] = $all['app'][$k] ?? $all['panel'][$k] ?? $all['vendor'][$k] ?? $all['web'][$k] ?? '';
+
+        if ($type === 'all') {
+            $all = [];
+            foreach ($paths as $key => $path) {
+                $all[$key] = File::exists($path) ? json_decode(File::get($path), true) : [];
+            }
+            $mergedKeys = array_unique(array_merge(...array_map('array_keys', $all)));
+            $merged = [];
+            foreach ($mergedKeys as $k) {
+                $merged[$k] = $all['app'][$k] ?? $all['panel'][$k] ?? $all['vendor'][$k] ?? $all['web'][$k] ?? '';
+            }
+            $data['enLabels'] = $merged;
+            $data['type'] = 'all';
+            return $data;
         }
-        $data['enLabels'] = $merged;
-        $data['type'] = 'all';
+
+        $defaultFile = $defaults[$type] ?? $defaults['panel'];
+        $jsonFile    = $paths[$type] ?? $paths['panel'];
+
+        $defaultArr = File::exists($defaultFile) ? json_decode(File::get($defaultFile), true) : [];
+        $targetArr  = File::exists($jsonFile) ? json_decode(File::get($jsonFile), true) : [];
+
+        // Build the response IN MEMORY. DO NOT write on GET.
+        foreach ($defaultArr as $k => $v) {
+            if (!array_key_exists($k, $targetArr)) {
+                $targetArr[$k] = $v;
+            }
+        }
+
+        $data['enLabels'] = $targetArr;
+        $data['type'] = $type;
         return $data;
     }
 
-    $defaultFile = $defaults[$type] ?? $defaults['panel'];
-    $jsonFile    = $paths[$type] ?? $paths['panel'];
 
-    $defaultArr = File::exists($defaultFile) ? json_decode(File::get($defaultFile), true) : [];
-    $targetArr  = File::exists($jsonFile) ? json_decode(File::get($jsonFile), true) : [];
+    // public function updatelanguage($id, $type, $updatedLabels)
+    // {
+    //     return DB::transaction(function () use ($id, $type, $updatedLabels) {
+    //         $language = Language::findOrFail($id);
 
-    // Build the response IN MEMORY. DO NOT write on GET.
-    foreach ($defaultArr as $k => $v) {
-        if (!array_key_exists($k, $targetArr)) {
-            $targetArr[$k] = $v;
-        }
-    }
+    //         $ensureAssoc = function ($path, $vals) {
+    //             $arr = is_array($vals) ? $vals : [];
+    //             if ($arr && array_values($arr) === $arr) {
+    //                 $current = File::exists($path) ? json_decode(File::get($path), true) : [];
+    //                 $keys = array_keys($current);
+    //                 $mapped = [];
+    //                 foreach ($keys as $i => $k) {
+    //                     if (array_key_exists($i, $arr))
+    //                         $mapped[$k] = $arr[$i];
+    //                 }
+    //                 return $mapped;
+    //             }
+    //             return $arr;
+    //         };
 
-    $data['enLabels'] = $targetArr;
-    $data['type'] = $type;
-    return $data;
-}
+    //         $paths = [
+    //             'panel' => base_path("resources/lang/{$language->panel_file}"),
+    //             'app' => base_path("resources/lang/{$language->app_file}"),
+    //             'vendor' => base_path("resources/lang/{$language->vendor_file}"),
+    //             'web' => base_path("resources/lang/{$language->web_file}"),
+    //         ];
 
+    //         $applyToFile = function ($path, $vals) {
+    //             $existing = File::exists($path) ? json_decode(File::get($path), true) : [];
+    //             foreach ($vals as $k => $v) {
+    //                 if (array_key_exists($k, $existing)) {
+    //                     $existing[$k] = $v;
+    //                 }
+    //             }
+    //             File::put($path, json_encode($existing, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    //         };
+
+    //         if ($type === 'all') {
+    //             foreach ($paths as $path) {
+    //                 $assoc = $ensureAssoc($path, $updatedLabels);
+    //                 $applyToFile($path, $assoc);
+    //             }
+    //             return true;
+    //         }
+
+    //         if (!array_key_exists($type, $paths)) {
+    //             throw new \Exception("Invalid type: {$type}");
+    //         }
+
+    //         $assoc = $ensureAssoc($paths[$type], $updatedLabels);
+    //         $applyToFile($paths[$type], $assoc);
+    //         return true;
+    //     });
+    // }
 
     public function updatelanguage($id, $type, $updatedLabels)
     {
         return DB::transaction(function () use ($id, $type, $updatedLabels) {
             $language = Language::findOrFail($id);
+
+            $paths = [
+                'panel' => base_path("resources/lang/{$language->panel_file}"),
+                'app' => base_path("resources/lang/{$language->app_file}"),
+                'vendor' => base_path("resources/lang/{$language->vendor_file}"),
+                'web' => base_path("resources/lang/{$language->web_file}"),
+            ];
+
+            $mainPath = base_path("resources/lang/{$language->code}.json");
 
             $ensureAssoc = function ($path, $vals) {
                 $arr = is_array($vals) ? $vals : [];
@@ -251,13 +331,6 @@ public function getLanguageData($id = null, $type = null)
                 return $arr;
             };
 
-            $paths = [
-                'panel' => base_path("resources/lang/{$language->panel_file}"),
-                'app' => base_path("resources/lang/{$language->app_file}"),
-                'vendor' => base_path("resources/lang/{$language->vendor_file}"),
-                'web' => base_path("resources/lang/{$language->web_file}"),
-            ];
-
             $applyToFile = function ($path, $vals) {
                 $existing = File::exists($path) ? json_decode(File::get($path), true) : [];
                 foreach ($vals as $k => $v) {
@@ -273,18 +346,25 @@ public function getLanguageData($id = null, $type = null)
                     $assoc = $ensureAssoc($path, $updatedLabels);
                     $applyToFile($path, $assoc);
                 }
-                return true;
+            } else {
+                if (!array_key_exists($type, $paths)) {
+                    throw new \Exception("Invalid type: {$type}");
+                }
+                $assoc = $ensureAssoc($paths[$type], $updatedLabels);
+                $applyToFile($paths[$type], $assoc);
             }
 
-            if (!array_key_exists($type, $paths)) {
-                throw new \Exception("Invalid type: {$type}");
+            $allLabels = [];
+            foreach ($paths as $p) {
+                $data = File::exists($p) ? json_decode(File::get($p), true) : [];
+                $allLabels = array_merge($allLabels, $data);
             }
+            File::put($mainPath, json_encode($allLabels, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-            $assoc = $ensureAssoc($paths[$type], $updatedLabels);
-            $applyToFile($paths[$type], $assoc);
             return true;
         });
     }
+
 
 
     public function getLanguageList()

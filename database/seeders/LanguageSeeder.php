@@ -46,10 +46,12 @@ class LanguageSeeder extends Seeder
             );
 
             if ($languageModel->wasRecentlyCreated) {
-                FileService::generateJsonLanguageFile("{$lang['code']}_app", 'userAppFile');
-                FileService::generateJsonLanguageFile("{$lang['code']}_panel", 'adminDashboardFile');
-                FileService::generateJsonLanguageFile("{$lang['code']}_vendor", 'vendorDashboardFile');
-                FileService::generateJsonLanguageFile("{$lang['code']}_web", 'webFile');
+                FileService::generateJsonLanguageFile($lang['code']);
+
+                // FileService::generateJsonLanguageFile("{$lang['code']}_app", 'userAppFile');
+                // FileService::generateJsonLanguageFile("{$lang['code']}_panel", 'adminDashboardFile');
+                // FileService::generateJsonLanguageFile("{$lang['code']}_vendor", 'vendorDashboardFile');
+                // FileService::generateJsonLanguageFile("{$lang['code']}_web", 'webFile');
             }
         }
     }
