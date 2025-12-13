@@ -20,6 +20,7 @@ class SetLocalePanel
 
         $currentLanguage = Session::get('locale', $defaultLanguage);
 
+        dd($currentLanguage, $defaultLanguage);
         App::setLocale($currentLanguage);
 
         $file = $request->is('admin/*') ? 'panel' : 'web';
