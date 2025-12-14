@@ -43,11 +43,7 @@
             </thead>
 
             <tbody>
-              <tr
-                v-for="q in paginatedQuotes"
-                :key="q.id"
-                class="border-t hover:bg-gray-50 transition"
-              >
+              <tr v-for="q in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition">
                 <!-- ID -->
                 <td class="py-2 px-3 font-medium">{{ q.id }}</td>
 
@@ -59,7 +55,7 @@
 
                 <!-- User -->
                 <td class="py-2 px-3 text-gray-700">
-                  {{ users.find(u => u.id === q.user_id)?.name || `User ${q.user_id}` }}
+                  {{users.find(u => u.id === q.user_id)?.name || `User ${q.user_id}`}}
                 </td>
 
                 <!-- Vendor (selectable) -->
@@ -75,25 +71,23 @@
                 <!-- Price (input) -->
                 <td class="py-2 px-3">
                   <input v-model.number="q.response.price" type="number" class="form-input"
-                         :disabled="!q.editing && q.has_response" />
+                    :disabled="!q.editing && q.has_response" />
                 </td>
 
                 <!-- Timeline (input) -->
                 <td class="py-2 px-3">
                   <input v-model="q.response.time_line" type="text" class="form-input"
-                         :disabled="!q.editing && q.has_response" />
+                    :disabled="!q.editing && q.has_response" />
                 </td>
 
                 <!-- Status -->
                 <td class="py-2 px-3">
-                  <span
-                    :class="[
-                      'px-2 py-0.5 rounded-full text-xs border',
-                      q.has_response
-                        ? 'bg-green-100 text-green-700 border-green-200'
-                        : 'bg-yellow-100 text-yellow-700 border-yellow-200'
-                    ]"
-                  >
+                  <span :class="[
+                    'px-2 py-0.5 rounded-full text-xs border',
+                    q.has_response
+                      ? 'bg-green-100 text-green-700 border-green-200'
+                      : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                  ]">
                     {{ q.has_response ? 'Responded' : 'Pending' }}
                   </span>
                 </td>
@@ -102,44 +96,34 @@
                 <td class="py-2 px-3 text-center space-x-2">
 
                   <!-- Details button -->
-                  <button
-                    class="px-2 py-1 text-xs border rounded-lg text-gray-700 hover:bg-gray-100"
-                    @click="openDetails(q)"
-                  >
+                  <button class="px-2 py-1 text-xs border rounded-lg text-gray-700 hover:bg-gray-100"
+                    @click="openDetails(q)">
                     Details
                   </button>
 
                   <!-- Save -->
-                  <button
-                    v-if="!q.has_response"
+                  <button v-if="!q.has_response"
                     class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
-                    @click="saveResponse(q)"
-                  >
+                    @click="saveResponse(q)">
                     Save
                   </button>
 
                   <!-- Edit / Update / Delete -->
                   <template v-else>
-                    <button
-                      v-if="!q.editing"
+                    <button v-if="!q.editing"
                       class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
-                      @click="enableEdit(q)"
-                    >
+                      @click="enableEdit(q)">
                       Edit
                     </button>
 
-                    <button
-                      v-if="q.editing"
+                    <button v-if="q.editing"
                       class="px-3 py-1 text-xs border rounded-lg text-green-700 border-green-200 hover:bg-green-50"
-                      @click="updateResponse(q)"
-                    >
+                      @click="updateResponse(q)">
                       Update
                     </button>
 
-                    <button
-                      class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
-                      @click="deleteResponse(q)"
-                    >
+                    <button class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
+                      @click="deleteResponse(q)">
                       Delete
                     </button>
                   </template>
@@ -155,16 +139,15 @@
             </span>
             <div class="space-x-2">
               <button @click="prevPage" :disabled="currentPage === 1"
-                      class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Prev</button>
+                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Prev</button>
 
-              <button v-for="n in totalPages" :key="n" @click="goToPage(n)"
-                      class="px-3 py-1 border rounded-lg"
-                      :class="n === currentPage ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'">
+              <button v-for="n in totalPages" :key="n" @click="goToPage(n)" class="px-3 py-1 border rounded-lg"
+                :class="n === currentPage ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'">
                 {{ n }}
               </button>
 
               <button @click="nextPage" :disabled="currentPage === totalPages"
-                      class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Next</button>
+                class="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Next</button>
             </div>
           </div>
         </div>
@@ -172,10 +155,7 @@
     </div>
 
     <!-- DETAILS POPUP -->
-    <div
-      v-if="detailsModal"
-      class="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[200]"
-    >
+    <div v-if="detailsModal" class="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-[200]">
       <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 space-y-5">
 
         <h3 class="text-xl font-bold text-gray-800">Quote Details</h3>
@@ -186,19 +166,12 @@
           <div><b>Other Title:</b> {{ selectedQuote.other_title || '—' }}</div>
 
           <div>
-            <b>Building Type:</b>
-            {{
-              getEn(buildings.find(b => b.id === selectedQuote.type_of_building_id)?.name)
-                || '—'
-            }}
+            <p><strong>Building Type:</strong> {{ buildingTitle }}</p>
+
           </div>
 
           <div>
-            <b>Price Type:</b>
-            {{
-              getEn(prices.find(p => p.id === selectedQuote.type_of_price_id)?.name)
-                || '—'
-            }}
+            <p><strong>Price Type:</strong> {{ priceTitle }}</p>
           </div>
 
           <div><b>User:</b>
@@ -222,14 +195,8 @@
 
           <div v-if="selectedQuote.pay_image">
             <b>Payment Image:</b>
-            <a
-              :href="`/storage/${selectedQuote.pay_image}`"
-              target="_blank"
-            >
-              <img
-                :src="`/storage/${selectedQuote.pay_image}`"
-                class="h-24 w-24 object-cover rounded shadow mt-1"
-              />
+            <a :href="`/storage/${selectedQuote.pay_image}`" target="_blank">
+              <img :src="`/storage/${selectedQuote.pay_image}`" class="h-24 w-24 object-cover rounded shadow mt-1" />
             </a>
           </div>
 
@@ -237,10 +204,7 @@
         </div>
 
         <div class="flex justify-end pt-4">
-          <button
-            class="px-4 py-2 border rounded-lg hover:bg-gray-50"
-            @click="detailsModal = false"
-          >
+          <button class="px-4 py-2 border rounded-lg hover:bg-gray-50" @click="detailsModal = false">
             Close
           </button>
         </div>
@@ -262,8 +226,8 @@ import {
 import { UnitQuotesApi } from '@/Services/unitQuotes.js'
 import { VendorsApi } from '@/Services/vendors.js'
 import { UsersApi } from '@/Services/users.js'
-import { TypeOfBuildingsApi } from '@/Services/typeOfBuildings.js'
-import { TypeOfPricesApi } from '@/Services/typeOfPrices.js'
+import { TypeOfBuildingApi } from '@/Services/typeOfBuilding.js'
+import { TypeOfPriceApi } from '@/Services/typeOfPrice.js'
 
 const quotes = ref([])
 const users = ref([])
@@ -272,6 +236,8 @@ const buildings = ref([])
 const prices = ref([])
 const search = ref('')
 const loading = ref(false)
+const buildingTitle = ref("—")
+const priceTitle = ref("—")
 
 /* MODAL */
 const detailsModal = ref(false)
@@ -280,6 +246,14 @@ const selectedQuote = ref(null)
 function openDetails(q) {
   selectedQuote.value = q
   detailsModal.value = true
+
+  // BUILDING TYPE
+  const b = buildings.value.find(x => x.id === q.type_of_building_id)
+  buildingTitle.value = b ? parseTitle(b.title).en : "—"
+
+  // PRICE TYPE
+  const p = prices.value.find(x => x.id === q.type_of_price_id)
+  priceTitle.value = p ? parseTitle(p.title).en : "—"
 }
 
 /* Pagination */
@@ -320,8 +294,8 @@ async function fetchAll() {
         UnitQuoteResponsesApi.list(),
         UsersApi.list(),
         VendorsApi.list(),
-        TypeOfBuildingsApi.list(),
-        TypeOfPricesApi.list(),
+        TypeOfBuildingApi.list(),
+        TypeOfPriceApi.list(),
       ])
 
     quotes.value = allQuotes.map((q) => {
@@ -332,25 +306,26 @@ async function fetchAll() {
         editing: false,
         response: r
           ? {
-              id: r.id,
-              vendor_id: r.vendor_id,
-              user_id: r.user_id,
-              price: r.price,
-              time_line: r.time_line_en || '',
-            }
+            id: r.id,
+            vendor_id: r.vendor_id,
+            user_id: r.user_id,
+            price: r.price,
+            time_line: r.time_line_en || '',
+          }
           : {
-              vendor_id: '',
-              user_id: '',
-              price: '',
-              time_line: '',
-            },
+            vendor_id: '',
+            user_id: '',
+            price: '',
+            time_line: '',
+          },
       }
     })
 
     users.value = allUsers
     vendors.value = allVendors
-    buildings.value = allBuildings
-    prices.value = allPrices
+    buildings.value = allBuildings.data ?? []
+    prices.value = allPrices.data ?? []
+
 
   } finally {
     loading.value = false
@@ -427,6 +402,34 @@ function getEn(value) {
   if (!value) return '—'
   if (typeof value === 'object' && value.en) return value.en
   return value
+}
+watch(selectedQuote, async (newVal) => {
+  if (!newVal) return;
+
+  buildingTitle.value = "—";
+  priceTitle.value = "—";
+
+  if (newVal.type_of_building_id) {
+    const res = await TypeOfBuildingApi.show(newVal.type_of_building_id);
+    console.log("BUILDING API FIXED:", res);
+    buildingTitle.value = res?.title?.en || "—";
+  }
+
+  if (newVal.type_of_price_id) {
+    const res = await TypeOfPriceApi.show(newVal.type_of_price_id);
+    priceTitle.value = res?.title?.en || "—";
+  }
+});
+
+
+
+// Helper to parse JSON title
+function parseTitle(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return { en: "", ar: "" };
+  }
 }
 
 onMounted(fetchAll)
