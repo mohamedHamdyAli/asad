@@ -36,38 +36,143 @@ class FileService
      * @param $folder
      * @return string
      */
+    // public static function upload($requestFile, $folder)
+    // {
+    //     $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
+    //     $path = "$folder/$file_name";
+
+    //     $requestFile->storeAs($folder, $file_name, 'public');
+
+    //     $fullPath = storage_path('app/public/' . $path);
+    //     $ext = strtolower($requestFile->getClientOriginalExtension());
+
+    //     if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+    //         return $path;
+    //     }
+
+    //     switch ($ext) {
+    //         case 'jpg':
+    //         case 'jpeg':
+    //             $img = imagecreatefromjpeg($fullPath);
+    //             break;
+    //         case 'png':
+    //             $img = imagecreatefrompng($fullPath);
+    //             imagesavealpha($img, true);
+    //             break;
+    //     }
+
+    //     if (!$img) return $path;
+
+    //     $width  = imagesx($img);
+    //     $height = imagesy($img);
+
+    //     $watermarkPath = public_path('staticImage/watermark/watermark.png');
+    //     if (!file_exists($watermarkPath)) {
+    //         return $path;
+    //     }
+
+    //     $watermark = imagecreatefrompng($watermarkPath);
+    //     imagesavealpha($watermark, true);
+
+    //     $wmW = imagesx($watermark);
+    //     $wmH = imagesy($watermark);
+
+    //     $scale = max($width, $height) / $wmW;
+
+    //     $newW = $wmW * $scale * 0.7;
+    //     $newH = $wmH * $scale * 0.7;
+
+    //     $resized = imagecreatetruecolor($newW, $newH);
+    //     imagesavealpha($resized, true);
+    //     imagealphablending($resized, false);
+
+    //     $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+    //     imagefill($resized, 0, 0, $transparent);
+
+    //     imagecopyresampled(
+    //         $resized,
+    //         $watermark,
+    //         0,
+    //         0,
+    //         0,
+    //         0,
+    //         $newW,
+    //         $newH,
+    //         $wmW,
+    //         $wmH
+    //     );
+
+    //     imagedestroy($watermark);
+
+
+    //     $rotated = imagerotate($resized, 45, $transparent);
+    //     imagedestroy($resized);
+
+
+    //     $rw = imagesx($rotated);
+    //     $rh = imagesy($rotated);
+
+    //     imagecopymerge(
+    //         $img,
+    //         $rotated,
+    //         ($width - $rw) / 2,
+    //         ($height - $rh) / 2,
+    //         0,
+    //         0,
+    //         $rw,
+    //         $rh,
+    //         35
+    //     );
+
+    //     imagedestroy($rotated);
+
+
+    //     if ($ext === 'png') {
+    //         imagepng($img, $fullPath);
+    //     } else {
+    //         imagejpeg($img, $fullPath, 90);
+    //     }
+
+    //     imagedestroy($img);
+
+    //     return $path;
+    // }
+
     public static function upload($requestFile, $folder)
     {
-        $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
-        $path = $folder . '/' . $file_name;
+        if (!$requestFile || !extension_loaded('gd')) {
+            return null;
+        }
 
-        $requestFile->storeAs($folder, $file_name, 'public');
+        $fileName = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
+        $path = "$folder/$fileName";
 
+        $requestFile->storeAs($folder, $fileName, 'public');
         $fullPath = storage_path('app/public/' . $path);
-        $ext = strtolower($requestFile->getClientOriginalExtension());
 
-        if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+        $mime = $requestFile->getMimeType();
+        if (!in_array($mime, ['image/jpeg', 'image/png'])) {
             return $path;
         }
 
-        switch ($ext) {
-            case 'jpg':
-            case 'jpeg':
-                $img = imagecreatefromjpeg($fullPath);
-                break;
-            case 'png':
-                $img = imagecreatefrompng($fullPath);
-                imagesavealpha($img, true);
-                break;
+        // 🔹 Create image
+        if ($mime === 'image/png') {
+            $img = imagecreatefrompng($fullPath);
+            imagealphablending($img, true);
+            imagesavealpha($img, true);
+        } else {
+            $img = imagecreatefromjpeg($fullPath);
         }
 
         if (!$img) return $path;
 
-        $width  = imagesx($img);
-        $height = imagesy($img);
+        $imgW = imagesx($img);
+        $imgH = imagesy($img);
 
-        $watermarkPath = public_path('staticImage/watermark/watermark.png');
+        // 🔹 Load watermark
+        $watermarkPath = public_path('staticImage/watermark/logo.png');
         if (!file_exists($watermarkPath)) {
+            imagedestroy($img);
             return $path;
         }
 
@@ -77,14 +182,15 @@ class FileService
         $wmW = imagesx($watermark);
         $wmH = imagesy($watermark);
 
-        $scale = max($width, $height) / $wmW;
+        // 🔹 Watermark size = 10% of image width
+        $targetW = (int) ($imgW * 0.10);
+        $scale   = $targetW / $wmW;
+        $targetH = (int) ($wmH * $scale);
 
-        $newW = $wmW * $scale * 0.7;
-        $newH = $wmH * $scale * 0.7;
-
-        $resized = imagecreatetruecolor($newW, $newH);
-        imagesavealpha($resized, true);
+        // 🔹 Resize watermark
+        $resized = imagecreatetruecolor($targetW, $targetH);
         imagealphablending($resized, false);
+        imagesavealpha($resized, true);
 
         $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
         imagefill($resized, 0, 0, $transparent);
@@ -96,38 +202,38 @@ class FileService
             0,
             0,
             0,
-            $newW,
-            $newH,
+            $targetW,
+            $targetH,
             $wmW,
             $wmH
         );
 
         imagedestroy($watermark);
 
+        // 🔹 Padding from edges
+        $padding = 20;
 
-        $rotated = imagerotate($resized, 45, $transparent);
-        imagedestroy($resized);
+        // 🔹 Bottom Right position
+        $dstX = $imgW - $targetW - $padding;
+        $dstY = $imgH - $targetH - $padding;
+        imagefilter($resized, IMG_FILTER_COLORIZE, 255, 255, 255, 60);
 
-
-        $rw = imagesx($rotated);
-        $rh = imagesy($rotated);
-
-        imagecopymerge(
+        // 🔹 Merge watermark
+        imagecopy(
             $img,
-            $rotated,
-            ($width - $rw) / 2,
-            ($height - $rh) / 2,
+            $resized,
+            $dstX,
+            $dstY,
             0,
             0,
-            $rw,
-            $rh,
-            35
+            $targetW,
+            $targetH
         );
 
-        imagedestroy($rotated);
+        imagedestroy($resized);
 
-
-        if ($ext === 'png') {
+        // 🔹 Save image
+        if ($mime === 'image/png') {
             imagepng($img, $fullPath);
         } else {
             imagejpeg($img, $fullPath, 90);
@@ -137,6 +243,7 @@ class FileService
 
         return $path;
     }
+
 
     /**
      * @param $requestFile
