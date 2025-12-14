@@ -14831,3 +14831,9 @@ section.company__area.company__bg {
 nav.tgmenu__nav li.menu-item-has-children {
     display: none;
 }
+nav.flex.items-center.justify-between svg {
+    width: 23px;
+}
+nav.flex.items-center.justify-between .flex.justify-between.flex-1.sm\:hidden {
+    display: none;
+}
