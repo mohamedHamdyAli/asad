@@ -150,7 +150,13 @@
     "Office_Address": "عنوان المكتب",
     "Phone_Number": "رقم الهاتف",
     "Email_Address": "البريد الإلكتروني",
+    "Your Name": "أسمك",
+    "Your Subject": "موضوعك",
+    "Type Your Message": "اكتب رسالتك",
     "Unit_Gallery": "معرض الوحدات",
+    "Our Story": "قصتنا",
+    "QHSE Policy": "سياسة الجودة والصحة والسلامة والبيئة",
+    "Project Showcase": "عرض المشاريع",
     "Portfolio": "ملف الأعمال"
 
 }
