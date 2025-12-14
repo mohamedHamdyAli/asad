@@ -14886,3 +14886,8 @@ nav.flex.items-center.justify-between svg {
 nav.flex.items-center.justify-between .flex.justify-between.flex-1.sm\:hidden {
     display: none;
 }
+.breadcrumb__area.breadcrumb__bg {
+    transform: scaleX(-1);
+}
+
+.breadcrumb__area.breadcrumb__bg .container {transform: scaleX(-1);}
