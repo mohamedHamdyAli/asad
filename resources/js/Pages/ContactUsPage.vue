@@ -207,16 +207,17 @@ async function onCountryChange() {
   try {
     const { data } = await axios.get(`/api/contact-infos?country=${form.country}`)
 
-    const found = data.data?.[0] || null
+    const found = data.data?.find(
+      (item) => item.country?.toLowerCase() === form.country.toLowerCase()
+    ) || null
 
-    // 🧠 Verify that the response really matches the selected country
-    if (!found || found.country?.toLowerCase() !== form.country.toLowerCase()) {
+    if (!found) {
       clearForm()
-      form.country = form.country // keep dropdown value
+      form.country = form.country
+      errorMsg.value = "No contact info found for this country."
       return
     }
 
-    // ✅ Populate only if correct country data returned
     Object.assign(form, {
       country: form.country,
       telephone: found.telephone,
@@ -235,6 +236,7 @@ async function onCountryChange() {
     form.country = form.country
   }
 }
+
 
 
 /* Validation */
