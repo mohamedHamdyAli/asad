@@ -10,7 +10,7 @@
                 <!-- Default sliders if DB is empty -->
                 @for ($i = 1; $i <= 4; $i++)
                     <div class="swiper-slide slider__bg-two"
-                        data-background="{{ asset('assets/img/slider/h3_slider_bg0' . $i . '.jpg') }}">
+                        data-background="{{ asset("assets/img/slider/h3_slider_bg0$i.jpg") }}">
                         <div class="container">
                             <div class="row justify-content-end">
                                 <div class="col-xl-7 col-lg-7">

@@ -17,7 +17,7 @@
         @include('home.parts.services')
 
         {{-- Video --}}
-        @include('home.parts.video')
+        {{-- @include('home.parts.video') --}}
 
         {{-- Company --}}
         @include('home.parts.company')
