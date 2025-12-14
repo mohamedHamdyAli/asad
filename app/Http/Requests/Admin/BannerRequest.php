@@ -22,9 +22,19 @@ class BannerRequest extends FormRequest
     public function rules(): array
     {
         $rules = (Route::is('banners.store')) ? [
+            'name' => 'nullable|array',
+            'name.*' => 'nullable|string',
+            'description' => 'nullable|array',
+            'description.*' => 'nullable|string',
             'is_enabled' => 'required|boolean',
+            'page' => 'required|string|in:home,about,contactUs,project,application,logos,our-services,qhse-policy',
             'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
         ] : [
+            'name' => 'nullable|array',
+            'name.*' => 'nullable|string',
+            'description' => 'nullable|array',
+            'description.*' => 'nullable|string',
+            'page' => 'sometimes|string|in:home,about,contactUs,project,application,logos,our-services,qhse-policy',
             'image' => 'sometimes|mimes:jpeg,png,jpg,svg|max:6144',
             'is_enabled' => 'sometimes|boolean',
         ];
