@@ -8,13 +8,13 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="breadcrumb__content">
-                    <h2 class="title">Our Projects</h2>
+                    <h2 class="title">{{ __('Our Projects') }}</h2>
                     <nav class="breadcrumb">
                         <span property="itemListElement" typeof="ListItem">
-                            <a href="{{ url('/') }}">Home</a>
+                            <a href="{{ url('/') }}">{{ __('Home') }}</a>
                         </span>
                         <span class="breadcrumb-separator">/</span>
-                        <span property="itemListElement" typeof="ListItem">Our Projects</span>
+                        <span property="itemListElement" typeof="ListItem">{{ __('Our Projects') }}</span>
                     </nav>
                 </div>
             </div>
