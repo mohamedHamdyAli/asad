@@ -33,6 +33,7 @@ Route::get('/Consultants-management', fn() => inertia('Consultants/Index'))->nam
 Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
 Route::get('/unit-quotes', fn() => inertia('UnitQuotes'))->name('unit-quotes');
 Route::get('/unit-quote-responses', fn() => inertia('UnitQuoteResponses'))->name('unit-quotes-responses');
+Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
 // Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **

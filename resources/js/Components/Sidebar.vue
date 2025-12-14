@@ -53,6 +53,14 @@
           :to="route('unit-quotes-responses')"
           :href="route('unit-quotes-responses')"
           class="border-b border-gray-300/70"
+        />          
+        
+        <NavItem
+          icon="mdi:responsive"
+          label="Price & Building Types"
+          :to="route('unit-quote-types')"
+          :href="route('unit-quote-types')"
+          class="border-b border-gray-300/70"
         />
         <hr class="border-gray-300/70" />
 
