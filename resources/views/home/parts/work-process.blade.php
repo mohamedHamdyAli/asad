@@ -47,7 +47,7 @@
                                 <span class="number">0{{ $key + 1 }}</span>
                             </div>
                             <div class="work__content-two">
-                                <h4 class="title"><a href="{{ url('contact') }}">{{ $step['title'] }}</a></h4>
+                                <h4 class="title">{{ $step['title'] }}</h4>
                                 <p>{{ $step['text'] }}</p>
                             </div>
                         </div>

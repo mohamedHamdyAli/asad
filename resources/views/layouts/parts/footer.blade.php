@@ -42,9 +42,9 @@
                         <h4 class="footer__widget-title">Quick Info</h4>
                         <div class="footer__widget-link">
                             <ul class="list-wrap">
-                                <li><a href="{{ url('about') }}"><i class="asad-right-arrow"></i><span>Our Story</span></a></li>
-                                <li><a href="{{ url('/qhse-policy') }}"><i class="asad-right-arrow"></i><span>qhse policy</span></a></li>
-                                <li><a href="{{ url('project') }}"><i class="asad-right-arrow"></i><span>Project Showcase</span></a></li>
+                                <li><a href="{{ url('about') }}"><i class="asad-right-arrow"></i><span>{{ __('Our Story') }}</span></a></li>
+                                <li><a href="{{ url('/qhse-policy') }}"><i class="asad-right-arrow"></i><span>{{ __('QHSE Policy') }}</span></a></li>
+                                <li><a href="{{ url('project') }}"><i class="asad-right-arrow"></i><span>{{ __('Project Showcase') }}</span></a></li>
                             </ul>
                         </div>
                     </div>

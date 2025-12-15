@@ -1,16 +1,4 @@
 <header>
-    <div class="tg-header__top">
-        <div class="container custom-container">
-            <div class="row align-items-center">
-                <div class="col-lg-12">
-                    <div class="tg-header__top-delivery">
-                        <p>Express delivery and free returns within 24 hours</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="header-fixed-height"></div>
     <div id="sticky-header" class="tg-header__area">
         <div class="container custom-container">

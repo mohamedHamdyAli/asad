@@ -7,20 +7,20 @@
         <div class="row gutter-20">
             <div class="col-md-6">
                 <div class="form-grp">
-                    <input type="text" name="name" placeholder="Your Name">
+                    <input type="text" name="name" placeholder="{{ __('Your Name') }}">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-grp">
-                    <input type="email" name="email" placeholder="Email Address">
+                    <input type="email" name="email" placeholder="{{ __('Email Address') }}">
                 </div>
             </div>
         </div>
         <div class="form-grp">
-            <input type="text" name="subject" placeholder="Your Subject">
+            <input type="text" name="subject" placeholder="{{ __('Your Subject') }}">
         </div>
         <div class="form-grp">
-            <textarea name="message" placeholder="Type Your Message"></textarea>
+            <textarea name="message" placeholder="{{ __('Type Your Message') }}"></textarea>
         </div>
         <button type="submit" class="btn btn-two">{{ __('Send Message') }}</button>
         <p class="ajax-response mb-0"></p>
