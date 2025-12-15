@@ -2,7 +2,7 @@ import axios from "axios";
 
 const STATUSES = [
   { value: "site_handover", label: "Site Handover" },
-  { value: "fondation",     label: "Foundation" }, // NOTE: spelled 'fondation' in backend
+  { value: "fondation",     label: "Skeleton" },
   { value: "finishing",     label: "Finishing" },
   { value: "handover",      label: "Handover" },
 ];
