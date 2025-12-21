@@ -75,6 +75,28 @@ export const UsersApi = {
     const { data } = await axios.delete(`/api/users/delete/${id}`)
     return data
   },
+
+  assignRole: async (id, payload) => {
+    // payload example: { roles: ['admin', 'manager'] }
+    const { data } = await axios.post(`/api/users/${id}/assign-role`, payload)
+    return data
+  },
+
+  assignPermission: async (id, payload) => {
+    // payload example: { permissions: ['create-user', 'edit-post'] }
+    const { data } = await axios.post(`/api/users/${id}/assign-permission`, payload)
+    return data
+  },
+
+   // Enable / Disable user
+  toggleStatus: async (userId, isEnabled) => {
+    const { data } = await axios.post(
+      `/api/users/update/${userId}`,
+      { is_enabled: isEnabled ? 1 : 0 }
+    )
+    return data
+  },
+
 }
 
 // Optional helpers if you’ll build forms:

@@ -44,6 +44,9 @@ use App\Http\Controllers\Admin\Unit\UnitContractorController as AdminUnitContrac
 use App\Http\Controllers\Admin\Unit\UnitLiveCameraController as AdminUnitLiveCameraController;
 use App\Http\Controllers\Admin\UnitQuoteResponseController as AdminUnitQuoteResponseController;
 use App\Http\Controllers\Admin\UnitIssueController as AdminUnitIssueController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\UserRoleController;
 
 //  user api routes
 Route::prefix('user')->group(function () {
@@ -378,4 +381,25 @@ Route::group(['prefix' => 'notifications'], static function () {
     Route::post('/create', [AdminNotificationController::class, 'store'])->name('notifications.store');
     Route::get('/show/{id}', [AdminNotificationController::class, 'show'])->name('notifications.show');
     Route::delete('/delete/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.delete');
+});
+
+Route::prefix('roles')->group(function () {
+    Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+    Route::post('/create', [RoleController::class, 'store'])->name('roles.store');
+    Route::get('/show/{role}', [RoleController::class, 'show'])->name('roles.show');
+    Route::post('/update/{role}', [RoleController::class, 'update'])->name('roles.update');
+    Route::delete('/delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+Route::prefix('permissions')->group(function () {
+    Route::get('/', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::post('/create', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/show/{permission}', [PermissionController::class, 'show'])->name('permissions.show');
+    Route::post('/update/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('/delete/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+});
+
+Route::prefix('users')->group(function () {
+    Route::post('/{user}/assign-role', [UserRoleController::class, 'assignRole'])->name('users.assignRole');
+    Route::post('/{user}/assign-permission', [UserRoleController::class, 'assignPermission'])->name('users.assignPermission');
 });
