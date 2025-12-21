@@ -64,7 +64,7 @@
       <section class="bg-white p-6 rounded shadow space-y-4">
         <h2 class="text-xl font-semibold">Users</h2>
 
-        <table class="w-full text-sm border">
+        <!-- <table class="w-full text-sm border">
           <thead class="bg-gray-100">
             <tr>
               <th class="p-2">Name</th>
@@ -103,7 +103,58 @@
               </td>
             </tr>
           </tbody>
+        </table> -->
+
+         <table class="w-full text-sm">
+          <thead class="bg-gray-100 text-left">
+            <tr>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Email</th>
+              <th class="px-4 py-3">Role</th>
+              <th class="px-4 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              v-for="user in users"
+              :key="user.id"
+              class="border-t"
+            >
+              <td class="px-4 py-3">{{ user.name }}</td>
+              <td class="px-4 py-3">{{ user.email }}</td>
+
+              <!-- ROLE SELECT -->
+              <td class="px-4 py-3">
+                <select
+                  v-model="selectedRoles[user.id]"
+                  class="form-input"
+                >
+                  <option value="">— Select role —</option>
+                  <option
+                    v-for="role in roles"
+                    :key="role.id"
+                    :value="role.name"
+                  >
+                    {{ role.name }}
+                  </option>
+                </select>
+              </td>
+
+              <!-- SAVE -->
+              <td class="px-4 py-3 text-right">
+                <button
+                  class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                  :disabled="saving[user.id]"
+                  @click="saveRole(user.id)"
+                >
+                  {{ saving[user.id] ? 'Saving…' : 'Save' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
+
       </section>
 
     </div>
@@ -162,6 +213,21 @@ async function assignRole(userId, role) {
 async function assignPermission(userId, permission) {
   if (!permission) return
   await UsersApi.assignPermission(userId, permission)
+}
+
+async function saveRole(userId) {
+  globalMsg.value = ''
+  globalError.value = ''
+  saving[userId] = true
+
+  try {
+    await UsersApi.assignRole(userId, selectedRoles[userId])
+    globalMsg.value = 'Role assigned successfully'
+  } catch (e) {
+    globalError.value = 'Failed to assign role'
+  } finally {
+    saving[userId] = false
+  }
 }
 
 onMounted(fetchAll)
