@@ -94,9 +94,9 @@
         />
         <NavItem
           icon="mdi:people"
-          label="Manage Users"
-          :to="route('users-management')"
-          :href="route('users-management')"
+          label="Users Roles & Permissions"
+          :to="route('roles-management')"
+          :href="route('roles-management')"
         />
       </nav>
     </div>
