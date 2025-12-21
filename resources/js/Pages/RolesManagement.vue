@@ -29,9 +29,16 @@
               <th class="p-2">Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr v-for="role in roles" :key="role.id" class="border-t">
-              <td class="p-2 font-medium">{{ role.name }}</td>
+            <tr
+              v-for="role in roles"
+              :key="role.id"
+              class="border-t"
+            >
+              <td class="p-2 font-medium">
+                {{ role.name }}
+              </td>
 
               <td class="p-2">
                 <div class="grid grid-cols-3 gap-2">
@@ -42,7 +49,7 @@
                   >
                     <input
                       type="checkbox"
-                      :checked="role.permissions.some(rp => rp.name === p.name)"
+                      :checked="role.permissions?.some(rp => rp.name === p.name)"
                       @change="toggleRolePermission(role, p.name)"
                     />
                     {{ p.name }}
@@ -51,7 +58,10 @@
               </td>
 
               <td class="p-2">
-                <button class="btn-danger" @click="deleteRole(role.id)">
+                <button
+                  class="btn-danger"
+                  @click="deleteRole(role.id)"
+                >
                   Delete
                 </button>
               </td>
@@ -64,48 +74,7 @@
       <section class="bg-white p-6 rounded shadow space-y-4">
         <h2 class="text-xl font-semibold">Users</h2>
 
-        <!-- <table class="w-full text-sm border">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="p-2">Name</th>
-              <th class="p-2">Email</th>
-              <th class="p-2">Assign Role</th>
-              <th class="p-2">Assign Permission</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="u in users" :key="u.id" class="border-t">
-              <td class="p-2">{{ u.name }}</td>
-              <td class="p-2">{{ u.email }}</td>
-
-              <td class="p-2">
-                <select
-                  class="form-input"
-                  @change="assignRole(u.id, $event.target.value)"
-                >
-                  <option value="">—</option>
-                  <option v-for="r in roles" :key="r.id" :value="r.name">
-                    {{ r.name }}
-                  </option>
-                </select>
-              </td>
-
-              <td class="p-2">
-                <select
-                  class="form-input"
-                  @change="assignPermission(u.id, $event.target.value)"
-                >
-                  <option value="">—</option>
-                  <option v-for="p in permissions" :key="p.id" :value="p.name">
-                    {{ p.name }}
-                  </option>
-                </select>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-
-         <table class="w-full text-sm">
+        <table class="w-full text-sm">
           <thead class="bg-gray-100 text-left">
             <tr>
               <th class="px-4 py-3">Name</th>
@@ -155,6 +124,13 @@
           </tbody>
         </table>
 
+        <!-- GLOBAL FEEDBACK -->
+        <p v-if="globalMsg" class="text-green-600 text-sm">
+          {{ globalMsg }}
+        </p>
+        <p v-if="globalError" class="text-red-600 text-sm">
+          {{ globalError }}
+        </p>
       </section>
 
     </div>
@@ -170,20 +146,35 @@ import { RolesApi } from '@/Services/roles'
 import { PermissionsApi } from '@/Services/permissions'
 import { UsersApi } from '@/Services/users'
 
-/* STATE */
+/* ================= STATE ================= */
 const roles = ref([])
 const permissions = ref([])
 const users = ref([])
 const newRole = ref('')
 
-/* FETCH */
+const selectedRoles = ref({})
+const saving = ref({})
+const globalMsg = ref('')
+const globalError = ref('')
+
+/* ================= FETCH ================= */
 async function fetchAll() {
   roles.value = await RolesApi.list()
   permissions.value = await PermissionsApi.list()
   users.value = await UsersApi.list()
+
+  users.value.forEach(user => {
+    if (!(user.id in selectedRoles.value)) {
+      selectedRoles.value[user.id] = user.roles?.[0]?.name || ''
+    }
+
+    if (!(user.id in saving.value)) {
+      saving.value[user.id] = false
+    }
+  })
 }
 
-/* ROLES */
+/* ================= ROLES ================= */
 async function createRole() {
   if (!newRole.value) return
   await RolesApi.create({ name: newRole.value })
@@ -198,35 +189,26 @@ async function deleteRole(id) {
 }
 
 async function toggleRolePermission(role, permission) {
-  await RolesApi.update(role.id, {
-    permission,
-  })
+  await RolesApi.update(role.id, { permission })
   await fetchAll()
 }
 
-/* USERS */
-async function assignRole(userId, role) {
-  if (!role) return
-  await UsersApi.assignRole(userId, role)
-}
-
-async function assignPermission(userId, permission) {
-  if (!permission) return
-  await UsersApi.assignPermission(userId, permission)
-}
-
+/* ================= USERS ================= */
 async function saveRole(userId) {
   globalMsg.value = ''
   globalError.value = ''
-  saving[userId] = true
+  saving.value[userId] = true
 
   try {
-    await UsersApi.assignRole(userId, selectedRoles[userId])
+    await UsersApi.assignRole(
+      userId,
+      selectedRoles.value[userId]
+    )
     globalMsg.value = 'Role assigned successfully'
   } catch (e) {
     globalError.value = 'Failed to assign role'
   } finally {
-    saving[userId] = false
+    saving.value[userId] = false
   }
 }
 
