@@ -200,10 +200,10 @@ async function saveRole(userId) {
   saving.value[userId] = true
 
   try {
-    await UsersApi.assignRole(
-      userId,
-      selectedRoles.value[userId]
-    )
+    await UsersApi.assignRole(userId, {
+      roles: [selectedRoles.value[userId]],
+    })
+
     globalMsg.value = 'Role assigned successfully'
   } catch (e) {
     globalError.value = 'Failed to assign role'
