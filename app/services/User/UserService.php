@@ -34,38 +34,45 @@ class UserService
             return successReturnData(new RegisterResource($user), 'Data Fetched Successfully');
         });
     }
-    public function login(array $data)
-    {
-        return DB::transaction(function () use ($data) {
-            $credentials = [
-                'phone' => $data['phone'],
-                'password' => $data['password'],
-            ];
+public function login(array $data)
+{
+    return DB::transaction(function () use ($data) {
 
-            if (!Auth::attempt($credentials)) {
-                return failReturnMsg('Invalid credentials');
-            }
+        $credentials = [
+            'phone'    => $data['phone'],
+            'password' => $data['password'],
+        ];
 
-            $user = Auth::user();
+        if (!Auth::attempt($credentials)) {
+            return failReturnMsg('Invalid credentials');
+        }
 
-            if (!$user->is_enabled) {
-                Auth::logout();
-                return failReturnMsg('Your account is disabled');
-            }
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-            if (!in_array($user->role, ['user', 'guest'])) {
-                Auth::logout();
-                return failReturnMsg('Unauthorized role');
-            }
+        if (!$user->is_enabled) {
+            Auth::logout();
+            return failReturnMsg('Your account is disabled');
+        }
 
-            $user->tokens()->delete();
+        if (!$user->hasAnyRole(['user', 'guest' , 'admin' , 'super_admin' , 'vendor'])) {
+            Auth::logout();
+            return failReturnMsg('Unauthorized role');
+        }
 
-            $token = $user->createToken("{$user->role}:{$user->id}")->accessToken;
-            $user->token = "Bearer $token";
+        $token = $user->createToken(
+            $user->getRoleNames()->first() . ':' . $user->id
+        )->accessToken;
 
-            return successReturnData(new RegisterResource($user), 'Data fetched successfully');
-        });
-    }
+        $user->token = "Bearer {$token}";
+
+        return successReturnData(
+            new RegisterResource($user),
+            'Data fetched successfully'
+        );
+    });
+}
+
 
     public function sendResetLink($data)
     {
