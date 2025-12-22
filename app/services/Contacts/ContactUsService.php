@@ -7,9 +7,15 @@ use Illuminate\Support\Facades\DB;
 
 class ContactUsService
 {
-    public function getContactUs($id = null)
+     public function getContactUs(?string $country = null): array
     {
-        return $id ? ContactUs::find($id) : ContactUs::all();
+        if ($country) {
+            $contact = ContactUs::where('country', $country)->first();
+
+            return $contact ? [$contact] : [];
+        }
+
+        return ContactUs::all()->toArray();
     }
 
     public function createContactUs(array $request): bool

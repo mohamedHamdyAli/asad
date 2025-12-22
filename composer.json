@@ -16,7 +16,7 @@
         "laravel/passport": "^13.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-permission": "^6.20",
+        "spatie/laravel-permission": "6.24",
         "tightenco/ziggy": "^2.5"
     },
     "require-dev": {

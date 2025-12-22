@@ -26,6 +26,7 @@ class User extends Authenticatable
         'country_code',
         'country_name',
         'role',
+        'roles',
         'profile_image',
         'otp',
         'otp_expiry',
@@ -43,6 +44,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $guarded = [];
 
     /**
      * Get the attributes that should be cast.

@@ -193,6 +193,12 @@ return [
     'Office_Address' => 'Office Address',
     'Phone_Number' => 'Phone Number',
     'Email_Address' => 'Email Address',
+    'Your Name' => 'Your Name',
+    'Your Subject' => 'Your Subject',
+    'Type Your Message' => 'Type Your Message',
     'Unit_Gallery' => 'Unit Gallery',
     'Portfolio' => 'Portfolio',
+    'Our Story' => 'Our Story',
+    'Project Showcase' => 'Project Showcase',
+    'QHSE Policy' => 'Qhse Policy',
 ];
