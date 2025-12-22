@@ -13,6 +13,7 @@ function normalizeUser(row = {}) {
     country_code: row.country_code || '',
     country_name: row.country_name || '',
     role: row.role || 'user',
+     roles: row.roles || [],
     is_enabled: toBool(row.is_enabled),
     profile_image: img,
     profile_image_url: img ? `/storage/${img}` : null,

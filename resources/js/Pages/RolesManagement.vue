@@ -1,5 +1,4 @@
 <template>
-
   <Head title="Roles & Permissions" />
 
   <AuthenticatedLayout>
@@ -11,7 +10,11 @@
 
         <!-- Create Role -->
         <div class="flex gap-2">
-          <input v-model="newRole" placeholder="Role name" class="form-input w-64" />
+          <input
+            v-model="newRole"
+            placeholder="Role name"
+            class="form-input w-64"
+          />
           <button class="btn-primary" @click="createRole">
             Add Role
           </button>
@@ -33,9 +36,18 @@
 
               <td class="p-2">
                 <div class="grid grid-cols-3 gap-2">
-                  <label v-for="p in permissions" :key="p.id" class="flex items-center gap-1 text-xs">
-                    <input type="checkbox" :checked="role.permissions?.some(rp => rp.name === p.name)"
-                      @change="toggleRolePermission(role, p.name)" />
+                  <label
+                    v-for="p in permissions"
+                    :key="p.id"
+                    class="flex items-center gap-1 text-xs"
+                  >
+<input
+  type="checkbox"
+  :checked="role.permissions?.some(rp => rp.name === p.name)"
+  @change="onPermissionToggle(role.id, p.name, $event)"
+/>
+
+
                     {{ p.name }}
                   </label>
                 </div>
@@ -57,7 +69,11 @@
 
         <!-- SEARCH & FILTER -->
         <div class="flex flex-wrap gap-4 items-center">
-          <input v-model="search" placeholder="Search name or email" class="form-input w-64" />
+          <input
+            v-model="search"
+            placeholder="Search name or email"
+            class="form-input w-64"
+          />
 
           <select v-model="roleFilter" class="form-input w-48">
             <option value="">All roles</option>
@@ -73,23 +89,39 @@
             <tr>
               <th class="px-4 py-3">Name</th>
               <th class="px-4 py-3">Email</th>
-              <th class="px-4 py-3">Role</th>
+              <th class="px-4 py-3">Current Role</th>
+              <th class="px-4 py-3">Change Role</th>
               <th class="px-4 py-3 text-right">Action</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr v-for="user in paginatedUsers" :key="user.id" class="border-t">
+            <tr
+              v-for="user in paginatedUsers"
+              :key="user.id"
+              class="border-t"
+            >
               <td class="px-4 py-3">{{ user.name }}</td>
               <td class="px-4 py-3">{{ user.email }}</td>
 
-              <!-- ROLE SELECT -->
-              <td class="px-4 py-3">
-                <select :key="`role-select-${user.id}-${roles.length}`" v-model="selectedRoles[user.id]"
-                  class="form-input">
+              <!-- CURRENT ROLE -->
+              <td class="px-4 py-3 font-medium">
+                {{ user.roles?.[0]?.name ?? '—' }}
+              </td>
 
+              <!-- CHANGE ROLE -->
+              <td class="px-4 py-3">
+                <select
+                  class="form-input"
+                  :value="selectedRoles[user.id]"
+                  @change="onRoleChange(user.id, $event.target.value)"
+                >
                   <option value="">— Select role —</option>
-                  <option v-for="role in roles" :key="role.id" :value="role.name">
+                  <option
+                    v-for="role in roles"
+                    :key="role.id"
+                    :value="role.name"
+                  >
                     {{ role.name }}
                   </option>
                 </select>
@@ -97,8 +129,11 @@
 
               <!-- SAVE -->
               <td class="px-4 py-3 text-right">
-                <button class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50" :disabled="saving[user.id]"
-                  @click="saveRole(user.id)">
+                <button
+                  class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                  :disabled="saving[user.id]"
+                  @click="saveRole(user.id)"
+                >
                   {{ saving[user.id] ? 'Saving…' : 'Save' }}
                 </button>
               </td>
@@ -113,11 +148,19 @@
           </span>
 
           <div class="flex gap-2">
-            <button class="px-3 py-1 border rounded" :disabled="currentPage === 1" @click="currentPage--">
+            <button
+              class="px-3 py-1 border rounded"
+              :disabled="currentPage === 1"
+              @click="currentPage--"
+            >
               Prev
             </button>
 
-            <button class="px-3 py-1 border rounded" :disabled="currentPage === totalPages" @click="currentPage++">
+            <button
+              class="px-3 py-1 border rounded"
+              :disabled="currentPage === totalPages"
+              @click="currentPage++"
+            >
               Next
             </button>
           </div>
@@ -171,21 +214,11 @@ async function fetchAll() {
   permissions.value = permsRes.data ?? permsRes
   users.value = usersRes.data ?? usersRes
 
-  // ✅ IMPORTANT: wait until roles exist
   users.value.forEach(user => {
-    const roleName = user.roles?.[0]?.name || ''
-
-    // only set if role exists in roles table
-    if (roles.value.some(r => r.name === roleName)) {
-      selectedRoles.value[user.id] = roleName
-    } else {
-      selectedRoles.value[user.id] = ''
-    }
-
+    selectedRoles.value[user.id] = user.roles?.[0]?.name ?? ''
     saving.value[user.id] = false
   })
 }
-
 
 
 /* ================= FILTERING ================= */
@@ -235,13 +268,35 @@ async function deleteRole(id) {
   await RolesApi.remove(id)
   await fetchAll()
 }
+function onPermissionToggle(roleId, permissionName, event) {
 
-async function toggleRolePermission(role, permission) {
-  await RolesApi.update(role.id, { name: permission })
-  await fetchAll()
+  toggleRolePermission(roleId, permissionName)
 }
 
+async function toggleRolePermission(roleId, permissionName) {
+  const role = roles.value.find(r => r.id === roleId)
+  if (!role) return
+
+  const current = role.permissions?.map(p => p.name) ?? []
+
+  const updatedPermissions = current.includes(permissionName)
+    ? current.filter(p => p !== permissionName)
+    : [...current, permissionName]
+
+  await RolesApi.syncPermissions(roleId, {
+    permissions: updatedPermissions,
+  })
+
+  role.permissions = updatedPermissions.map(p => ({ name: p }))
+}
+
+
+
 /* ================= USERS ================= */
+function onRoleChange(userId, value) {
+  selectedRoles.value[userId] = value
+}
+
 async function saveRole(userId) {
   globalMsg.value = ''
   globalError.value = ''
@@ -272,11 +327,9 @@ onMounted(fetchAll)
 .form-input {
   @apply border rounded px-3 py-1 text-sm;
 }
-
 .btn-primary {
   @apply bg-blue-600 text-white px-3 py-1 rounded;
 }
-
 .btn-danger {
   @apply bg-red-600 text-white px-3 py-1 rounded;
 }

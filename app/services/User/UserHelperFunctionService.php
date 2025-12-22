@@ -16,14 +16,25 @@ class UserHelperFunctionService
         $this->uploadFolder = 'users';
     }
 
-    public function getUserData($id = null)
-    {
-        if ($id) {
-            return User::with('roles')->find($id);
-        }
+// public function getUserData($id = null)
+// {
+//     if ($id) {
+//         return User::with('roles')->where('id', $id)->first();
+//     }
 
-        return User::with('roles')->get();
+//     return User::with('roles')->get();
+// }
+public function getUserData($id = null)
+{
+    $query = User::query()->with('roles');
+
+    if ($id) {
+        return $query->find($id);
     }
+
+    return $query->get();
+}
+
 
     public function createUser(array $request): bool
     {

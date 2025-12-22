@@ -26,6 +26,7 @@ class User extends Authenticatable
         'country_code',
         'country_name',
         'role',
+        'roles',
         'profile_image',
         'otp',
         'otp_expiry',
