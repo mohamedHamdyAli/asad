@@ -1,9 +1,9 @@
 <?php
 
-namespace App\services\User;
+namespace App\Services\User;
 
 use App\Models\User;
-use App\services\FileService;
+use App\Services\FileService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,25 +13,32 @@ class UserHelperFunctionService
 
     public function __construct()
     {
-        $this->uploadFolder = "users";
+        $this->uploadFolder = 'users';
     }
-
 
     public function getUserData($id = null)
     {
+        if ($id) {
+            return User::with('roles')->find($id);
+        }
 
-        return $id ? User::where(['id' => $id, 'role' => 'user'])->first() : User::where('role', 'user')->get();
+        return User::with('roles')->get();
     }
 
-    public function createUser($request): bool
+    public function createUser(array $request): bool
     {
         return DB::transaction(function () use ($request) {
-            if (!empty($request['profile_image'])) {
-                $request['profile_image'] = FileService::upload($request['profile_image'], $this->uploadFolder);
-            }
-            $user =  User::create($request);
-            $user->assignRole('user');
 
+            if (!empty($request['profile_image'])) {
+                $request['profile_image'] = FileService::upload(
+                    $request['profile_image'],
+                    $this->uploadFolder
+                );
+            }
+
+            $user = User::create($request);
+
+            $user->assignRole('user');
 
             return true;
         });
@@ -40,7 +47,8 @@ class UserHelperFunctionService
     public function updateUserData(array $request, int $id): bool
     {
         return DB::transaction(function () use ($request, $id) {
-            $user = User::where(['id' => $id, 'role' => 'user'])->first();
+
+            $user = User::find($id);
 
             if (!$user) {
                 return false;
@@ -59,6 +67,7 @@ class UserHelperFunctionService
             }
 
             $user->update($request);
+
             return true;
         });
     }
@@ -66,15 +75,21 @@ class UserHelperFunctionService
     public function deleteUser(int $id): bool
     {
         return DB::transaction(function () use ($id) {
-            $user = User::where(['id' => $id, 'role' => 'user'])->first();
+
+            $user = User::find($id);
+
             if (!$user) {
                 return false;
             }
+
             if ($user->profile_image) {
-                FileService::delete($user->getRawOriginal('profile_image'));
+                FileService::delete(
+                    $user->getRawOriginal('profile_image')
+                );
             }
 
             $user->delete();
+
             return true;
         });
     }
