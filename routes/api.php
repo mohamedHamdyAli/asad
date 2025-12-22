@@ -389,6 +389,7 @@ Route::prefix('roles')->group(function () {
     Route::get('/show/{role}', [RoleController::class, 'show'])->name('roles.show');
     Route::post('/update/{role}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::post('/{role}/sync-permissions',[RoleController::class, 'syncPermissions'])->name('roles.syncPermissions');
 });
 
 Route::prefix('permissions')->group(function () {
