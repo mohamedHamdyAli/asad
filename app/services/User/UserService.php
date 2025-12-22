@@ -52,8 +52,9 @@ class UserService
                 Auth::logout();
                 return failReturnMsg('Your account is disabled');
             }
+            // temporary fix
 
-            if (!in_array($user->role, ['user', 'guest'])) {
+            if (!in_array($user->role, ['user', 'guest', 'admin', 'super_admin','vendor'])) {
                 Auth::logout();
                 return failReturnMsg('Unauthorized role');
             }
