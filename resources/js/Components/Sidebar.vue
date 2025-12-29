@@ -98,6 +98,13 @@
           :to="route('roles-management')"
           :href="route('roles-management')"
         />
+        
+        <NavItem
+          icon="mdi:people"
+          label="Unit Issues"
+          :to="route('unit-issues')"
+          :href="route('unit-issues')"
+        />
       </nav>
     </div>
   </aside>

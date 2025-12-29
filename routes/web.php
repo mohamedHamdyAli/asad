@@ -36,6 +36,7 @@ Route::get('/unit-quotes', fn() => inertia('UnitQuotes'))->name('unit-quotes');
 Route::get('/unit-quote-responses', fn() => inertia('UnitQuoteResponses'))->name('unit-quotes-responses');
 Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
 Route::get('/roles-management', fn() => inertia('RolesManagement'))->name('roles-management');
+Route::get('/unit-issues', fn() => inertia('UnitIssues'))->name('unit-issues');
 // Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **
