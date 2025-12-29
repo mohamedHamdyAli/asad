@@ -7,13 +7,11 @@
       <h2 class="text-2xl font-semibold">Unit Issues</h2>
 
       <!-- SEARCH -->
-      <div class="flex gap-4">
-        <input
-          v-model="search"
-          class="form-input w-72"
-          placeholder="Search by title, unit or user"
-        />
-      </div>
+      <input
+        v-model="search"
+        class="form-input w-72"
+        placeholder="Search by title, unit or user"
+      />
 
       <!-- TABLE -->
       <div class="bg-white rounded-xl shadow border overflow-hidden">
@@ -58,16 +56,10 @@
               </td>
 
               <td class="px-4 py-3 text-right space-x-2">
-                <button
-                  class="text-blue-600 text-sm"
-                  @click="openEdit(issue)"
-                >
+                <button class="text-blue-600" @click="openEdit(issue)">
                   Edit
                 </button>
-                <button
-                  class="text-red-600 text-sm"
-                  @click="remove(issue.id)"
-                >
+                <button class="text-red-600" @click="remove(issue.id)">
                   Delete
                 </button>
               </td>
@@ -96,7 +88,6 @@
           >
             Prev
           </button>
-
           <button
             class="px-3 py-1 border rounded"
             :disabled="currentPage === totalPages"
@@ -114,9 +105,7 @@
       >
         <div class="bg-white w-full max-w-lg rounded-xl p-6">
 
-          <h3 class="text-lg font-semibold mb-4">
-            Edit Issue
-          </h3>
+          <h3 class="text-lg font-semibold mb-4">Edit Issue</h3>
 
           <Form
             :validation-schema="schema"
@@ -124,10 +113,31 @@
             @submit="submit"
           >
             <div class="space-y-3">
-              <Field name="unit_id" class="form-input" placeholder="Unit ID" />
+
+              <!-- UNIT -->
+              <Field name="unit_id" as="select" class="form-input">
+                <option value="">Select Unit</option>
+                <option
+                  v-for="u in units"
+                  :key="u.id"
+                  :value="u.id"
+                >
+                  {{ u.name?.en ?? `Unit #${u.id}` }}
+                </option>
+              </Field>
               <ErrorMessage name="unit_id" class="error" />
 
-              <Field name="user_id" class="form-input" placeholder="User ID" />
+              <!-- USER -->
+              <Field name="user_id" as="select" class="form-input">
+                <option value="">Select User</option>
+                <option
+                  v-for="u in users"
+                  :key="u.id"
+                  :value="u.id"
+                >
+                  {{ u.name ?? `User #${u.id}` }}
+                </option>
+              </Field>
               <ErrorMessage name="user_id" class="error" />
 
               <Field name="title" class="form-input" placeholder="Title" />
@@ -146,6 +156,7 @@
                 <option value="open">Open</option>
                 <option value="close">Close</option>
               </Field>
+
             </div>
 
             <div class="flex justify-end gap-2 mt-4">
@@ -164,29 +175,30 @@
     </div>
   </AuthenticatedLayout>
 </template>
-
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Head } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+
 import { UnitIssuesApi } from '@/Services/unitIssues'
+import { UnitsApi } from '@/Services/units'
+import { UsersApi } from '@/Services/users'
 
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 
 /* ================= STATE ================= */
 const issues = ref([])
+const units = ref([])
+const users = ref([])
+
 const search = ref('')
 const currentPage = ref(1)
 const perPage = 10
 
 const modalOpen = ref(false)
 const currentId = ref(null)
-
 const form = ref({})
-
-const errorMsg = ref('')
-const editing = ref(false)
 
 /* ================= VALIDATION ================= */
 const schema = yup.object({
@@ -194,24 +206,35 @@ const schema = yup.object({
   user_id: yup.number().required(),
   title: yup.string().required(),
   description: yup.string().required(),
-  status: yup.string().oneOf(['open', 'close']).nullable(),
+  status: yup.string().oneOf(['open', 'close']).required(),
 })
 
 /* ================= LOAD ================= */
 async function load() {
-  issues.value = await UnitIssuesApi.list()
+  const [issuesRes, unitsRes, usersRes] = await Promise.all([
+    UnitIssuesApi.list(),
+    UnitsApi.list(),
+    UsersApi.list(),
+  ])
+
+  issues.value = issuesRes
+  units.value = unitsRes
+  users.value = usersRes
 }
 
-/* ================= FILTER + PAGINATION ================= */
+/* ================= FILTER ================= */
 const filteredIssues = computed(() => {
   const q = search.value.toLowerCase()
   return issues.value.filter(i =>
     i.title?.toLowerCase().includes(q) ||
-    String(i.unit_id).includes(q) ||
-    String(i.user_id).includes(q)
+    i.unit?.name?.en?.toLowerCase().includes(q) ||
+    i.user?.name?.toLowerCase().includes(q)
   )
 })
 
+watch(search, () => currentPage.value = 1)
+
+/* ================= PAGINATION ================= */
 const totalPages = computed(() =>
   Math.ceil(filteredIssues.value.length / perPage)
 )
@@ -236,35 +259,19 @@ function openEdit(issue) {
 
 function closeModal() {
   modalOpen.value = false
+  form.value = {}
 }
 
 /* ================= SAVE ================= */
 async function submit(values) {
-  errorMsg.value = ''
-
-  const payload = {
+  await UnitIssuesApi.update(currentId.value, {
+    ...values,
     unit_id: Number(values.unit_id),
     user_id: Number(values.user_id),
-    title: values.title,
-    description: values.description,
-    status: values.status || 'open',
-  }
+  })
 
-  try {
-      await UnitIssuesApi.update(currentId.value, payload)
-
-
-    closeModal()
-    await load()
-  } catch (e) {
-    console.error(e)
-
-    if (e?.response?.status === 422) {
-      errorMsg.value = e.response.data?.message || 'Validation error'
-    } else {
-      errorMsg.value = 'Server error'
-    }
-  }
+  closeModal()
+  load()
 }
 
 /* ================= DELETE ================= */
@@ -276,7 +283,6 @@ async function remove(id) {
 
 onMounted(load)
 </script>
-
 <style scoped>
 .form-input {
   @apply w-full border border-gray-300 rounded px-3 py-2;
