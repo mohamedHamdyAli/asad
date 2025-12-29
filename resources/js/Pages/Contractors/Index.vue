@@ -276,6 +276,9 @@ onMounted(load)
 
 <style scoped>
 .form-input {
-  @apply w-full border rounded px-3 py-2;
+  @apply w-full border border-gray-300 rounded px-3 py-2;
+}
+.error {
+  @apply text-red-600 text-xs;
 }
 </style>

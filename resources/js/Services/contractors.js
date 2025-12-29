@@ -10,24 +10,41 @@ function unwrapList(payload){
   return [];
 }
 function toUrl(p){ return p ? `/storage/${p}` : ""; }
-function normalize(row = {}){
-  const t = tryJson(row.title);
-  const d = tryJson(row.description);
-  const title = t && typeof t === "object" ? t : { en: t ?? "", ar: t ?? "" };
-  const desc  = d && typeof d === "object" ? d : { en: d ?? "", ar: d ?? "" };
+function normalize(row = {}) {
+  const title = tryJson(row.title) || {}
+  const description = tryJson(row.description) || {}
+
   return {
     id: row.id,
+
     email: row.email || "",
+
     image: row.image || "",
     image_url: toUrl(row.image),
-    title_en: title.en ?? "",
-    title_ar: title.ar ?? "",
-    description_en: desc.en ?? "",
-    description_ar: desc.ar ?? "",
+
+    // 🔴 TITLES
+    title_en: title.en || "",
+    title_ar: title.ar || "",
+
+    // 🔴 DESCRIPTIONS
+    description_en: description.en || "",
+    description_ar: description.ar || "",
+
+    // 🔴 PHONES
+    company_phone: row.company_phone || "",
+    representative_phone: row.representative_phone || "",
+
+    // 🔴 ADDRESSES
+    company_address: row.company_address || { en: "", ar: "" },
+
+    // 🔴 REPRESENTATIVE
+    representative_name: row.representative_name || { en: "", ar: "" },
+
     created_at: row.created_at,
     updated_at: row.updated_at,
-  };
+  }
 }
+
 
 /* ---------------- API ---------------- */
 export const ContractorsApi = {
