@@ -12,7 +12,7 @@ export const UnitIssuesApi = {
   },
 
   create: async (payload) => {
-    const { data } = await axios.post('/api/unit-issues/store', {
+    const { data } = await axios.post('/api/unit-issues/create', {
       data: payload,
     })
     return data

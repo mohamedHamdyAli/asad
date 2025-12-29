@@ -1,233 +1,290 @@
 <template>
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-dash-title">Contractors</h2>
-        <button class="px-3 py-1 border rounded text-black" @click="fetchList">Refresh</button>
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Contractors</h2>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded" @click="openCreate">
+          + Add Contractor
+        </button>
       </div>
 
-      <!-- Create one contractor -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">Add Contractor</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
-            <input v-model="createForm.title.en" type="text" class="form-input" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
-            <input v-model="createForm.title.ar" type="text" class="form-input" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Email *</label>
-            <input v-model="createForm.email" type="email" class="form-input" />
-          </div>
-          <div class="md:col-span-1">
-            <label class="block text-xs text-gray-500 mb-1">Image *</label>
-            <input type="file" accept="image/*" @change="onCreateFile" />
-            <img v-if="createPreview" :src="createPreview" class="mt-2 w-24 h-16 object-cover rounded border" />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 mb-1">Description (EN) *</label>
-            <textarea v-model="createForm.description.en" type="text" class="form-input" ></textarea>
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 mb-1">Description (AR) *</label>
-            <textarea v-model="createForm.description.ar" type="text" class="form-input" ></textarea>
-          </div>
-        </div>
+      <!-- SEARCH -->
+      <div class="flex gap-4">
+        <input
+          v-model="search"
+          placeholder="Search by title or email"
+          class="form-input w-72"
+        />
+      </div>
 
-        <div class="mt-4 flex items-center gap-3">
+      <!-- TABLE -->
+      <div class="bg-white rounded-xl shadow border overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-3 text-left">Image</th>
+              <th class="px-4 py-3 text-left">Title (EN)</th>
+              <th class="px-4 py-3 text-left">Email</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="c in paginatedRows" :key="c.id" class="border-t">
+              <td class="px-4 py-3">
+                <img
+                  v-if="c.image_url"
+                  :src="c.image_url"
+                  class="w-16 h-12 object-cover rounded border"
+                />
+                <span v-else class="text-gray-400">—</span>
+              </td>
+
+              <td class="px-4 py-3">{{ c.title_en }}</td>
+              <td class="px-4 py-3">{{ c.email }}</td>
+
+              <td class="px-4 py-3 text-right space-x-2">
+                <button class="text-blue-600" @click="openEdit(c)">Details</button>
+                <button class="text-red-600" @click="remove(c.id)">Delete</button>
+              </td>
+            </tr>
+
+            <tr v-if="filteredRows.length === 0">
+              <td colspan="4" class="text-center py-6 text-gray-500">
+                No contractors found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="flex justify-between items-center">
+        <span class="text-sm text-gray-600">
+          Page {{ currentPage }} of {{ totalPages }}
+        </span>
+
+        <div class="flex gap-2">
           <button
-            class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
-            :disabled="creating || !canCreate"
-            @click="createOne"
+            class="px-3 py-1 border rounded"
+            :disabled="currentPage === 1"
+            @click="currentPage--"
           >
-            {{ creating ? 'Saving…' : 'Add' }}
+            Prev
           </button>
-          <span v-if="createErr" class="text-sm text-red-600">{{ createErr }}</span>
+          <button
+            class="px-3 py-1 border rounded"
+            :disabled="currentPage === totalPages"
+            @click="currentPage++"
+          >
+            Next
+          </button>
         </div>
       </div>
 
-      <!-- List -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">All Contractors</h3>
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
+      <!-- MODAL -->
+      <div
+        v-if="modalOpen"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div class="bg-white w-full max-w-xl rounded-xl p-6">
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          <div v-for="c in rows" :key="c.id" class="border rounded bg-gray-50 overflow-hidden">
-            <div class="h-40 bg-white flex items-center justify-center">
-              <img v-if="c.image_url" :src="c.image_url" class="max-h-40 object-contain" />
-              <div v-else class="text-gray-400">No image</div>
+          <h3 class="text-lg font-semibold mb-4">
+            {{ editing ? 'Edit Contractor' : 'Add Contractor' }}
+          </h3>
+
+          <Form
+            :validation-schema="schema"
+            :initial-values="form"
+            @submit="submit"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <Field name="title.en" class="form-input" placeholder="Title (EN)" />
+              <ErrorMessage name="title.en" class="error" />
+
+              <Field name="title.ar" class="form-input" placeholder="Title (AR)" />
+              <ErrorMessage name="title.ar" class="error" />
+
+              <Field name="email" type="email" class="form-input" placeholder="Email" />
+              <ErrorMessage name="email" class="error" />
+
+              <Field
+                name="description.en"
+                as="textarea"
+                class="form-input md:col-span-2"
+                placeholder="Description (EN)"
+              />
+              <ErrorMessage name="description.en" class="error md:col-span-2" />
+
+              <Field
+                name="description.ar"
+                as="textarea"
+                class="form-input md:col-span-2"
+                placeholder="Description (AR)"
+              />
+              <ErrorMessage name="description.ar" class="error md:col-span-2" />
+
+              <input
+                type="file"
+                accept="image/*"
+                @change="onFile"
+                class="md:col-span-2"
+              />
+
             </div>
 
-            <div class="p-3 space-y-3 text-sm">
-              <div class="flex items-center justify-between">
-                <!-- <div class="font-semibold">#{{ c.id }}</div> -->
-                <button class="px-2 py-1 border rounded text-red-600" @click="remove(c.id)">Delete</button>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
-                  <input v-model="edit[c.id].title.en" class="form-input" type="text" />
-                </div>
-                <div>
-                  <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
-                  <input v-model="edit[c.id].title.ar" class="form-input" type="text" />
-                </div>
-                <div class="md:col-span-2">
-                  <label class="block text-[11px] text-gray-500 mb-1">Description (EN)</label>
-                  <input v-model="edit[c.id].description.en" class="form-input" type="text" />
-                </div>
-                <div class="md:col-span-2">
-                  <label class="block text-[11px] text-gray-500 mb-1">Description (AR)</label>
-                  <input v-model="edit[c.id].description.ar" class="form-input" type="text" />
-                </div>
-                <div>
-                  <label class="block text-[11px] text-gray-500 mb-1">Email</label>
-                  <input v-model="edit[c.id].email" class="form-input" type="email" />
-                </div>
-                <div>
-                  <label class="block text-[11px] text-gray-500 mb-1">Replace Image</label>
-                  <input type="file" accept="image/*" @change="onReplaceFile(c.id, $event)" />
-                </div>
-              </div>
-
-              <div>
-                <button class="px-3 py-1 border rounded" :disabled="saving[c.id]" @click="saveOne(c.id)">
-                  {{ saving[c.id] ? 'Saving…' : 'Save' }}
-                </button>
-              </div>
+            <div class="flex justify-end gap-2 mt-4">
+              <button
+                type="button"
+                class="px-4 py-2 border rounded"
+                @click="closeModal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-green-600 text-white rounded"
+              >
+                Save
+              </button>
             </div>
-          </div>
+          </Form>
 
-          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
-            No contractors found.
-          </div>
         </div>
       </div>
+
     </div>
   </AuthenticatedLayout>
 </template>
-
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import * as yup from 'yup'
+
 import {
   ContractorsApi,
   buildContractorsCreateFD,
   buildContractorsUpdateFD
 } from '@/Services/contractors'
 
-/* Create */
-const createForm = ref({
-  title: { en: '', ar: '' },
-  description: { en: '', ar: '' },
-  email: '',
-  image: null,
+/* STATE */
+const rows = ref([])
+const search = ref('')
+const currentPage = ref(1)
+const perPage = 10
+
+const modalOpen = ref(false)
+const editing = ref(false)
+const currentId = ref(null)
+const imageFile = ref(null)
+
+const form = ref({})
+
+/* VALIDATION */
+const schema = yup.object({
+  title: yup.object({
+    en: yup.string().required(),
+    ar: yup.string().required(),
+  }),
+  description: yup.object({
+    en: yup.string().required(),
+    ar: yup.string().required(),
+  }),
+  email: yup.string().email().required(),
 })
-const createPreview = ref(null)
-function onCreateFile(e){
-  const f = e.target.files?.[0] || null
-  createForm.value.image = f
-  createPreview.value = f ? URL.createObjectURL(f) : null
+
+/* LOAD */
+async function load() {
+  rows.value = await ContractorsApi.list()
 }
-const creating = ref(false)
-const createErr = ref('')
-const canCreate = computed(() =>
-  !!createForm.value.title.en?.trim() &&
-  !!createForm.value.title.ar?.trim() &&
-  !!createForm.value.description.en?.trim() &&
-  !!createForm.value.description.ar?.trim() &&
-  !!createForm.value.email?.trim() &&
-  !!createForm.value.image
+
+/* SEARCH + PAGINATION */
+const filteredRows = computed(() => {
+  const q = search.value.toLowerCase()
+  return rows.value.filter(r =>
+    r.title_en?.toLowerCase().includes(q) ||
+    r.title_ar?.toLowerCase().includes(q) ||
+    r.email?.toLowerCase().includes(q)
+  )
+})
+
+const totalPages = computed(() =>
+  Math.ceil(filteredRows.value.length / perPage)
 )
 
-async function createOne(){
-  creating.value = true
-  createErr.value = ''
-  try {
-    const fd = buildContractorsCreateFD([ createForm.value ])
-    await ContractorsApi.create(fd)
-    await fetchList()
-    // reset
-    createForm.value = { title:{en:'',ar:''}, description:{en:'',ar:''}, email:'', image:null }
-    createPreview.value = null
-  } catch (e) {
-    console.error(e)
-    // surface validation errors (422)
-    createErr.value = e?.response?.data?.message || e?.message || 'Create failed'
-  } finally {
-    creating.value = false
+const paginatedRows = computed(() => {
+  const start = (currentPage.value - 1) * perPage
+  return filteredRows.value.slice(start, start + perPage)
+})
+
+/* MODAL */
+function openCreate() {
+  editing.value = false
+  form.value = {
+    title: { en: '', ar: '' },
+    description: { en: '', ar: '' },
+    email: '',
   }
+  imageFile.value = null
+  modalOpen.value = true
 }
 
-/* List + per-card edit */
-const rows = ref([])
-const loading = ref(false)
-const edit = reactive({})
-const saving = reactive({})
-const pendingFile = reactive({})
-
-function seedEditState(arr){
-  Object.keys(edit).forEach(k => delete edit[k])
-  arr.forEach(c => {
-    edit[c.id] = {
-      title: { en: c.title_en || '', ar: c.title_ar || '' },
-      description: { en: c.description_en || '', ar: c.description_ar || '' },
-      email: c.email || '',
-    }
-  })
-}
-
-async function fetchList(){
-  loading.value = true
-  try {
-    rows.value = await ContractorsApi.list()
-    seedEditState(rows.value)
-  } finally {
-    loading.value = false
+function openEdit(c) {
+  editing.value = true
+  currentId.value = c.id
+  form.value = {
+    title: { en: c.title_en, ar: c.title_ar },
+    description: { en: c.description_en, ar: c.description_ar },
+    email: c.email,
   }
+  modalOpen.value = true
 }
 
-function onReplaceFile(id, e){
-  const f = e.target.files?.[0] || null
-  if (f) pendingFile[id] = f
+function closeModal() {
+  modalOpen.value = false
 }
 
-async function saveOne(id){
-  const item = edit[id]
-  if (!item) return
-  saving[id] = true
-  try {
-    const payload = {
-      title: item.title,
-      description: item.description,
-      email: item.email,
-      image: pendingFile[id],
-    }
-    const fd = buildContractorsUpdateFD(payload)
-    await ContractorsApi.update(id, fd)
-    delete pendingFile[id]
-    await fetchList()
-  } catch (e) {
-    console.error(e)
-    alert(e?.response?.data?.message || 'Update failed')
-  } finally {
-    saving[id] = false
+function onFile(e) {
+  imageFile.value = e.target.files?.[0] || null
+}
+
+/* SAVE */
+async function submit(values) {
+  const payload = { ...values, image: imageFile.value }
+
+  if (editing.value) {
+    await ContractorsApi.update(
+      currentId.value,
+      buildContractorsUpdateFD(payload)
+    )
+  } else {
+    await ContractorsApi.create(
+      buildContractorsCreateFD([payload])
+    )
   }
+
+  closeModal()
+  load()
 }
 
-async function remove(id){
+/* DELETE */
+async function remove(id) {
   if (!confirm('Delete this contractor?')) return
   await ContractorsApi.remove(id)
-  await fetchList()
+  load()
 }
 
-onMounted(fetchList)
+onMounted(load)
 </script>
-
 <style scoped>
-.form-input { @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
+.form-input {
+  @apply w-full border border-gray-300 rounded px-3 py-2;
+}
+.error {
+  @apply text-red-600 text-xs;
+}
 </style>

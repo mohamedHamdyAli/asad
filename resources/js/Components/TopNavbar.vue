@@ -32,7 +32,7 @@
     </div>
         <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
       <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('vendors-management')">Vendors Managemnt</NavLink>
+<NavLink :href="route('pm-management')">Vendors Managemnt</NavLink>
     </div>
         <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
       <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />

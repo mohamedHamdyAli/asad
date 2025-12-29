@@ -22,8 +22,8 @@
         <NavItem
           icon="mdi:responsive"
           label="Project Managers (PM)"
-          :to="route('vendors-management')"
-          :href="route('vendors-management')"
+          :to="route('pm-management')"
+          :href="route('pm-management')"
           class="border-b border-gray-300/70"
         />
         <NavItem
