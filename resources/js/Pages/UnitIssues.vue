@@ -185,13 +185,16 @@ const currentId = ref(null)
 
 const form = ref({})
 
+const errorMsg = ref('')
+const editing = ref(false)
+
 /* ================= VALIDATION ================= */
 const schema = yup.object({
   unit_id: yup.number().required(),
   user_id: yup.number().required(),
   title: yup.string().required(),
   description: yup.string().required(),
-  status: yup.string().oneOf(['open', 'close']),
+  status: yup.string().oneOf(['open', 'close']).nullable(),
 })
 
 /* ================= LOAD ================= */
@@ -237,9 +240,31 @@ function closeModal() {
 
 /* ================= SAVE ================= */
 async function submit(values) {
-  await UnitIssuesApi.update(currentId.value, { data: values })
-  closeModal()
-  load()
+  errorMsg.value = ''
+
+  const payload = {
+    unit_id: Number(values.unit_id),
+    user_id: Number(values.user_id),
+    title: values.title,
+    description: values.description,
+    status: values.status || 'open',
+  }
+
+  try {
+      await UnitIssuesApi.update(currentId.value, payload)
+
+
+    closeModal()
+    await load()
+  } catch (e) {
+    console.error(e)
+
+    if (e?.response?.status === 422) {
+      errorMsg.value = e.response.data?.message || 'Validation error'
+    } else {
+      errorMsg.value = 'Server error'
+    }
+  }
 }
 
 /* ================= DELETE ================= */

@@ -1,419 +1,343 @@
 <template>
-
   <Head title="Vendors Management" />
+
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-dash-title">Project Managers (PM)</h2>
-        <button @click="openCreate" class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Project Managers (PM)</h2>
+        <button
+          class="px-4 py-2 bg-black text-white rounded"
+          @click="openCreate"
+        >
           + Add PM
         </button>
       </div>
 
-      <!-- List -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-bold">Project Managers</h3>
-          <button @click="fetchVendors" class="px-3 py-1 border rounded">
-            Refresh
+      <!-- SEARCH -->
+      <div class="flex gap-4">
+        <input
+          v-model="search"
+          placeholder="Search name, email, or phone"
+          class="form-input w-80"
+        />
+      </div>
+
+      <!-- TABLE -->
+      <div class="bg-white rounded-xl shadow border overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3">#</th>
+              <th class="px-4 py-3">Avatar</th>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Email</th>
+              <th class="px-4 py-3">Phone</th>
+              <th class="px-4 py-3">Enabled</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="v in paginatedRows" :key="v.id" class="border-t">
+              <td class="px-4 py-3">{{ v.id }}</td>
+
+              <td class="px-4 py-3">
+                <img
+                  v-if="v.profile_image_url"
+                  :src="v.profile_image_url"
+                  class="w-10 h-10 rounded-full object-cover"
+                />
+                <span v-else class="text-gray-400">—</span>
+              </td>
+
+              <td class="px-4 py-3 font-medium">{{ v.name }}</td>
+              <td class="px-4 py-3">{{ v.email }}</td>
+              <td class="px-4 py-3">
+                {{ v.country_code }} {{ v.phone }}
+              </td>
+
+              <td class="px-4 py-3">
+                <span
+                  :class="v.is_enabled ? 'text-green-600' : 'text-gray-400'"
+                >
+                  {{ v.is_enabled ? 'Yes' : 'No' }}
+                </span>
+              </td>
+
+              <td class="px-4 py-3 text-right space-x-2">
+                <button class="text-blue-600" @click="openEdit(v)">
+                  Edit
+                </button>
+                <button class="text-red-600" @click="remove(v)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            <tr v-if="filteredRows.length === 0">
+              <td colspan="7" class="text-center py-6 text-gray-500">
+                No PMs found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="flex justify-between items-center">
+        <span class="text-sm text-gray-600">
+          Page {{ currentPage }} of {{ totalPages }}
+        </span>
+
+        <div class="flex gap-2">
+          <button
+            class="px-3 py-1 border rounded"
+            :disabled="currentPage === 1"
+            @click="currentPage--"
+          >
+            Prev
+          </button>
+          <button
+            class="px-3 py-1 border rounded"
+            :disabled="currentPage === totalPages"
+            @click="currentPage++"
+          >
+            Next
           </button>
         </div>
-
-        <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
-
-        <div v-else class="overflow-x-auto">
-          <table class="w-full text-sm text-left text-gray-700">
-            <thead class="text-xs uppercase bg-gray-50 text-gray-500">
-              <tr>
-                <th class="px-3 py-2">#</th>
-                <th class="px-3 py-2">Avatar</th>
-                <th class="px-3 py-2">Name</th>
-                <th class="px-3 py-2">Email</th>
-                <th class="px-3 py-2">Phone</th>
-                <th class="px-3 py-2">Enabled</th>
-                <th class="px-3 py-2 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="v in rows" :key="v.id" class="border-b">
-                <td class="px-3 py-2">{{ v.id }}</td>
-                <td class="px-3 py-2">
-                  <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                    <img v-if="v.profile_image_url" :src="v.profile_image_url" class="w-full h-full object-cover" />
-                    <span v-else class="text-xs text-gray-400">—</span>
-                  </div>
-                </td>
-                <td class="px-3 py-2 font-medium">{{ v.name }}</td>
-                <td class="px-3 py-2">{{ v.email }}</td>
-                <td class="px-3 py-2">
-                  {{ v.country_code ? v.country_code + ' ' : '' }}
-                  {{ v.phone || '—' }}
-                </td>
-                <td class="px-3 py-2">
-                  <span :class="v.is_enabled ? 'text-green-600' : 'text-gray-400'">
-                    {{ v.is_enabled ? 'Yes' : 'No' }}
-                  </span>
-                </td>
-                <td class="px-3 py-2 text-right space-x-2">
-                  <button class="text-blue-600 hover:underline" @click="openEdit(v)">
-                    Edit
-                  </button>
-                  <button class="text-red-600 hover:underline" @click="remove(v)">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-              <tr v-if="!rows.length">
-                <td colspan="7" class="px-3 py-6 text-center text-gray-500">
-                  No vendors found.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
 
-      <!-- Modal -->
-     <!-- Modal -->
-<div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 back-drop">
-  <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-5 relative">
-    <button @click="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-      ✕
-    </button>
-    <h3 class="text-lg font-bold mb-4">
-      {{ editingId ? "Edit PM" : "Add PM" }}
-    </h3>
+      <!-- MODAL -->
+      <div
+        v-if="showModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-xl w-full max-w-2xl p-6 relative">
 
-    <form @submit.prevent="submit" novalidate>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Name -->
-        <div class="md:col-span-2">
-          <label class="block text-xs text-gray-500 mb-1">Name *</label>
-          <input v-model.trim="form.name" class="form-input" type="text" />
-          <p v-if="fieldErrors.name" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.name[0] }}
-          </p>
-        </div>
+          <button
+            class="absolute top-3 right-3 text-gray-400"
+            @click="closeModal"
+          >
+            ✕
+          </button>
 
-        <!-- Email -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Email *</label>
-          <input v-model.trim="form.email" class="form-input" type="email" />
-          <p v-if="fieldErrors.email" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.email[0] }}
-          </p>
-        </div>
+          <h3 class="text-lg font-bold mb-4">
+            {{ editingId ? 'Edit PM' : 'Add PM' }}
+          </h3>
 
-        <!-- Phone (split) -->
-        <div class="flex gap-2">
-          <div class="w-1/3">
-            <label class="block text-xs text-gray-500 mb-1">Code *</label>
-            <input v-model.trim="form.country_code" class="form-input" type="text" placeholder="+20" />
-            <p v-if="fieldErrors.country_code" class="text-xs text-red-600 mt-1">
-              {{ fieldErrors.country_code[0] }}
-            </p>
-          </div>
-          <div class="flex-1">
-            <label class="block text-xs text-gray-500 mb-1">Phone *</label>
-            <input v-model.trim="form.phone" class="form-input" type="text" />
-            <p v-if="fieldErrors.phone" class="text-xs text-red-600 mt-1">
-              {{ fieldErrors.phone[0] }}
-            </p>
-          </div>
-        </div>
+          <Form
+            :validation-schema="schema"
+            :initial-values="form"
+            @submit="submit"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <!-- Password -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">
-            {{ editingId ? "Password (optional)" : "Password *" }}
-          </label>
-          <input v-model="form.password" class="form-input" type="password" minlength="8" />
-          <p v-if="fieldErrors.password" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.password[0] }}
-          </p>
-        </div>
+              <Field name="name" class="form-input md:col-span-2" placeholder="Name" />
+              <ErrorMessage name="name" class="error md:col-span-2" />
 
-        <!-- Gender -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Gender *</label>
-          <select v-model="form.gender" class="form-input">
-            <option value="" disabled>Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          <p v-if="fieldErrors.gender" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.gender[0] }}
-          </p>
-        </div>
+              <Field name="email" type="email" class="form-input" placeholder="Email" />
+              <ErrorMessage name="email" class="error" />
 
-        <!-- Country -->
-        <div>
-          <label class="block text-xs text-gray-500 mb-1">Country *</label>
-          <select v-model="form.country_name" class="form-input">
-            <option value="" disabled>Select country</option>
-            <option v-for="c in countryList" :key="c.name" :value="c.name">
-              {{ c.name }}
-            </option>
-          </select>
-          <p v-if="fieldErrors.country_name" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.country_name[0] }}
-          </p>
-        </div>
+              <div class="flex gap-2">
+                <Field name="country_code" class="form-input w-1/3" placeholder="+20" />
+                <Field name="phone" class="form-input flex-1" placeholder="Phone" />
+              </div>
+              <ErrorMessage name="country_code" class="error" />
+              <ErrorMessage name="phone" class="error" />
 
-        <!-- Enabled -->
-        <div class="flex items-center gap-2">
-          <input id="enabled" type="checkbox" v-model="form.is_enabled" />
-          <label for="enabled" class="text-sm">Enabled</label>
-        </div>
+              <Field
+                name="password"
+                type="password"
+                class="form-input"
+                :placeholder="editingId ? 'Password (optional)' : 'Password'"
+              />
+              <ErrorMessage name="password" class="error" />
 
-        <!-- Profile Image -->
-        <div class="md:col-span-2">
-          <label class="block text-xs text-gray-500 mb-1">
-            Profile Image
-            {{ editingId ? "(optional; select to replace)" : "(required)" }}
-          </label>
-          <input type="file" accept="image/*" @change="onFile" />
-          <div v-if="imagePreview" class="mt-2">
-            <img :src="imagePreview" class="w-32 h-32 object-cover rounded border" />
-          </div>
-          <p v-if="fieldErrors.profile_image" class="text-xs text-red-600 mt-1">
-            {{ fieldErrors.profile_image[0] }}
-          </p>
+              <Field as="select" name="gender" class="form-input">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </Field>
+              <ErrorMessage name="gender" class="error" />
+
+              <Field as="select" name="country_name" class="form-input">
+                <option value="">Select country</option>
+                <option
+                  v-for="c in countryList"
+                  :key="c.name"
+                  :value="c.name"
+                >
+                  {{ c.name }}
+                </option>
+              </Field>
+              <ErrorMessage name="country_name" class="error" />
+
+              <div class="flex items-center gap-2">
+                <Field type="checkbox" name="is_enabled" />
+                <span class="text-sm">Enabled</span>
+              </div>
+
+              <input type="file" accept="image/*" @change="onFile" class="md:col-span-2" />
+              <img v-if="imagePreview" :src="imagePreview" class="w-24 h-24 rounded border" />
+
+            </div>
+
+            <div class="flex justify-end gap-2 mt-6">
+              <button type="button" class="px-4 py-2 border rounded" @click="closeModal">
+                Cancel
+              </button>
+              <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded">
+                Save
+              </button>
+            </div>
+          </Form>
+
         </div>
       </div>
-
-      <!-- Actions -->
-      <div class="mt-4 flex items-center gap-3">
-      <button
-  type="submit"
-  :disabled="saving"
-  class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60"
->
-  {{ saving ? "Saving…" : editingId ? "Update" : "Create" }}
-</button>
-
-        <button type="button" class="px-3 py-2 border rounded" @click="closeModal">
-          Cancel
-        </button>
-      </div>
-
-      <!-- Global Errors -->
-      <div v-if="errorMsg" class="text-sm text-red-600 mt-2">
-        {{ errorMsg }}
-      </div>
-    </form>
-    <!-- Nice top alert -->
-  </div>
-</div>
 
     </div>
   </AuthenticatedLayout>
 </template>
-
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
-import { ref, onMounted } from "vue"
-import { VendorsApi, buildVendorCreateFD, buildVendorUpdateFD } from "@/Services/vendors"
 import { Head } from "@inertiajs/vue3"
-import { countries as countriesData } from 'countries-list'
+import { ref, onMounted, computed } from "vue"
+import { Form, Field, ErrorMessage } from "vee-validate"
+import * as yup from "yup"
+import { VendorsApi, buildVendorCreateFD, buildVendorUpdateFD } from "@/Services/vendors"
+import { countries as countriesData } from "countries-list"
 
+/* STATE */
 const rows = ref([])
-const loading = ref(false)
+const search = ref("")
+const currentPage = ref(1)
+const perPage = 10
 
 const showModal = ref(false)
 const editingId = ref(null)
-const original = ref(null)
-
-const form = ref({
-  name: "",
-  email: "",
-  phone: "",
-  password: "",
-  gender: "",
-  country_code: "",
-  country_name: "",
-  is_enabled: true,
-  profile_image: null,
-})
+const imageFile = ref(null)
 const imagePreview = ref(null)
 
-const saving = ref(false)
-const errorMsg = ref("")
-const fieldErrors = ref({})
+const form = ref({})
 
-const countryList = Object.values(countriesData).map(c => ({
-  name: c.name,
-  code: c.phone,
-}))
-function validateForm() {
-  const errors = {}
+/* COUNTRIES */
+const countryList = Object.values(countriesData).map(c => ({ name: c.name }))
 
-  if (!form.value.name?.trim()) errors.name = ["Name is required"]
+/* VALIDATION */
+const schema = yup.object({
+  name: yup.string().required(),
+  email: yup.string().email().required(),
+  country_code: yup.string().required(),
+  phone: yup.string().required(),
+  gender: yup.string().required(),
+  country_name: yup.string().required(),
+  password: yup.string().min(8).nullable(),
+  is_enabled: yup.boolean(),
+})
 
-  if (!form.value.email?.trim()) {
-    errors.email = ["Email is required"]
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
-    errors.email = ["Invalid email format"]
-  }
-
-  if (!form.value.country_code?.trim()) {
-    errors.country_code = ["Country code is required"]
-  }
-
-  if (!form.value.phone?.trim()) {
-    errors.phone = ["Phone is required"]
-  } else if (!/^[0-9]{6,15}$/.test(form.value.phone)) {
-    errors.phone = ["Phone must be 6–15 digits"]
-  }
-
-  if (!editingId.value && !form.value.password?.trim()) {
-    errors.password = ["Password is required"]
-  } else if (form.value.password && form.value.password.length < 8) {
-    errors.password = ["Password must be at least 8 characters"]
-  }
-
-  if (!form.value.gender) errors.gender = ["Gender is required"]
-  if (!form.value.country_name) errors.country_name = ["Country is required"]
-
-  fieldErrors.value = errors
-  return Object.keys(errors).length === 0
+/* LOAD */
+async function fetchVendors() {
+  rows.value = await VendorsApi.list()
 }
 
+/* SEARCH + PAGINATION */
+const filteredRows = computed(() => {
+  const q = search.value.toLowerCase()
+  return rows.value.filter(v =>
+    v.name?.toLowerCase().includes(q) ||
+    v.email?.toLowerCase().includes(q) ||
+    v.phone?.includes(q)
+  )
+})
 
-function resetForm() {
+const totalPages = computed(() =>
+  Math.ceil(filteredRows.value.length / perPage)
+)
+
+const paginatedRows = computed(() => {
+  const start = (currentPage.value - 1) * perPage
+  return filteredRows.value.slice(start, start + perPage)
+})
+
+/* MODAL */
+function openCreate() {
+  editingId.value = null
   form.value = {
     name: "",
     email: "",
     phone: "",
-    password: "",
-    gender: "",
     country_code: "",
+    gender: "",
     country_name: "",
     is_enabled: true,
-    profile_image: null,
+    password: "",
   }
+  imageFile.value = null
   imagePreview.value = null
-  errorMsg.value = ""
-  fieldErrors.value = {}
-  editingId.value = null
-  original.value = null
-}
-function openCreate() {
-  resetForm()
   showModal.value = true
 }
-function openEdit(vendor) {
-  resetForm()
-  editingId.value = vendor.id
-  original.value = { ...vendor }
-  Object.assign(form.value, {
-    name: vendor.name,
-    email: vendor.email,
-    phone: vendor.phone,
-    gender: vendor.gender || "",
-    country_code: vendor.country_code || "",
-    country_name: vendor.country_name || "",
-    is_enabled: !!vendor.is_enabled,
-  })
-  imagePreview.value = vendor.profile_image_url || null
+
+function openEdit(v) {
+  editingId.value = v.id
+  form.value = {
+    name: v.name,
+    email: v.email,
+    phone: v.phone,
+    country_code: v.country_code,
+    gender: v.gender,
+    country_name: v.country_name,
+    is_enabled: !!v.is_enabled,
+    password: "",
+  }
+  imagePreview.value = v.profile_image_url || null
   showModal.value = true
 }
+
 function closeModal() {
   showModal.value = false
 }
 
 function onFile(e) {
   const f = e.target.files?.[0] || null
-  form.value.profile_image = f
+  imageFile.value = f
   imagePreview.value = f ? URL.createObjectURL(f) : imagePreview.value
 }
 
-async function fetchVendors() {
-  loading.value = true
-  try {
-    rows.value = await VendorsApi.list()
-  } finally {
-    loading.value = false
+/* SAVE */
+async function submit(values) {
+  const payload = { ...values, profile_image: imageFile.value }
+
+  if (editingId.value) {
+    await VendorsApi.update(
+      editingId.value,
+      buildVendorUpdateFD(payload)
+    )
+  } else {
+    await VendorsApi.create(
+      buildVendorCreateFD(payload)
+    )
   }
+
+  closeModal()
+  fetchVendors()
 }
 
-async function submit() {
-  saving.value = true
-  errorMsg.value = ""
-  fieldErrors.value = {}
-
-  if (!validateForm()) {
-    saving.value = false
-    return
-  }
-
-  try {
-    let res
-
-    if (editingId.value) {
-      const changed = {}
-      const keys = ["name", "email", "phone", "gender", "country_code", "country_name", "is_enabled"]
-      keys.forEach((k) => {
-        if ((original.value?.[k] ?? "") !== (form.value?.[k] ?? "")) {
-          changed[k] = form.value[k]
-        }
-      })
-      if (form.value.password && form.value.password.trim() !== "")
-        changed.password = form.value.password
-      if (form.value.profile_image)
-        changed.profile_image = form.value.profile_image
-
-      const fd = buildVendorUpdateFD(changed)
-      res = await VendorsApi.update(editingId.value, fd)
-    } else {
-      const fd = buildVendorCreateFD(form.value)
-      res = await VendorsApi.create(fd)
-    }
-
-    // 🔑 Check response code manually
-    if (res?.status && res.status !== 200) {
-      errorMsg.value = res.data?.msg || res.data?.message || "Something went wrong"
-      return // ❌ stop here, keep modal open
-    }
-
-    await fetchVendors()
-    closeModal() // ✅ only closes if truly succeeded
-  } catch (e) {
-    const status = e?.response?.status
-    const data = e?.response?.data || {}
-
-    if (status === 422 && data.errors) {
-      fieldErrors.value = data.errors
-      errorMsg.value = data.msg || data.message || "Validation error"
-    } else {
-      errorMsg.value = data.msg || data.message || e?.message || "Request failed"
-    }
-
-    // 🔒 make sure modal stays open
-    showModal.value = true
-    return
-  } finally {
-    saving.value = false
-  }
-}
-
-
-
-
-async function remove(vendor) {
-  if (!confirm(`Delete vendor "${vendor.name}"?`)) return
-  await VendorsApi.remove(vendor.id)
-  await fetchVendors()
+/* DELETE */
+async function remove(v) {
+  if (!confirm(`Delete "${v.name}"?`)) return
+  await VendorsApi.remove(v.id)
+  fetchVendors()
 }
 
 onMounted(fetchVendors)
 </script>
-
 <style scoped>
 .form-input {
-  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500;
+  @apply w-full border border-gray-300 rounded px-3 py-2;
 }
-.back-drop {
-margin-top: -25px !important;
+.error {
+  @apply text-xs text-red-600;
 }
 </style>

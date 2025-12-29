@@ -21,7 +21,7 @@ Route::get('/register', fn() => inertia('Auth/Register'))->name('register');
 
 Route::get('/settings', fn() => inertia('Settings'))->name('settings');
 Route::get('/messages', fn() => inertia('Messages'))->name('messages');
-Route::get('/Vendors-management', fn() => inertia('VendorsManagement'))->name('vendors-management');
+Route::get('/pm-management', fn() => inertia('VendorsManagement'))->name('pm-management');
 Route::get('/bids-management', fn() => inertia('BidsManagement'))->name('bids-management');
 Route::get('/languages', fn() => inertia('LanguageManagement'))->name('language-management');
 // Route::get('/language-editor', fn() => inertia('LanguageEditor'))->name('language-editor');
