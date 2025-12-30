@@ -55,7 +55,7 @@ public function login(array $data)
             return failReturnMsg('Your account is disabled');
         }
 
-        if (!$user->hasAnyRole(['user', 'guest' , 'admin' , 'super_admin' , 'vendor'])) {
+        if (!in_array($user->role, ['user', 'guest'])) {
             Auth::logout();
             return failReturnMsg('Unauthorized role');
         }
