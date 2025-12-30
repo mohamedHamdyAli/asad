@@ -8,52 +8,37 @@
           </div> -->
 
         <!-- Sample Menu Dropdown -->
-        <div class="relative" @click="toggleSampleMenu">
+       <!-- Mobile Menu Button -->
+<div class="relative lg:hidden">
+  <button
+    @click.stop="toggleSampleMenu"
+    class="flex items-center gap-2 text-white font-medium"
+  >
+    <Icon icon="mdi:menu" class="w-6 h-6" />
+    <span>Menu</span>
+  </button>
 
-          <button
-            class="flex items-center space-x-2 text-white hover:text-blue-800 focus:outline-none text-sm font-medium">
-            <Icon icon="mdi:menu" class="w-5 h-5" />
-            <span>Sample menu</span>
-            <Icon icon="mdi:chevron-down" class="w-4 h-4" />
-          </button>
-          <!-- tempo pause sample menu -->
-          <!-- <div v-if="sampleMenuOpen" class="absolute left-0 mt-2 w-44 bg-white border rounded shadow z-50">
-    <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:clock-outline" class="me-2 w-4 text-subtitle-2" />
-<NavLink :href="route('dashboard')">Dashboard</NavLink>
-    </div>
-    <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('finance-management')">Reports</NavLink>
-    </div>
-        <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('bids-management')">Bids Management</NavLink>
-    </div>
-        <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('pm-management')">Vendors Managemnt</NavLink>
-    </div>
-        <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('intro-management')">App Intro</NavLink>
-    </div>
-            <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('language-management')">Language Management</NavLink>
-    </div>
-            <div class="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
-      <Icon icon="mdi:cloud-outline" class="me-2 w-4 h-4" />
-<NavLink :href="route('users-management')">User Management</NavLink>
-    </div>
-  </div> -->
-        </div>
-        <!-- <NavItem icon="mdi:table-large" label="Reports" :to="route('finance-management')" :href="route('finance-management')" />
-                <NavItem icon="mdi:view-dashboard-outline" label="Bids" :to="route('bids-management')" :href="route('bids-management')" />
-                <NavItem icon="mdi:responsive" label="SPCs" :to="route('spc-management')" :href="route('spc-management')" />
-                <NavItem icon="mdi:file-document-edit-outline" label="App Intro" :to="route('intro-management')" :href="route('intro-management')" />             
-                <NavItem icon="mdi:world" label="Languages" :to="route('language-management')" :href="route('language-management')" />
-                <NavItem icon="mdi:people" label="Manage Users" :to="route('users-management')" :href="route('users-management')" /> -->
+  <!-- Dropdown -->
+  <div
+    v-if="sampleMenuOpen"
+    class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-lg z-50 overflow-hidden"
+  >
+    <template v-for="(item, i) in navigationItems" :key="i">
+      <div v-if="item.divider" class="border-t my-1" />
+
+      <Link
+        v-else
+        :href="route(item.route)"
+        class="flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-100"
+        @click="sampleMenuOpen = false"
+      >
+        <Icon :icon="item.icon" class="w-5 h-5 text-gray-600" />
+        <span>{{ item.label }}</span>
+      </Link>
+    </template>
+  </div>
+</div>
+
       </div>
 
       <!-- Right side: Icons + profile -->
@@ -169,6 +154,26 @@ const notifications = ref([])
 const unreadCount = ref(0)
 const loading = ref(false)
 
+const navigationItems = [
+  { icon: "mdi:view-dashboard", label: "Dashboard", route: "dashboard" },
+  { icon: "mdi:responsive", label: "Project Managers (PM)", route: "pm-management" },
+  { icon: "mdi:responsive", label: "Units management", route: "unit-management" },
+  { icon: "mdi:responsive", label: "Contractors management", route: "contractors-management" },
+  { icon: "mdi:responsive", label: "Consultants management", route: "Consultants-management" },
+  { icon: "mdi:responsive", label: "Quotations management", route: "unit-quotes-responses" },
+  { icon: "mdi:responsive", label: "Price & Building Types", route: "unit-quote-types" },
+
+  { divider: true },
+
+  { icon: "mdi:file-document-edit-outline", label: "App Intros", route: "intro-management" },
+  { icon: "mdi:file-document-edit-outline", label: "App Banners", route: "banner-management" },
+  { icon: "mdi:world", label: "Languages", route: "language-management" },
+  { icon: "mdi:world", label: "Contact Us Management", route: "contactus-management" },
+  { icon: "mdi:people", label: "Users Roles & Permissions", route: "roles-management" },
+  { icon: "mdi:people", label: "Unit Issues", route: "unit-issues" },
+]
+
+
 function toggleNotifications() {
   showNotifications.value = !showNotifications.value
   if (showNotifications.value && notifications.value.length === 0) {
@@ -217,6 +222,9 @@ async function deleteNotification(id) {
 }
 
 window.addEventListener("click", () => (showNotifications.value = false))
+window.addEventListener("click", () => {
+  sampleMenuOpen.value = false
+})
 
 
 </script>

@@ -101,7 +101,7 @@
       <!-- MODAL -->
       <div
         v-if="modalOpen"
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50"
       >
         <div class="bg-white w-full max-w-lg rounded-xl p-6">
 
@@ -115,7 +115,7 @@
             <div class="space-y-3">
 
               <!-- UNIT -->
-              <Field name="unit_id" as="select" class="form-input">
+              <!-- <Field name="unit_id" as="select" class="form-input">
                 <option value="">Select Unit</option>
                 <option
                   v-for="u in units"
@@ -125,10 +125,10 @@
                   {{ u.name?.en ?? `Unit #${u.id}` }}
                 </option>
               </Field>
-              <ErrorMessage name="unit_id" class="error" />
+              <ErrorMessage name="unit_id" class="error" /> -->
 
               <!-- USER -->
-              <Field name="user_id" as="select" class="form-input">
+              <!-- <Field name="user_id" as="select" class="form-input">
                 <option value="">Select User</option>
                 <option
                   v-for="u in users"
@@ -141,7 +141,7 @@
               <ErrorMessage name="user_id" class="error" />
 
               <Field name="title" class="form-input" placeholder="Title" />
-              <ErrorMessage name="title" class="error" />
+              <ErrorMessage name="title" class="error" /> -->
 
               <Field
                 name="description"
@@ -202,9 +202,9 @@ const form = ref({})
 
 /* ================= VALIDATION ================= */
 const schema = yup.object({
-  unit_id: yup.number().required(),
-  user_id: yup.number().required(),
-  title: yup.string().required(),
+//   unit_id: yup.number().required(),
+//   user_id: yup.number().required(),
+//   title: yup.string().required(),
   description: yup.string().required(),
   status: yup.string().oneOf(['open', 'close']).required(),
 })
@@ -213,8 +213,8 @@ const schema = yup.object({
 async function load() {
   const [issuesRes, unitsRes, usersRes] = await Promise.all([
     UnitIssuesApi.list(),
-    UnitsApi.list(),
-    UsersApi.list(),
+    // UnitsApi.list(),
+    // UsersApi.list(),
   ])
 
   issues.value = issuesRes
@@ -248,8 +248,8 @@ const paginatedIssues = computed(() => {
 function openEdit(issue) {
   currentId.value = issue.id
   form.value = {
-    unit_id: issue.unit_id,
-    user_id: issue.user_id,
+    // unit_id: issue.unit_id,
+    // user_id: issue.user_id,
     title: issue.title,
     description: issue.description,
     status: issue.status,
@@ -266,8 +266,8 @@ function closeModal() {
 async function submit(values) {
   await UnitIssuesApi.update(currentId.value, {
     ...values,
-    unit_id: Number(values.unit_id),
-    user_id: Number(values.user_id),
+    // unit_id: Number(values.unit_id),
+    // user_id: Number(values.user_id),
   })
 
   closeModal()
@@ -289,5 +289,8 @@ onMounted(load)
 }
 .error {
   @apply text-red-600 text-xs;
+}
+.back-drop {
+  margin-top: -25px !important;
 }
 </style>

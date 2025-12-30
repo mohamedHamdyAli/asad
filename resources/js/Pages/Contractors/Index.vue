@@ -51,7 +51,7 @@
       </div>
 
       <!-- MODAL -->
-      <div v-if="modalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div v-if="modalOpen" class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50">
         <div class="bg-white w-full max-w-2xl rounded-xl p-6">
 
           <h3 class="text-lg font-semibold mb-4">
@@ -280,5 +280,8 @@ onMounted(load)
 }
 .error {
   @apply text-red-600 text-xs;
+}
+.back-drop {
+  margin-top: -25px !important;
 }
 </style>
