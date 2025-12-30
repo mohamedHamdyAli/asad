@@ -32,8 +32,10 @@
           </thead>
 
           <tbody>
-            <tr v-for="v in paginatedRows" :key="v.id" class="border-t">
-              <td class="px-4 py-3">{{ v.id }}</td>
+            <tr v-for="(v, index) in paginatedRows" :key="v.id" class="border-t">
+              <td class="px-4 py-3">
+                {{ (currentPage - 1) * perPage + index + 1 }}
+              </td>
 
               <td class="px-4 py-3">
                 <img v-if="v.profile_image_url" :src="v.profile_image_url"
@@ -69,6 +71,10 @@
       <!-- PAGINATION -->
       <div class="flex justify-between">
         <span class="text-sm">Page {{ currentPage }} of {{ totalPages }}</span>
+        <span class="text-sm text-gray-500">
+          Showing {{ paginatedRows.length }} of {{ filteredRows.length }}
+        </span>
+
         <div class="space-x-2">
           <button @click="currentPage--" :disabled="currentPage === 1">Prev</button>
           <button @click="currentPage++" :disabled="currentPage === totalPages">Next</button>
@@ -91,7 +97,8 @@
               {{ serverError }}
             </div>
 
-            <Form :key="formKey" :validation-schema="schema" :initial-values="form"  v-slot="{ setFieldValue }" @submit="submit">
+            <Form :key="formKey" :validation-schema="schema" :initial-values="form" v-slot="{ setFieldValue }"
+              @submit="submit">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div class="md:col-span-2">
