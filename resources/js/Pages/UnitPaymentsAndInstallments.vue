@@ -231,6 +231,9 @@ import InstallmentModal from '@/Components/InstallmentModal.vue'
 import InvoiceModal from '@/Components/InvoiceModal.vue'
 import PaymentLogsModal from '@/Components/PaymentLogsModal.vue'
 import { UnitPaymentLogsApi } from '@/Services/unitPaymentLogs'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 const props = defineProps({ unitId: Number })
 const tab = ref('payments')
@@ -259,14 +262,16 @@ function setEditablePayment(p) {
 }
 
 async function openLogs(id) {
-  selectedPaymentId.value = id
+  // selectedPaymentId.value = id
   showLogs.value = true
   try {
     const res = await UnitPaymentLogsApi.installmentLogs(id)
 
     logs.value = res
   } catch {
+
     logs.value = []
+    show(e)
     // alert('Failed to fetch logs')
     console.log('No logs found')
   }
@@ -290,7 +295,11 @@ async function fetchPayment() {
   await fetchInstallments()
 }
 
-  } finally {
+  } catch (e) {
+    show(e)
+  }
+  
+  finally {
     loadingPayment.value = false
   }
 }
@@ -300,18 +309,28 @@ async function fetchPayment() {
 
 
 async function createPayment() {
+  try{
   creating.value = true
   const fd = buildUnitPaymentCreateFD(props.unitId, [newPayment.value])
   await UnitPaymentsApi.create(fd)
   await fetchPayment()
   creating.value = false
+  } catch (e) {
+    show(e)
+  }
 }
 
 async function savePayment() {
+
+  try {
   if (!payment.value) return
   const fd = buildUnitPaymentUpdateFD(payment.value.editable)
   await UnitPaymentsApi.update(payment.value.id, fd)
   await fetchPayment()
+  }
+  catch (e) {
+    show(e)
+  }
 }
 
 
@@ -358,7 +377,9 @@ async function fetchInstallments() {
   loadingInstallments.value = true
   try {
     installments.value = await UnitInstallmentsApi.list(selectedPaymentId.value)
-  } finally {
+  } 
+  
+  finally {
     loadingInstallments.value = false
   }
 }
