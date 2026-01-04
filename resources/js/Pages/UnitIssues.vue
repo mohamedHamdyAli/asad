@@ -149,6 +149,7 @@
                 rows="3"
                 class="form-input"
                 placeholder="Description"
+                disabled
               />
               <ErrorMessage name="description" class="error" />
 

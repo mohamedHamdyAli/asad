@@ -45,8 +45,8 @@
                             <th class="table-header w-10 text-center">
                                 <input type="checkbox" @change="toggleAll" :checked="allSelected" />
                             </th>
-                            <th class="table-header w-16 cursor-pointer" @click="sortBy('id')">
-                                ID
+                            <th class="table-header w-16  text-center">
+                                #
                             </th>
                             <th class="table-header cursor-pointer" @click="sortBy('title')">
                                 Title
@@ -61,15 +61,15 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="item in paginatedItems" :key="item.uid" class="border-b hover:bg-gray-50 transition">
+                        <tr v-for="(item, index) in paginatedItems" :key="item.uid" class="border-b hover:bg-gray-50 transition">
                             <!-- Checkbox -->
                             <td class="table-cell text-center">
                                 <input type="checkbox" :value="item.uid" v-model="selected" />
                             </td>
 
-                            <!-- ID -->
+                            <!-- Order -->
                             <td class="table-cell font-medium text-gray-700">
-                                {{ item.id }}
+                                {{ (page - 1) * perPage + index + 1 }}
                             </td>
 
                             <!-- Title -->
@@ -133,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { ref, computed, onMounted , watch} from "vue"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import { TypeOfBuildingApi } from "@/Services/typeOfBuilding"
 import { TypeOfPriceApi } from "@/Services/typeOfPrice"
@@ -310,6 +310,10 @@ function safeTitle(data) {
         ar: data?.ar ?? ''
     }
 }
+
+watch([search, filterType, priceFilter], () => {
+  page.value = 1
+})
 
 
 onMounted(fetchAll)

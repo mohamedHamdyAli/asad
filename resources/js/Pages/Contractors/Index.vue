@@ -52,61 +52,108 @@
 
       <!-- MODAL -->
       <div v-if="modalOpen" class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div class="bg-white w-full max-w-2xl rounded-xl p-6">
-
+        <div class="bg-white w-full max-w-2xl rounded-xl p-6 max-h-[85vh] overflow-y-auto">
           <h3 class="text-lg font-semibold mb-4">
             {{ editing ? 'Edit Contractor' : 'Add Contractor' }}
           </h3>
 
-          <Form :key="formKey" :validation-schema="schema" :initial-values="form" @submit="submit">
+          <Form ref="formRef" :validate-on-mount="false" :key="formKey" :validation-schema="schema"
+            :initial-values="form" :validation-context="{ isCreate: !editing }" @submit="submit"
+            v-slot="{ setFieldValue, submitCount }">
+
             <div class="grid grid-cols-2 gap-4">
 
-<Field name="title.en" class="form-input" placeholder="Title (EN)" />
-<ErrorMessage name="title.en" class="text-red-500 text-xs" />
+              <!-- Title EN -->
+              <div>
+                <Field name="title.en" class="form-input" placeholder="Title (EN)" />
+                <ErrorMessage name="title.en" class="error" />
+              </div>
 
-<Field name="title.ar" class="form-input" placeholder="Title (AR)" />
-<ErrorMessage name="title.ar" class="text-red-500 text-xs" />
+              <!-- Title AR -->
+              <div>
+                <Field name="title.ar" class="form-input" placeholder="Title (AR)" />
+                <ErrorMessage name="title.ar" class="error" />
+              </div>
 
-<Field name="email" type="email" class="form-input col-span-2" placeholder="Email" />
-<ErrorMessage name="email" class="text-red-500 text-xs col-span-2" />
+              <!-- Email -->
+              <div class="col-span-2">
+                <Field name="email" type="email" class="form-input" placeholder="Email" />
+                <ErrorMessage name="email" class="error" />
+              </div>
 
-<Field name="description.en" as="textarea" class="form-input col-span-2" placeholder="Description (EN)" />
-<ErrorMessage name="description.en" class="text-red-500 text-xs col-span-2" />
+              <!-- Description EN -->
+              <div class="col-span-2">
+                <Field name="description.en" as="textarea" class="form-input" placeholder="Description (EN)" />
+                <ErrorMessage name="description.en" class="error" />
+              </div>
 
-<Field name="description.ar" as="textarea" class="form-input col-span-2" placeholder="Description (AR)" />
-<ErrorMessage name="description.ar" class="text-red-500 text-xs col-span-2" />
+              <!-- Description AR -->
+              <div class="col-span-2">
+                <Field name="description.ar" as="textarea" class="form-input" placeholder="Description (AR)" />
+                <ErrorMessage name="description.ar" class="error" />
+              </div>
 
-              <Field name="company_phone" class="form-input" placeholder="Company Phone" />
-              <ErrorMessage name="company_phone" class="text-red-500 text-xs" />
+              <!-- Company Phone -->
+              <div>
+                <Field name="company_phone" class="form-input" placeholder="Company Phone" />
+                <ErrorMessage name="company_phone" class="error" />
+              </div>
 
-              <Field name="representative_phone" class="form-input" placeholder="Representative Phone" />
-              <ErrorMessage name="representative_phone" class="text-red-500 text-xs" />
+              <!-- Representative Phone -->
+              <div>
+                <Field name="representative_phone" class="form-input" placeholder="Representative Phone" />
+                <ErrorMessage name="representative_phone" class="error" />
+              </div>
 
-              <Field name="company_address.en" class="form-input" placeholder="Company Address (EN)" />
-              <ErrorMessage name="company_address.en" class="text-red-500 text-xs" />
+              <!-- Company Address EN -->
+              <div>
+                <Field name="company_address.en" class="form-input" placeholder="Company Address (EN)" />
+                <ErrorMessage name="company_address.en" class="error" />
+              </div>
 
-              <Field name="company_address.ar" class="form-input" placeholder="Company Address (AR)" />
-              <ErrorMessage name="company_address.ar" class="text-red-500 text-xs" />
+              <!-- Company Address AR -->
+              <div>
+                <Field name="company_address.ar" class="form-input" placeholder="Company Address (AR)" />
+                <ErrorMessage name="company_address.ar" class="error" />
+              </div>
 
-              <Field name="representative_name.en" class="form-input" placeholder="Representative Name (EN)" />
-              <ErrorMessage name="representative_name.en" class="text-red-500 text-xs" />
+              <!-- Representative Name EN -->
+              <div>
+                <Field name="representative_name.en" class="form-input" placeholder="Representative Name (EN)" />
+                <ErrorMessage name="representative_name.en" class="error" />
+              </div>
 
-              <Field name="representative_name.ar" class="form-input" placeholder="Representative Name (AR)" />
-              <ErrorMessage name="representative_name.ar" class="text-red-500 text-xs" />
+              <!-- Representative Name AR -->
+              <div>
+                <Field name="representative_name.ar" class="form-input" placeholder="Representative Name (AR)" />
+                <ErrorMessage name="representative_name.ar" class="error" />
+              </div>
 
-              <input type="file" accept="image/*" @change="onFile" class="col-span-2" />
+              <!-- Image -->
+              <div class="col-span-2">
+                <input type="file" accept="image/*" @change="(e) => {
+                  onFile(e)
+                  setFieldValue('image', e.target.files?.[0] || null)
+                }" />
+                <ErrorMessage v-if="submitCount > 0" name="image" class="error" />
+              </div>
+
             </div>
 
-            <div class="flex justify-end gap-2 mt-4">
-              <button type="button" class="border px-4 py-2" @click="closeModal">Cancel</button>
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 mt-6">
+              <button type="button" class="border px-4 py-2 rounded" @click="closeModal">
+                Cancel
+              </button>
+
               <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
                 Save
               </button>
             </div>
           </Form>
-
         </div>
       </div>
+
 
     </div>
   </AuthenticatedLayout>
@@ -118,6 +165,9 @@ import { ref, onMounted, computed } from 'vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 import { ContractorsApi, buildContractorsCreateFD, buildContractorsUpdateFD } from '@/Services/contractors'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 const rows = ref([])
 const search = ref('')
@@ -135,28 +185,42 @@ const form = ref({})
 
 const schema = yup.object({
   title: yup.object({
-    en: yup.string().required(),
-    ar: yup.string().required(),
+    en: yup.string().required('EN title is required'),
+    ar: yup.string().required('AR title is required'),
   }),
   description: yup.object({
-    en: yup.string().required(),
-    ar: yup.string().required(),
+    en: yup.string().required('English description is required'),
+    ar: yup.string().required('Arabic description is required'),
   }),
-  email: yup.string().email().required(),
+  email: yup.string().email().required('Email is required'),
 
-  company_phone: yup.string().nullable(),
-  representative_phone: yup.string().nullable(),
+  company_phone: yup.string().required('Company phone is required'),
+  representative_phone: yup.string().required('Representative phone is required'),
 
   company_address: yup.object({
-    en: yup.string().nullable(),
-    ar: yup.string().nullable(),
+    en: yup.string().required('EN address is required'),
+    ar: yup.string().required('AR address is required'),
   }),
 
   representative_name: yup.object({
-    en: yup.string().nullable(),
-    ar: yup.string().nullable(),
+    en: yup.string().required('EN representative name is required'),
+    ar: yup.string().required('AR representative name is required'),
   }),
+
+  image: yup
+    .mixed()
+    .test(
+      'required-on-create',
+      'Image is required',
+      function (value) {
+        const { isCreate } = this.options.context || {}
+        if (!isCreate) return true
+        return value instanceof File
+      }
+    ),
+
 })
+
 
 
 async function load() {
@@ -190,10 +254,11 @@ function openCreate() {
     representative_phone: '',
     company_address: { en: '', ar: '' },
     representative_name: { en: '', ar: '' },
+    image: null
   }
 
   imageFile.value = null
-  formKey.value++      // 🔴 IMPORTANT
+  formKey.value++
   modalOpen.value = true
 }
 
@@ -210,10 +275,11 @@ function openEdit(c) {
     representative_phone: c.representative_phone || '',
     company_address: c.company_address || { en: '', ar: '' },
     representative_name: c.representative_name || { en: '', ar: '' },
+    image: null
   }
 
   imageFile.value = null
-  formKey.value++      // 🔴 IMPORTANT
+  formKey.value++
   modalOpen.value = true
 }
 
@@ -260,7 +326,7 @@ async function submit(values) {
     load()
   } catch (e) {
     console.error('SAVE ERROR', e.response?.data || e)
-    alert(e.response?.data?.message || 'Save failed')
+    show(e)
   }
 }
 
@@ -278,9 +344,12 @@ onMounted(load)
 .form-input {
   @apply w-full border border-gray-300 rounded px-3 py-2;
 }
+
 .error {
-  @apply text-red-600 text-xs;
+  @apply text-red-600 text-xs mt-1;
 }
+
+
 .back-drop {
   margin-top: -25px !important;
 }

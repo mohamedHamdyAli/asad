@@ -5,94 +5,91 @@
         <h2 class="text-2xl font-bold text-dash-title">Unit Documents</h2>
         <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
- <!-- 🔗 Unit navigation -->
+      <!-- 🔗 Unit navigation -->
       <UnitNav :unit-id="Number(unitId)" :cols="2" />
 
       <!-- Create (batch) -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">Add Documents</h3>
+      <Form :validation-schema="createSchema" :validate-on-mount="false" :initial-values="createForm"
+        @submit="createBatchValidated" v-slot="{ setFieldValue, submitCount }">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-bold mb-3">Add Documents</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FolderPicker
-            type="document"
-            label="Folder *"
-            v-model="createForm.folder_id"
-            :options="folders"
-            :unitId="props.unitId"
-            @created="onFolderCreated"
-            @refresh="fetchFolders"
-          />
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
-            <input v-model="createForm.title.en" class="form-input" type="text" required />
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- Folder -->
+            <div>
+              <FolderPicker type="document" label="Folder *" :model-value="createForm.folder_id" :options="folders"
+                :unitId="props.unitId" @update:modelValue="val => {
+                  createForm.folder_id = val
+                  setFieldValue('folder_id', val)
+                }" @created="onFolderCreated" @refresh="fetchFolders" />
+              <ErrorMessage v-if="submitCount > 0" name="folder_id" class="error" />
+            </div>
+
+            <!-- Title EN -->
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
+              <Field name="title.en" class="form-input" />
+              <ErrorMessage v-if="submitCount > 0" name="title.en" class="error" />
+            </div>
+
+            <!-- Title AR -->
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
+              <Field name="title.ar" class="form-input" />
+              <ErrorMessage v-if="submitCount > 0" name="title.ar" class="error" />
+            </div>
+
           </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
-            <input v-model="createForm.title.ar" class="form-input" type="text" required />
+
+          <!-- Files -->
+          <div class="mt-4">
+            <input type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
+            <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
+
+            <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
+              {{ newFiles.length }} file(s) selected
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-3">
+            <button type="submit" :disabled="creating" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700">
+              {{ creating ? 'Uploading…' : 'Upload' }}
+            </button>
+
+            <span v-if="createErr" class="text-red-600 text-sm">
+              {{ createErr }}
+            </span>
           </div>
         </div>
+      </Form>
 
-        <div class="mt-4">
-          <input type="file" multiple @change="onNewFiles" />
-          <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
-            {{ newFiles.length }} file(s) selected
-          </div>
-        </div>
-
-        <div class="mt-4 flex items-center gap-3">
-          <button
-            :disabled="creating || !canCreate"
-            @click="createBatch"
-            class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700"
-          >
-            {{ creating ? 'Uploading…' : 'Upload' }}
-          </button>
-          <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
-        </div>
-      </div>
 
       <!-- List -->
       <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold text-gray-800">Documents</h3>
-          <button
-            @click="fetchList"
-            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
-          >
+          <button @click="fetchList" class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50">
             Refresh
           </button>
         </div>
 
         <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
 
-        <div
-          v-else
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5"
-        >
-          <div
-            v-for="d in rows"
-            :key="d.id"
-            class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200"
-          >
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+          <div v-for="d in rows" :key="d.id"
+            class="group rounded-2xl overflow-hidden bg-white border border-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-200">
             <!-- File header -->
             <div class="relative aspect-[4/3] bg-gray-50 flex items-center justify-center">
               <template v-if="d.file_url && /\.(jpg|jpeg|png|gif|webp)$/i.test(d.file_url)">
-                <img
-                  :src="d.file_url"
-                  class="absolute inset-0 w-full h-full object-cover"
-                  alt="Document Preview"
-                />
+                <img :src="d.file_url" class="absolute inset-0 w-full h-full object-cover" alt="Document Preview" />
               </template>
               <template v-else>
                 <div class="flex flex-col items-center text-gray-500 text-xs">
                   <div class="text-4xl">📄</div>
                   <span class="mt-2 break-all max-w-[90%]">{{ d.file_name }}</span>
-                  <a
-                    v-if="d.file_url"
-                    :href="d.file_url"
-                    target="_blank"
-                    class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100"
-                  >
+                  <a v-if="d.file_url" :href="d.file_url" target="_blank"
+                    class="mt-2 px-2 py-1 border rounded text-xs hover:bg-gray-100">
                     Open
                   </a>
                 </div>
@@ -104,44 +101,36 @@
               <!-- Title EN -->
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
-                <textarea
-                  v-model="edit[d.id].title.en"
-                  class="form-input !h-auto min-h-9"
-                  rows="1"
-                  @input="autoGrow($event)"
-                ></textarea>
+                <textarea v-model="edit[d.id].title.en" class="form-input !h-auto min-h-9" rows="1"
+                  @input="autoGrow($event)"></textarea>
+                <p v-if="editErrors?.[d.id]?.['title.en']" class="error">
+                  {{ editErrors[d.id]['title.en'] }}
+                </p>
+
               </div>
 
               <!-- Title AR -->
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
-                <textarea
-                  v-model="edit[d.id].title.ar"
-                  class="form-input !h-auto min-h-9"
-                  rows="1"
-                  dir="rtl"
-                  @input="autoGrow($event)"
-                ></textarea>
+                <textarea v-model="edit[d.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
+                  @input="autoGrow($event)"></textarea>
+                <p v-if="editErrors?.[d.id]?.['title.ar']" class="error">
+                  {{ editErrors[d.id]['title.ar'] }}
+                </p>
+
               </div>
 
               <!-- Folder -->
-              <FolderPicker
-                type="document"
-                label="Folder *"
-                v-model="edit[d.id].folder_id"
-                :options="folders"
-                :unitId="props.unitId"
-                @created="onFolderCreated"
-                @refresh="fetchFolders"
-              />
+              <FolderPicker type="document" label="Folder *" v-model="edit[d.id].folder_id" :options="folders"
+                :unitId="props.unitId" @created="onFolderCreated" @refresh="fetchFolders" />
+              <p v-if="editErrors?.[d.id]?.folder_id" class="error">
+                {{ editErrors[d.id].folder_id }}
+              </p>
 
               <!-- Replace file -->
               <div class="text-[11px]">
                 <label class="block text-gray-500 mb-1">Replace File</label>
-                <input
-                  type="file"
-                  @change="onReplaceFile(d.id, $event)"
-                />
+                <input type="file" @change="onReplaceFile(d.id, $event)" />
                 <p v-if="pendingFile?.[d.id]" class="mt-1 text-[11px] text-gray-500">
                   Selected: {{ pendingFile[d.id]?.name }}
                 </p>
@@ -158,25 +147,19 @@
                 </button> -->
                 <button
                   class="px-3 py-1.5 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
-                  @click="saveOne(d.id)"
-                  :disabled="saving[d.id]"
-                >
+                  @click="saveOne(d.id)" :disabled="saving[d.id]">
                   {{ saving[d.id] ? 'Saving…' : 'Save' }}
                 </button>
                 <button
                   class="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
-                  @click="remove(d.id)"
-                >
+                  @click="remove(d.id)">
                   Delete
                 </button>
               </div>
             </div>
           </div>
 
-          <div
-            v-if="!rows.length"
-            class="col-span-full text-center text-gray-500 py-8"
-          >
+          <div v-if="!rows.length" class="col-span-full text-center text-gray-500 py-8">
             No documents found.
           </div>
         </div>
@@ -192,6 +175,42 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitDocsApi, buildDocsCreateFD, buildDocsUpdateFD } from '@/Services/unitDocs'
 import FolderPicker from '@/Components/FolderPicker.vue'
 import { FolderApi } from '@/Services/folders'
+import { Form, Field, ErrorMessage } from "vee-validate"
+import * as yup from "yup"
+
+const createSchema = yup.object({
+  folder_id: yup
+    .number()
+    .required("Folder is required"),
+
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+
+  files: yup
+    .mixed()
+    .nullable()
+    .test(
+      "required",
+      "Please select at least one file",
+      value => Array.isArray(value) && value.length > 0
+    ),
+})
+
+const editSchema = yup.object({
+  folder_id: yup
+    .number()
+    .required("Folder is required"),
+
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+})
+
+const editErrors = reactive({})
+
 
 const props = defineProps({
   unitId: { type: [Number, String], required: true },
@@ -220,6 +239,7 @@ function onFolderCreated(f) {
 const createForm = ref({
   folder_id: null,
   title: { en: '', ar: '' },
+  files: [],
 })
 const newFiles = ref([])
 const creating = ref(false)
@@ -232,10 +252,12 @@ const canCreate = computed(() =>
   newFiles.value.length > 0
 )
 
-function onNewFiles(e) {
+function onNewFilesValidated(e, setFieldValue) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
+  setFieldValue("files", files)
 }
+
 
 
 function isImage(file) {
@@ -262,28 +284,36 @@ function getFileName(file) {
   }
 }
 
-async function createBatch() {
+async function createBatchValidated(values) {
   creating.value = true
-  createErr.value = ''
+  createErr.value = ""
+
   try {
-    const items = newFiles.value.map(f => ({
-      folder_id: createForm.value.folder_id,
-      title: { ...createForm.value.title },
+    const items = values.files.map(f => ({
+      folder_id: values.folder_id,
+      title: { ...values.title },
       file: f,
     }))
+
     const fd = buildDocsCreateFD(props.unitId, items)
     await UnitDocsApi.create(fd)
     await fetchList()
+
     // reset
     newFiles.value = []
-    createForm.value.title = { en: '', ar: '' }
+    createForm.value.title = { en: "", ar: "" }
+
   } catch (e) {
     console.error(e)
-    createErr.value = e?.response?.data?.message || e?.message || 'Upload failed'
+    createErr.value =
+      e?.response?.data?.message ||
+      e?.message ||
+      "Upload failed"
   } finally {
     creating.value = false
   }
 }
+
 
 /* List */
 const rows = ref([])
@@ -327,27 +357,43 @@ function onReplaceFile(id, e) {
 async function saveOne(id) {
   const item = edit[id]
   if (!item) return
+
+  // reset errors
+  editErrors[id] = {}
+
+  try {
+    await editSchema.validate(item, { abortEarly: false })
+  } catch (err) {
+    err.inner.forEach(e => {
+      editErrors[id][e.path] = e.message
+    })
+    return
+  }
+
   saving[id] = true
   try {
     const items = [
       {
         id,
         folder_id: item.folder_id,
-        title: item.title || { en: '', ar: '' },
+        title: item.title || { en: "", ar: "" },
         file: pendingFile[id],
       },
     ]
+
     const fd = buildDocsUpdateFD(props.unitId, items)
     await UnitDocsApi.update(fd)
+
     delete pendingFile[id]
     await fetchList()
   } catch (e) {
     console.error(e)
-    alert(e?.response?.data?.message || 'Update failed')
+    alert(e?.response?.data?.message || "Update failed")
   } finally {
     saving[id] = false
   }
 }
+
 
 async function remove(id) {
   if (!confirm('Delete this document?')) return
@@ -365,7 +411,12 @@ onMounted(async () => {
 .form-input {
   @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
+
 .aspect-\[4\/3\] {
   aspect-ratio: 4 / 3;
+}
+
+.error {
+  @apply text-red-600 text-xs mt-1;
 }
 </style>
