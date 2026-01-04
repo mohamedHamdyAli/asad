@@ -11,35 +11,65 @@
 
 
       <!-- Create (batch) -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">Add Timeline Items</h3>
+    <Form
+  :validation-schema="createSchema"
+  :validate-on-mount="false"
+  :initial-values="createForm"
+  @submit="createBatchValidated"
+  v-slot="{ setFieldValue, submitCount }"
+>
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-lg font-bold mb-3">Add Timeline Items</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
-            <input v-model="createForm.title.en" class="form-input" type="text" required />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
-            <input v-model="createForm.title.ar" class="form-input" type="text" required />
-          </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <div class="mt-4">
-          <input type="file" multiple :accept="accepts" @change="onNewFiles" />
-          <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
-            {{ newFiles.length }} file(s) selected
-          </div>
-        </div>
-
-        <div class="mt-4 flex items-center gap-3">
-          <button :disabled="creating || !canCreate" @click="createBatch"
-            class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700">
-            {{ creating ? 'Uploading…' : 'Upload' }}
-          </button>
-          <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
-        </div>
+      <!-- Title EN -->
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
+        <Field name="title.en" class="form-input" />
+        <ErrorMessage v-if="submitCount > 0" name="title.en" class="error" />
       </div>
+
+      <!-- Title AR -->
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
+        <Field name="title.ar" class="form-input" />
+        <ErrorMessage v-if="submitCount > 0" name="title.ar" class="error" />
+      </div>
+    </div>
+
+    <!-- Files -->
+    <div class="mt-4">
+      <input
+        type="file"
+        multiple
+        :accept="accepts"
+        @change="(e) => onNewFilesValidated(e, setFieldValue)"
+      />
+      <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
+
+      <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
+        {{ newFiles.length }} file(s) selected
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 flex items-center gap-3">
+      <button
+        type="submit"
+        :disabled="creating"
+        class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700"
+      >
+        {{ creating ? 'Uploading…' : 'Upload' }}
+      </button>
+
+      <span v-if="createErr" class="text-red-600 text-sm">
+        {{ createErr }}
+      </span>
+    </div>
+  </div>
+</Form>
+
 
       <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
         <div class="flex items-center justify-between mb-4">
@@ -76,6 +106,10 @@
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
                 <textarea v-model="edit[r.id].title.en" class="form-input !h-auto min-h-9" rows="1"
                   @input="autoGrow($event)"></textarea>
+                  <p v-if="editErrors?.[r.id]?.['title.en']" class="error">
+  {{ editErrors[r.id]['title.en'] }}
+</p>
+
               </div>
 
               <!-- Title AR -->
@@ -83,6 +117,10 @@
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
                 <textarea v-model="edit[r.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
                   @input="autoGrow($event)"></textarea>
+                  <p v-if="editErrors?.[r.id]?.['title.ar']" class="error">
+  {{ editErrors[r.id]['title.ar'] }}
+</p>
+
               </div>
 
               <!-- Replace file -->
@@ -129,6 +167,33 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitTimelineApi, buildTimelineCreateFD, buildTimelineUpdateFD } from '@/Services/unitTimeline'
+import { Form, Field, ErrorMessage } from "vee-validate"
+import * as yup from "yup"
+
+const createSchema = yup.object({
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+  files: yup
+    .mixed()
+    .nullable()
+    .test(
+      "required",
+      "Please select at least one file",
+      value => Array.isArray(value) && value.length > 0
+    ),
+})
+
+const editSchema = yup.object({
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+})
+
+const editErrors = reactive({})
+
 
 const props = defineProps({
   unitId: { type: [Number, String], required: true },
@@ -139,7 +204,7 @@ const backToUnits = computed(() => '/units-management')
 const accepts =
   '.pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-const createForm = ref({ title: { en: '', ar: '' } })
+const createForm = ref({ title: { en: '', ar: '' }, files: [] })
 const newFiles = ref([])
 const creating = ref(false)
 const createErr = ref('')
@@ -150,31 +215,42 @@ const canCreate = computed(() =>
   newFiles.value.length > 0
 )
 
-function onNewFiles(e) {
+function onNewFilesValidated(e, setFieldValue) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
+  setFieldValue("files", files)
 }
 
-async function createBatch() {
+
+async function createBatchValidated(values) {
   creating.value = true
-  createErr.value = ''
+  createErr.value = ""
+
   try {
-    const items = newFiles.value.map(f => ({
-      title: { ...createForm.value.title },
+    const items = values.files.map(f => ({
+      title: { ...values.title },
       file: f,
     }))
+
     const fd = buildTimelineCreateFD(props.unitId, items)
     await UnitTimelineApi.create(fd)
     await fetchList()
+
+    // reset
     newFiles.value = []
-    createForm.value.title = { en: '', ar: '' }
+    createForm.value.title = { en: "", ar: "" }
+
   } catch (e) {
     console.error(e)
-    createErr.value = e?.response?.data?.message || e?.message || 'Upload failed'
+    createErr.value =
+      e?.response?.data?.message ||
+      e?.message ||
+      "Upload failed"
   } finally {
     creating.value = false
   }
 }
+
 
 const rows = ref([])
 const loading = ref(false)
@@ -209,6 +285,18 @@ function onReplaceFile(id, e) {
 async function saveOne(id) {
   const item = edit[id]
   if (!item) return
+
+  editErrors[id] = {}
+
+  try {
+    await editSchema.validate(item, { abortEarly: false })
+  } catch (err) {
+    err.inner.forEach(e => {
+      editErrors[id][e.path] = e.message
+    })
+    return
+  }
+
   saving[id] = true
   try {
     const items = [{
@@ -216,17 +304,20 @@ async function saveOne(id) {
       title: item.title,
       file: pendingFile[id],
     }]
+
     const fd = buildTimelineUpdateFD(props.unitId, items)
     await UnitTimelineApi.update(fd)
+
     delete pendingFile[id]
     await fetchList()
   } catch (e) {
     console.error(e)
-    alert(e?.response?.data?.message || 'Update failed')
+    alert(e?.response?.data?.message || "Update failed")
   } finally {
     saving[id] = false
   }
 }
+
 
 function autoGrow(e) {
   const el = e?.target
@@ -249,4 +340,9 @@ onMounted(fetchList)
 .form-input {
   @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
+
+.error {
+  @apply text-red-600 text-xs mt-1;
+}
+
 </style>

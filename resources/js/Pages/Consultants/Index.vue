@@ -12,11 +12,7 @@
 
       <!-- SEARCH -->
       <div class="flex gap-4">
-        <input
-          v-model="search"
-          placeholder="Search by title or email"
-          class="form-input w-72"
-        />
+        <input v-model="search" placeholder="Search by title or email" class="form-input w-72" />
       </div>
 
       <!-- TABLE -->
@@ -34,11 +30,7 @@
           <tbody>
             <tr v-for="c in paginatedRows" :key="c.id" class="border-t">
               <td class="px-4 py-3">
-                <img
-                  v-if="c.image_url"
-                  :src="c.image_url"
-                  class="w-16 h-12 object-cover rounded border"
-                />
+                <img v-if="c.image_url" :src="c.image_url" class="w-16 h-12 object-cover rounded border" />
                 <span v-else class="text-gray-400">—</span>
               </td>
 
@@ -78,45 +70,97 @@
 
       <!-- MODAL -->
       <div v-if="modalOpen" class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div class="bg-white w-full max-w-xl rounded-xl p-6">
+        <div class="bg-white w-full max-w-xl rounded-xl p-6 max-h-[85vh] overflow-y-auto">
 
           <h3 class="text-lg font-semibold mb-4">
             {{ editing ? 'Edit Consultant' : 'Add Consultant' }}
           </h3>
 
-          <Form :validation-schema="schema" :initial-values="form" @submit="submit">
+          <Form :key="formKey" :validate-on-mount="false" :validation-schema="schema" :initial-values="form"
+            :validation-context="{ isCreate: !editing }" @submit="submit" v-slot="{ setFieldValue, submitCount }">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <Field name="title.en" class="form-input" placeholder="Title (EN)" />
-              <ErrorMessage name="title.en" class="error" />
+              <!-- Title EN -->
+              <div>
+                <Field name="title.en" class="form-input" placeholder="Title (EN)" />
+                <ErrorMessage name="title.en" class="error" />
+              </div>
 
-              <Field name="title.ar" class="form-input" placeholder="Title (AR)" />
-              <ErrorMessage name="title.ar" class="error" />
+              <!-- Title AR -->
+              <div>
+                <Field name="title.ar" class="form-input" placeholder="Title (AR)" />
+                <ErrorMessage name="title.ar" class="error" />
+              </div>
 
-              <Field name="email" type="email" class="form-input" placeholder="Email" />
-              <ErrorMessage name="email" class="error" />
+              <!-- Email -->
+              <div class="md:col-span-2">
+                <Field name="email" type="email" class="form-input" placeholder="Email" />
+                <ErrorMessage name="email" class="error" />
+              </div>
 
-              <Field
-                name="description.en"
-                as="textarea"
-                class="form-input md:col-span-2"
-                placeholder="Description (EN)"
-              />
-              <ErrorMessage name="description.en" class="error md:col-span-2" />
+              <!-- Description EN -->
+              <div class="md:col-span-2">
+                <Field name="description.en" as="textarea" class="form-input" placeholder="Description (EN)" />
+                <ErrorMessage name="description.en" class="error" />
+              </div>
 
-              <Field
-                name="description.ar"
-                as="textarea"
-                class="form-input md:col-span-2"
-                placeholder="Description (AR)"
-              />
-              <ErrorMessage name="description.ar" class="error md:col-span-2" />
+              <!-- Description AR -->
+              <div class="md:col-span-2">
+                <Field name="description.ar" as="textarea" class="form-input" placeholder="Description (AR)"
+                  dir="rtl" />
+                <ErrorMessage name="description.ar" class="error" />
+              </div>
 
-              <input type="file" accept="image/*" @change="onFile" class="md:col-span-2" />
+              <!-- Company Phone -->
+              <div>
+                <Field name="company_phone" class="form-input" placeholder="Company Phone" />
+                <ErrorMessage name="company_phone" class="error" />
+              </div>
+
+              <!-- Representative Phone -->
+              <div>
+                <Field name="representative_phone" class="form-input" placeholder="Representative Phone" />
+                <ErrorMessage name="representative_phone" class="error" />
+              </div>
+
+              <!-- Company Address EN -->
+              <div>
+                <Field name="company_address.en" class="form-input" placeholder="Company Address (EN)" />
+                <ErrorMessage name="company_address.en" class="error" />
+              </div>
+
+              <!-- Company Address AR -->
+              <div>
+                <Field name="company_address.ar" class="form-input" placeholder="Company Address (AR)" />
+                <ErrorMessage name="company_address.ar" class="error" />
+              </div>
+
+              <!-- Representative Name EN -->
+              <div>
+                <Field name="representative_name.en" class="form-input" placeholder="Representative Name (EN)" />
+                <ErrorMessage name="representative_name.en" class="error" />
+              </div>
+
+              <!-- Representative Name AR -->
+              <div>
+                <Field name="representative_name.ar" class="form-input" placeholder="Representative Name (AR)" />
+                <ErrorMessage name="representative_name.ar" class="error" />
+              </div>
+
+
+              <!-- Image -->
+              <div class="md:col-span-2">
+                <input type="file" accept="image/*" @change="(e) => {
+                  imageFile = e.target.files?.[0] || null
+                  setFieldValue('image', imageFile)
+                }" />
+                <ErrorMessage v-if="submitCount > 0" name="image" class="error" />
+              </div>
 
             </div>
 
-            <div class="flex justify-end gap-2 mt-4">
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 mt-6">
               <button type="button" class="px-4 py-2 border rounded" @click="closeModal">
                 Cancel
               </button>
@@ -129,6 +173,7 @@
         </div>
       </div>
 
+
     </div>
   </AuthenticatedLayout>
 </template>
@@ -138,6 +183,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, onMounted, computed } from 'vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 import {
   ConsultantsApi,
@@ -155,20 +203,52 @@ const modalOpen = ref(false)
 const editing = ref(false)
 const currentId = ref(null)
 const imageFile = ref(null)
+const formKey = ref(0)
 
 const form = ref({})
 
 /* VALIDATION */
 const schema = yup.object({
   title: yup.object({
-    en: yup.string().required(),
-    ar: yup.string().required(),
+    en: yup.string().required('EN title is required'),
+    ar: yup.string().required('AR title is required'),
   }),
+
   description: yup.object({
-    en: yup.string().required(),
-    ar: yup.string().required(),
+    en: yup.string().required('English description is required'),
+    ar: yup.string().required('Arabic description is required'),
   }),
-  email: yup.string().email().required(),
+
+  email: yup
+    .string()
+    .email('Invalid email')
+    .required('Email is required'),
+
+  company_phone: yup.string().required('Company phone is required'),
+  representative_phone: yup.string().required('Representative phone is required'),
+
+  company_address: yup.object({
+    en: yup.string().required('EN address is required'),
+    ar: yup.string().required('AR address is required'),
+  }),
+
+  representative_name: yup.object({
+    en: yup.string().required('EN representative name is required'),
+    ar: yup.string().required('AR representative name is required'),
+  }),
+
+  image: yup
+    .mixed()
+    .test(
+      'image-required-on-create',
+      'Image is required',
+      function (value) {
+        const { isCreate } = this.options.context || {}
+        if (!isCreate) return true
+        return value instanceof File
+      }
+    ),
+
 })
 
 /* LOAD */
@@ -198,25 +278,45 @@ const paginatedRows = computed(() => {
 /* MODAL */
 function openCreate() {
   editing.value = false
+  currentId.value = null
+
   form.value = {
     title: { en: '', ar: '' },
     description: { en: '', ar: '' },
     email: '',
+    company_phone: '',
+    representative_phone: '',
+    company_address: { en: '', ar: '' },
+    representative_name: { en: '', ar: '' },
+    image: null,
   }
+
   imageFile.value = null
+  formKey.value++
   modalOpen.value = true
 }
+
 
 function openEdit(c) {
   editing.value = true
   currentId.value = c.id
+
   form.value = {
     title: { en: c.title_en, ar: c.title_ar },
     description: { en: c.description_en, ar: c.description_ar },
     email: c.email,
+    company_phone: c.company_phone || '',
+    representative_phone: c.representative_phone || '',
+    company_address: c.company_address || { en: '', ar: '' },
+    representative_name: c.representative_name || { en: '', ar: '' },
+    image: null,
   }
+
+  imageFile.value = null
+  formKey.value++
   modalOpen.value = true
 }
+
 
 function closeModal() {
   modalOpen.value = false
@@ -228,16 +328,28 @@ function onFile(e) {
 
 /* SAVE */
 async function submit(values) {
-  const payload = { ...values, image: imageFile.value }
-
+  const payload = {
+    email: values.email,
+    title: values.title,
+    description: values.description,
+    company_phone: values.company_phone || '',
+    representative_phone: values.representative_phone || '',
+    company_address: values.company_address || { en: '', ar: '' },
+    representative_name: values.representative_name || { en: '', ar: '' },
+    image: imageFile.value,
+  }
+try {
   if (editing.value) {
     await ConsultantsApi.update(currentId.value, buildConsultantsUpdateFD(payload))
   } else {
     await ConsultantsApi.create(buildConsultantsCreateFD([payload]))
   }
-
-  closeModal()
+    closeModal()
   load()
+} catch (e) {
+  show(e)
+}
+
 }
 
 /* DELETE */
@@ -253,9 +365,11 @@ onMounted(load)
 .form-input {
   @apply w-full border border-gray-300 rounded px-3 py-2;
 }
+
 .error {
-  @apply text-red-600 text-xs;
+  @apply text-red-600 text-xs mt-1;
 }
+
 .back-drop {
   margin-top: -25px !important;
 }

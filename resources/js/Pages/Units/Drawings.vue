@@ -6,49 +6,74 @@
         <a :href="backToUnits" class="px-3 py-1 border rounded text-black">Back to Units</a>
       </div>
 
-       <!-- 🔗 Unit navigation -->
+      <!-- 🔗 Unit navigation -->
       <UnitNav :unit-id="Number(unitId)" :cols="2" />
 
 
       <!-- Create (batch) -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">Add Drawings</h3>
+      <Form :validation-schema="createSchema" :validate-on-mount="false" :initial-values="createForm"
+        @submit="createBatchValidated" v-slot="{ setFieldValue, submitCount }">
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <FolderPicker type="drawing" label="Folder *" fileType="drawing" v-model="createForm.folder_id"
-            :options="folders" :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Date *</label>
-            <input v-model="createForm.date" class="form-input" type="date" required />
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-bold mb-3">Add Drawings</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            <!-- Folder -->
+            <div class="md:col-span-1">
+              <FolderPicker type="drawing" label="Folder *" fileType="drawing" :model-value="createForm.folder_id"
+                :options="folders" :unitId="props.unitId" @update:modelValue="val => {
+                  createForm.folder_id = val
+                  setFieldValue('folder_id', val)
+                }" @created="folders.unshift($event)" @refresh="fetchFolders" />
+              <ErrorMessage v-if="submitCount > 0" name="folder_id" class="error" />
+            </div>
+
+            <!-- Date -->
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Date *</label>
+              <Field name="date" type="date" class="form-input" />
+              <ErrorMessage v-if="submitCount > 0" name="date" class="error" />
+            </div>
+
+            <!-- Title EN -->
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
+              <Field name="title.en" class="form-input" />
+              <ErrorMessage v-if="submitCount > 0" name="title.en" class="error" />
+            </div>
+
+            <!-- Title AR -->
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
+              <Field name="title.ar" class="form-input" />
+              <ErrorMessage v-if="submitCount > 0" name="title.ar" class="error" />
+            </div>
+
           </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
-            <input v-model="createForm.title.en" class="form-input" type="text" required />
+
+
+          <div class="mt-4">
+            <input type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
+            <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
+            <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
+              <a v-for="(src, i) in newPreviews" :key="i" :href="src" target="_blank" rel="noopener">
+                <img :src="src" class="w-24 h-16 object-cover rounded border" />
+              </a>
+            </div>
           </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
-            <input v-model="createForm.title.ar" class="form-input" type="text" required />
+
+          <div class="mt-4 flex items-center gap-3">
+            <button type="submit" :disabled="creating" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700">
+              {{ creating ? 'Uploading…' : 'Upload' }}
+            </button>
+
+            <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
           </div>
         </div>
 
-        <div class="mt-4">
-          <input type="file" multiple @change="onNewFiles" />
-          <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
-            <a v-for="(src, i) in newPreviews" :key="i" :href="src" target="_blank" rel="noopener">
-              <img :src="src" class="w-24 h-16 object-cover rounded border" />
-            </a>
-          </div>
-        </div>
 
-        <div class="mt-4 flex items-center gap-3">
-          <button :disabled="creating || !canCreate" @click="createBatch"
-                        class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700"
->
-            {{ creating ? 'Uploading…' : 'Upload' }}
-          </button>
-          <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
-        </div>
-      </div>
+      </Form>
 
       <!-- List -->
       <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
@@ -104,23 +129,38 @@
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Date *</label>
                 <input v-model="edit[g.id].date" class="form-input" type="date" />
+                <p v-if="editErrors?.[g.id]?.date" class="error">
+                  {{ editErrors[g.id].date }}
+                </p>
               </div>
 
               <!-- Folder -->
               <FolderPicker type="drawing" :label="'Folder *'" v-model="edit[g.id].folder_id" :options="folders"
                 @created="folders.unshift($event)" @refresh="fetchFolders" />
+              <p v-if="editErrors?.[g.id]?.folder_id" class="error">
+                {{ editErrors[g.id].folder_id }}
+              </p>
+
 
               <!-- Titles -->
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
                 <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
                   @input="autoGrow($event)"></textarea>
+                <p v-if="editErrors?.[g.id]?.['title.en']" class="error">
+                  {{ editErrors[g.id]['title.en'] }}
+                </p>
+
               </div>
 
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
                 <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
                   @input="autoGrow($event)"></textarea>
+                <p v-if="editErrors?.[g.id]?.['title.ar']" class="error">
+                  {{ editErrors[g.id]['title.ar'] }}
+                </p>
+
               </div>
 
               <!-- Replace image -->
@@ -164,6 +204,38 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitDrawingsApi, buildDrawingsCreateFD, buildDrawingsUpdateFD } from '@/Services/unitDrawings'
 import FolderPicker from '@/Components/FolderPicker.vue'
 import { FolderApi } from '@/Services/folders'
+import { Form, Field, ErrorMessage } from "vee-validate"
+import * as yup from "yup"
+
+const createSchema = yup.object({
+  folder_id: yup.number().required("Folder is required"),
+  date: yup.string().required("Date is required"),
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+  files: yup
+    .mixed()
+    .nullable()
+    .test(
+      "required",
+      "Please select at least one file",
+      value => Array.isArray(value) && value.length > 0
+    ),
+
+})
+
+const editSchema = yup.object({
+  folder_id: yup.number().required("Folder is required"),
+  date: yup.string().required("Date is required"),
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+})
+
+
+const editErrors = reactive({})
 
 const folders = ref([])
 const folderLoading = ref(false)
@@ -187,6 +259,7 @@ const createForm = ref({
   folder_id: null,
   date: '',
   title: { en: '', ar: '' },
+  files: [],
 })
 const newFiles = ref([])
 const newPreviews = ref([])
@@ -201,11 +274,13 @@ const canCreate = computed(() =>
   newFiles.value.length > 0
 )
 
-function onNewFiles(e) {
+function onNewFilesValidated(e, setFieldValue) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
   newPreviews.value = files.map(f => URL.createObjectURL(f))
+  setFieldValue("files", files)
 }
+
 
 function fileUrl(file) {
   if (!file) return ''
@@ -228,30 +303,38 @@ function getFileName(file) {
 }
 
 
-async function createBatch() {
+async function createBatchValidated(values) {
   creating.value = true
   createErr.value = ''
+  createForm.value.files = []
   try {
-    const items = newFiles.value.map(f => ({
-      folder_id: createForm.value.folder_id,
-      date: createForm.value.date,
-      title: { ...createForm.value.title },
+    const items = values.files.map(f => ({
+      folder_id: values.folder_id,
+      date: values.date,
+      title: { ...values.title },
       image: f,
     }))
+
     const fd = buildDrawingsCreateFD(props.unitId, items)
     await UnitDrawingsApi.create(fd)
     await fetchList()
-    // reset
+
+    // reset (unchanged logic)
     newFiles.value = []
     newPreviews.value = []
     createForm.value.title = { en: '', ar: '' }
+
   } catch (e) {
     console.error(e)
-    createErr.value = e?.response?.data?.message || e?.message || 'Upload failed'
+    createErr.value =
+      e?.response?.data?.message ||
+      e?.message ||
+      'Upload failed'
   } finally {
     creating.value = false
   }
 }
+
 
 /* List   edit per-card */
 const rows = ref([])
@@ -297,6 +380,19 @@ function onReplaceFile(id, e) {
 async function saveOne(id) {
   const item = edit[id]
   if (!item) return
+
+  // reset errors
+  editErrors[id] = {}
+
+  try {
+    await editSchema.validate(item, { abortEarly: false })
+  } catch (err) {
+    err.inner.forEach(e => {
+      editErrors[id][e.path] = e.message
+    })
+    return
+  }
+
   saving[id] = true
   try {
     const items = [{
@@ -318,6 +414,7 @@ async function saveOne(id) {
   }
 }
 
+
 async function remove(id) {
   if (!confirm('Delete this drawing?')) return
   await UnitDrawingsApi.remove(id)
@@ -334,5 +431,9 @@ onMounted(async () => { await fetchFolders(); await fetchList(); })
 
 .aspect-\[4\/3\] {
   aspect-ratio: 4 / 3;
+}
+
+.error {
+  @apply text-red-600 text-xs mt-1;
 }
 </style>

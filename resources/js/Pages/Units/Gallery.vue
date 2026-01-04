@@ -11,46 +11,94 @@
 
 
       <!-- Create (batch) -->
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-bold mb-3">Add Images</h3>
+  <Form
+  :validation-schema="createSchema"
+  :validate-on-mount="false"
+  :initial-values="createForm"
+  @submit="createBatchValidated"
+  v-slot="{ setFieldValue, submitCount }"
+>
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-lg font-bold mb-3">Add Images</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <FolderPicker type="gallery" label="Folder *" v-model="createForm.folder_id" :options="folders"
-            :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Date *</label>
-            <input v-model="createForm.date" class="form-input" type="date" required />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
-            <input v-model="createForm.title.en" class="form-input" type="text" required />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
-            <input v-model="createForm.title.ar" class="form-input" type="text" required />
-          </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-        <div class="mt-4">
-          <input type="file" multiple @change="onNewFiles" />
-          <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
-            <img v-for="(src, i) in newPreviews" :key="i" :src="src" class="w-24 h-16 object-cover rounded border" />
-          </div>
-        </div>
-
-        <div class="mt-4 flex items-center gap-3">
-          <button :disabled="creating ||
-            !newFiles.length ||
-            !createForm.folder_id ||
-            !createForm.date ||
-            !createForm.title.en?.trim() ||
-            !createForm.title.ar?.trim()
-            " @click="createBatch" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700">
-            {{ creating ? 'Uploading…' : 'Upload' }}
-          </button>
-          <span v-if="createErr" class="text-red-600 text-sm">{{ createErr }}</span>
-        </div>
+      <!-- Folder -->
+      <div>
+        <FolderPicker
+          type="gallery"
+          label="Folder *"
+          :model-value="createForm.folder_id"
+          :options="folders"
+          :unitId="props.unitId"
+          @update:modelValue="val => {
+            createForm.folder_id = val
+            setFieldValue('folder_id', val)
+          }"
+          @created="folders.unshift($event)"
+          @refresh="fetchFolders"
+        />
+        <ErrorMessage v-if="submitCount > 0" name="folder_id" class="error" />
       </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Date *</label>
+        <Field name="date" type="date" class="form-input" />
+        <ErrorMessage v-if="submitCount > 0" name="date" class="error" />
+      </div>
+
+      <!-- Title EN -->
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Title (EN) *</label>
+        <Field name="title.en" class="form-input" />
+        <ErrorMessage v-if="submitCount > 0" name="title.en" class="error" />
+      </div>
+
+      <!-- Title AR -->
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Title (AR) *</label>
+        <Field name="title.ar" class="form-input" />
+        <ErrorMessage v-if="submitCount > 0" name="title.ar" class="error" />
+      </div>
+    </div>
+
+    <!-- Files -->
+    <div class="mt-4">
+      <input
+        type="file"
+        multiple
+        @change="(e) => onNewFilesValidated(e, setFieldValue)"
+      />
+      <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
+
+      <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
+        <img
+          v-for="(src, i) in newPreviews"
+          :key="i"
+          :src="src"
+          class="w-24 h-16 object-cover rounded border"
+        />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 flex items-center gap-3">
+      <button
+        type="submit"
+        :disabled="creating"
+        class="px-4 py-2 bg-black text-white rounded hover:bg-gray-700"
+      >
+        {{ creating ? 'Uploading…' : 'Upload' }}
+      </button>
+
+      <span v-if="createErr" class="text-red-600 text-sm">
+        {{ createErr }}
+      </span>
+    </div>
+  </div>
+</Form>
+
 
       <!-- List -->
       <div class="bg-white p-5 rounded-2xl shadow-sm ring-1 ring-black/[0.05]">
@@ -109,25 +157,39 @@
               </div>
               <FolderPicker type="gallery" :label="' '" v-model="edit[g.id].folder_id" :options="folders"
                 :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
+<p v-if="editErrors?.[g.id]?.folder_id" class="error">
+  {{ editErrors[g.id].folder_id }}
+</p>
 
               <!-- Date -->
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Date</label>
                 <input v-model="edit[g.id].date" class="form-input" type="date" />
               </div>
+<p v-if="editErrors?.[g.id]?.date" class="error">
+  {{ editErrors[g.id].date }}
+</p>
 
               <!-- Titles (always full, wrapped) -->
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (EN)</label>
                 <textarea v-model="edit[g.id].title.en" class="form-input !h-auto min-h-9" rows="1"
                   @input="autoGrow($event)" :placeholder="g.title_en ? '' : 'Enter English title'"></textarea>
-              </div>
+              <p v-if="editErrors?.[g.id]?.['title.en']" class="error">
+  {{ editErrors[g.id]['title.en'] }}
+</p>
+
+                </div>
 
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Title (AR)</label>
                 <textarea v-model="edit[g.id].title.ar" class="form-input !h-auto min-h-9" rows="1" dir="rtl"
                   @input="autoGrow($event)" :placeholder="g.title_ar ? '' : 'أدخل العنوان بالعربية'"></textarea>
-              </div>
+             <p v-if="editErrors?.[g.id]?.['title.ar']" class="error">
+  {{ editErrors[g.id]['title.ar'] }}
+</p>
+
+                </div>
 
               <!-- Replace image -->
               <div class="text-[11px]">
@@ -174,8 +236,39 @@ import UnitNav from '@/Components/UnitNav.vue'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitGalleryApi, buildGalleryCreateFD, buildGalleryUpdateFD } from '@/Services/unitGallery'
 import FolderPicker from '@/Components/FolderPicker.vue'
-
 import { FolderApi } from '@/Services/folders'
+import { Form, Field, ErrorMessage } from "vee-validate"
+import * as yup from "yup"
+
+const createSchema = yup.object({
+  folder_id: yup.number().required("Folder is required"),
+  date: yup.string().required("Date is required"),
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+  files: yup
+    .mixed()
+    .nullable()
+    .test(
+      "required",
+      "Please select at least one image",
+      value => Array.isArray(value) && value.length > 0
+    ),
+})
+
+const editSchema = yup.object({
+  folder_id: yup.number().required("Folder is required"),
+  date: yup.string().required("Date is required"),
+  title: yup.object({
+    en: yup.string().required("English title is required"),
+    ar: yup.string().required("Arabic title is required"),
+  }),
+})
+
+const editErrors = reactive({})
+
+
 const folders = ref([])
 const folderLoading = ref(false)
 async function fetchFolders() {
@@ -197,17 +290,20 @@ const createForm = ref({
   folder_id: null,
   date: '',
   title: { en: '', ar: '' },
+  files: [],
 })
 const newFiles = ref([])
 const newPreviews = ref([])
 const creating = ref(false)
 const createErr = ref('')
 
-function onNewFiles(e) {
+function onNewFilesValidated(e, setFieldValue) {
   const files = Array.from(e.target.files || [])
   newFiles.value = files
   newPreviews.value = files.map(f => URL.createObjectURL(f))
+  setFieldValue("files", files)
 }
+
 
 
 function fileUrl(file) {
@@ -231,30 +327,38 @@ function getFileName(file) {
 }
 
 
-async function createBatch() {
+async function createBatchValidated(values) {
   creating.value = true
-  createErr.value = ''
+  createErr.value = ""
+
   try {
-    const items = newFiles.value.map(f => ({
-      folder_id: createForm.value.folder_id,
-      date: createForm.value.date,
-      title: { ...createForm.value.title },
+    const items = values.files.map(f => ({
+      folder_id: values.folder_id,
+      date: values.date,
+      title: { ...values.title },
       image: f,
     }))
+
     const fd = buildGalleryCreateFD(props.unitId, items)
     await UnitGalleryApi.create(fd)
     await fetchList()
+
     // reset
     newFiles.value = []
     newPreviews.value = []
-    createForm.value.title = { en: '', ar: '' }
+    createForm.value.title = { en: "", ar: "" }
+
   } catch (e) {
     console.error(e)
-    createErr.value = e?.response?.data?.message || e?.message || 'Upload failed'
+    createErr.value =
+      e?.response?.data?.message ||
+      e?.message ||
+      "Upload failed"
   } finally {
     creating.value = false
   }
 }
+
 
 /* List   edit per-card */
 const rows = ref([])
@@ -334,6 +438,18 @@ function onReplaceFile(id, e) {
 async function saveOne(id) {
   const item = edit[id]
   if (!item) return
+
+  editErrors[id] = {}
+
+  try {
+    await editSchema.validate(item, { abortEarly: false })
+  } catch (err) {
+    err.inner.forEach(e => {
+      editErrors[id][e.path] = e.message
+    })
+    return
+  }
+
   saving[id] = true
   try {
     const items = [{
@@ -341,19 +457,22 @@ async function saveOne(id) {
       folder_id: item.folder_id,
       date: item.date,
       title: item.title,
-      image: pendingImage[id], // optional
+      image: pendingImage[id],
     }]
+
     const fd = buildGalleryUpdateFD(props.unitId, items)
     await UnitGalleryApi.update(fd)
+
     delete pendingImage[id]
     await fetchList()
   } catch (e) {
     console.error(e)
-    alert(e?.response?.data?.message || 'Update failed')
+    alert(e?.response?.data?.message || "Update failed")
   } finally {
     saving[id] = false
   }
 }
+
 
 async function remove(id) {
   if (!confirm('Delete this image?')) return
@@ -372,4 +491,9 @@ onMounted(async () => { await fetchFolders(); await fetchList(); })
 .aspect-\[4\/3\] {
   aspect-ratio: 4 / 3;
 }
+
+.error {
+  @apply text-red-600 text-xs mt-1;
+}
+
 </style>

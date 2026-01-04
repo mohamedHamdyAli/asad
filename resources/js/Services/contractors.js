@@ -22,22 +22,17 @@ function normalize(row = {}) {
     image: row.image || "",
     image_url: toUrl(row.image),
 
-    // 🔴 TITLES
     title_en: title.en || "",
     title_ar: title.ar || "",
 
-    // 🔴 DESCRIPTIONS
     description_en: description.en || "",
     description_ar: description.ar || "",
 
-    // 🔴 PHONES
     company_phone: row.company_phone || "",
     representative_phone: row.representative_phone || "",
 
-    // 🔴 ADDRESSES
     company_address: row.company_address || { en: "", ar: "" },
 
-    // 🔴 REPRESENTATIVE
     representative_name: row.representative_name || { en: "", ar: "" },
 
     created_at: row.created_at,
