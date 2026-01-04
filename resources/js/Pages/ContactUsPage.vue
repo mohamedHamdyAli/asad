@@ -185,6 +185,7 @@ const errorMsg = ref("")
 const errors = reactive({})
 
 const form = reactive({
+  id: null,
   country: "",
   telephone: "",
   account_name: "",
@@ -219,6 +220,7 @@ async function onCountryChange() {
     }
 
     Object.assign(form, {
+      id: found.id,
       country: form.country,
       telephone: found.telephone,
       account_name: found.account_name,
@@ -230,6 +232,15 @@ async function onCountryChange() {
       lat: found.lat,
       long: found.long,
     })
+  
+    if (!found) {
+  clearForm()
+  form.id = null
+  form.country = form.country
+  errorMsg.value = "No contact info found for this country."
+  return
+}
+
   } catch (e) {
     console.error(e)
     clearForm()
@@ -272,18 +283,35 @@ async function save() {
     return
   }
 
+  if (!form.id) {
+    errorMsg.value = "No record selected to update."
+    return
+  }
+
   saving.value = true
 
   try {
-    await axios.post("/api/contact-infos/update", form)
+    const { data } = await axios.post(
+      `/api/contact-infos/update/${form.id}`,
+      form
+    )
+
+    if (data?.code === 422 || data?.key === "Invalid data sent") {
+      errorMsg.value = data.msg || "Validation error"
+      return
+    }
+
     successMsg.value = "Saved successfully!"
   } catch (e) {
     errorMsg.value =
-      e?.response?.data?.message || "Save failed. Try again."
+      e?.response?.data?.msg ||
+      e?.response?.data?.message ||
+      "Save failed. Try again."
   } finally {
     saving.value = false
   }
 }
+
 
 /* Helpers */
 function clearForm() {

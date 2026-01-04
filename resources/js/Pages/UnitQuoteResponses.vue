@@ -43,9 +43,9 @@
             </thead>
 
             <tbody>
-              <tr v-for="q in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition">
+              <tr v-for="(q , index) in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition">
                 <!-- ID -->
-                <td class="py-2 px-3 font-medium">{{ q.id }}</td>
+                <td class="py-2 px-3 font-medium">{{ (currentPage - 1) * perPage + index + 1 }}</td>
 
                 <!-- Title -->
                 <td class="py-2 px-3">
@@ -61,7 +61,7 @@
                 <!-- Vendor (selectable) -->
                 <td class="py-2 px-3">
                   <select v-model="q.response.vendor_id" class="form-input" :disabled="!q.editing && q.has_response">
-                    <option value="" disabled>Select Vendor</option>
+                    <option value="" disabled>Select PM</option>
                     <option v-for="v in vendors" :key="v.id" :value="v.id">
                       {{ v.name }}
                     </option>
@@ -339,13 +339,15 @@ function enableEdit(q) {
 
 async function saveResponse(q) {
   const fd = buildQuoteResponseCreateFD({
+
     unit_quote_id: q.id,
     vendor_id: q.response.vendor_id,
-    user_id: q.response.user_id,
+    user_id: q.user_id,
     title: { en: q.title, ar: q.title },
     price: q.response.price,
     time_line: { en: q.response.time_line, ar: q.response.time_line },
   })
+  console.log(q)
   await UnitQuoteResponsesApi.create(fd)
   await fetchAll()
 }

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="fixed back-drop inset-0 z-50 flex items-center justify-center bg-black/50">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
 
         <!-- Close -->
@@ -192,5 +192,8 @@ async function submitForm(values) {
 }
 .error {
   @apply text-red-600 text-xs;
+}
+.back-drop {
+  margin-top: -25px !important;
 }
 </style>

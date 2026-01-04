@@ -71,33 +71,52 @@ export function buildVendorCreateFD({
   is_enabled = true,
   profile_image,
 }) {
+  if (!profile_image) {
+    throw new Error("Profile image is required");
+  }
+
   const fd = new FormData();
-  fd.append("name", name ?? "");
-  fd.append("email", email ?? "");
-  fd.append("phone", phone ?? "");
-  fd.append("password", password ?? "");
-  fd.append("country_code", country_code ?? "");
-  fd.append("country_name", country_name ?? "");
-  fd.append("gender", gender ?? "");
-  fd.append("is_enabled", (is_enabled ? 1 : 0).toString());
+  fd.append("name", name);
+  fd.append("email", email);
+  fd.append("phone", phone);
+  fd.append("password", password);
+  fd.append("country_code", country_code);
+  fd.append("country_name", country_name);
+  fd.append("gender", gender);
+  fd.append("is_enabled", is_enabled ? "1" : "0");
   fd.append("role", "vendor");
-  if (profile_image) fd.append("profile_image", profile_image);
+  fd.append("profile_image", profile_image);
+
   return fd;
 }
+
 export function buildVendorUpdateFD(partial = {}) {
   const fd = new FormData();
-  for (const [k, v] of Object.entries(partial)) {
-    if (v === undefined || v === null) continue;
-    if (k === "profile_image" && v) {
-      fd.append("profile_image", v);
-    } else if (k === "is_enabled") {
-      fd.append("is_enabled", (v ? 1 : 0).toString());
-    } else if (typeof v === "string") {
+
+  Object.entries(partial).forEach(([k, v]) => {
+    if (v === undefined || v === null) return;
+
+    if (k === "profile_image") {
+      if (v instanceof File) {
+        fd.append("profile_image", v);
+      }
+      return;
+    }
+
+    if (k === "is_enabled") {
+      fd.append("is_enabled", v ? "1" : "0");
+      return;
+    }
+
+    if (typeof v === "string") {
       const trimmed = v.trim();
       if (trimmed !== "") fd.append(k, trimmed);
-    } else {
-      fd.append(k, v);
+      return;
     }
-  }
+
+    fd.append(k, v);
+  });
+
   return fd;
 }
+
