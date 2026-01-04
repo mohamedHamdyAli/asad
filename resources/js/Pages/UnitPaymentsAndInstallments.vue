@@ -405,7 +405,10 @@ function openAddInstallmentModal() {
 
 function openEditInstallmentModal(i) {
   modalMode.value = 'edit'
-  selectedInstallment.value = i
+  selectedInstallment.value = {
+    ...i,
+    unit_payment_id: selectedPaymentId.value, 
+  }
   showInstallmentModal.value = true
 }
 
