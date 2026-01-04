@@ -89,14 +89,14 @@
             </div>
 
             <!-- Status -->
-            <!-- <div>
+            <div>
               <label class="block text-xs text-gray-500 mb-1">Status</label>
               <Field name="status" as="select" class="form-input">
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>
                 <option value="overdue">Overdue</option>
               </Field>
-            </div> -->
+            </div>
           </div>
 
           <!-- Footer -->
@@ -128,6 +128,9 @@
 import { ref , watch} from 'vue'
 import * as yup from 'yup'
 import { Form, Field, ErrorMessage } from 'vee-validate'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 import {
   UnitInstallmentsApi,
@@ -219,6 +222,7 @@ watch(
 
 
 /* ----------------------- SUBMIT HANDLER ----------------------- */
+/* ----------------------- SUBMIT HANDLER ----------------------- */
 async function handleSubmit(values) {
   saving.value = true
 
@@ -227,7 +231,11 @@ async function handleSubmit(values) {
       const fd = buildInstallmentCreateFD(props.paymentId, values)
       await UnitInstallmentsApi.create(fd)
     } else {
-      const fd = buildInstallmentUpdateFD(values)
+      const payload = {
+        ...values,
+        unit_payment_id: props.paymentId,
+      }
+      const fd = buildInstallmentUpdateFD(payload)
       await UnitInstallmentsApi.update(props.data.id, fd)
     }
 
@@ -236,8 +244,8 @@ async function handleSubmit(values) {
 
   } catch (err) {
     console.error(err)
+    show(e)
     alert('Failed to save installment')
-
   } finally {
     saving.value = false
   }

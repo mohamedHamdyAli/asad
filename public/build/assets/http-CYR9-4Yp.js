@@ -1,1 +1,0 @@
-import{m as t}from"./app-ClrU1S9T.js";const e=t.create({baseURL:"/",withCredentials:!0});e.defaults.headers.common["X-Requested-With"]="XMLHttpRequest";e.defaults.xsrfCookieName="XSRF-TOKEN";e.defaults.xsrfHeaderName="X-XSRF-TOKEN";export{e as h};
