@@ -41,7 +41,7 @@ class UnitPaymentApiService
 
     public function activeInstallments($request)
     {
-        $statuses = ['partial', 'overdue', 'unpaid'];
+        $statuses = ['partial', 'overdue', 'unpaid', 'pending'];
 
         $installments = UnitPayment::where('unit_id', $request['unit_id'])->with([
             'installments' => function ($q) use ($statuses) {
@@ -66,6 +66,10 @@ class UnitPaymentApiService
     {
         return DB::transaction(function () use ($request, $installment) {
 
+            if ($request['paid_amount'] > $installment->amount) {
+                return failReturnMsg("Paid amount cannot exceed installment amount of {$installment->amount}");
+            }
+
             // upload file
             $invoiceFilePath = FileService::upload($request['invoice_file'], 'units/invoices');
 
@@ -81,6 +85,11 @@ class UnitPaymentApiService
             // Update installment status if needed
             if (in_array($installment->status, ['unpaid', 'overdue'], true)) {
                 $installment->update(['status' => 'pending']);
+            }
+
+            $unitPayment = UnitPayment::find($installment->unit_payment_id);
+            if ($unitPayment && $unitPayment->remaining_installments > 0) {
+                $unitPayment->decrement('remaining_installments');
             }
 
             return successReturnData($invoice, 'Invoice uploaded successfully and is under processing');
