@@ -2,7 +2,6 @@
   <aside
     class="w-64 h-screen bg-dash-gray custom-background flex flex-col justify-between fixed border-r-2 border-black shadow-lg"
   >
-    <
       <!-- Logo -->
       <div class="px-6 pt-8 pb-10 text-xl font-bold tracking-wide border-b-2 border-black">
         <Link :href="route('dashboard')" class="flex items-center justify-center">
