@@ -1,4 +1,5 @@
 <template>
+
   <Head title="Unit Issues" />
 
   <AuthenticatedLayout>
@@ -7,11 +8,7 @@
       <h2 class="text-2xl font-semibold">Unit Issues</h2>
 
       <!-- SEARCH -->
-      <input
-        v-model="search"
-        class="form-input w-72"
-        placeholder="Search by title, unit or user"
-      />
+      <input v-model="search" class="form-input w-72" placeholder="Search by title, unit or user" />
 
       <!-- TABLE -->
       <div class="bg-white rounded-xl shadow border overflow-hidden">
@@ -27,11 +24,7 @@
           </thead>
 
           <tbody>
-            <tr
-              v-for="issue in paginatedIssues"
-              :key="issue.id"
-              class="border-t"
-            >
+            <tr v-for="issue in paginatedIssues" :key="issue.id" class="border-t">
               <td class="px-4 py-3">
                 {{ issue.unit?.name?.en ?? issue.unit_id }}
               </td>
@@ -45,12 +38,9 @@
               </td>
 
               <td class="px-4 py-3">
-                <span
-                  class="px-2 py-1 rounded text-xs"
-                  :class="issue.status === 'open'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-200 text-gray-700'"
-                >
+                <span class="px-2 py-1 rounded text-xs" :class="issue.status === 'open'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-200 text-gray-700'">
                   {{ issue.status }}
                 </span>
               </td>
@@ -81,82 +71,73 @@
         </span>
 
         <div class="flex gap-2">
-          <button
-            class="px-3 py-1 border rounded"
-            :disabled="currentPage === 1"
-            @click="currentPage--"
-          >
+          <button class="px-3 py-1 border rounded" :disabled="currentPage === 1" @click="currentPage--">
             Prev
           </button>
-          <button
-            class="px-3 py-1 border rounded"
-            :disabled="currentPage === totalPages"
-            @click="currentPage++"
-          >
+          <button class="px-3 py-1 border rounded" :disabled="currentPage === totalPages" @click="currentPage++">
             Next
           </button>
         </div>
       </div>
 
       <!-- MODAL -->
-      <div
-        v-if="modalOpen"
-        class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50"
-      >
+      <div v-if="modalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 back-drop">
         <div class="bg-white w-full max-w-lg rounded-xl p-6">
 
-          <h3 class="text-lg font-semibold mb-4">Edit Issue</h3>
+          <Form :validation-schema="schema" :initial-values="form" @submit="submit">
+            <div class="space-y-4">
 
-          <Form
-            :validation-schema="schema"
-            :initial-values="form"
-            @submit="submit"
-          >
-            <div class="space-y-3">
+              <!-- UNIT DETAILS -->
+              <div v-if="selectedIssue?.unit" class="border rounded-lg p-3 bg-gray-50">
 
-              <!-- UNIT -->
-              <!-- <Field name="unit_id" as="select" class="form-input">
-                <option value="">Select Unit</option>
-                <option
-                  v-for="u in units"
-                  :key="u.id"
-                  :value="u.id"
-                >
-                  {{ u.name?.en ?? `Unit #${u.id}` }}
-                </option>
-              </Field>
-              <ErrorMessage name="unit_id" class="error" /> -->
+                <div class="flex gap-4 items-start">
+                  <img v-if="selectedIssue.unit.cover_image" :src="`/${selectedIssue.unit.cover_image}`"
+                    class="w-28 h-20 object-cover rounded border" />
 
-              <!-- USER -->
-              <!-- <Field name="user_id" as="select" class="form-input">
-                <option value="">Select User</option>
-                <option
-                  v-for="u in users"
-                  :key="u.id"
-                  :value="u.id"
-                >
-                  {{ u.name ?? `User #${u.id}` }}
-                </option>
-              </Field>
-              <ErrorMessage name="user_id" class="error" />
+                  <div class="space-y-1 text-sm">
+                    <div class="font-semibold">
+                      {{ selectedIssue.unit.name?.en }}
+                    </div>
 
-              <Field name="title" class="form-input" placeholder="Title" />
-              <ErrorMessage name="title" class="error" /> -->
+                    <div class="text-gray-500 text-xs">
+                      {{ selectedIssue.unit.name?.ar }}
+                    </div>
 
-              <Field
-                name="description"
-                as="textarea"
-                rows="3"
-                class="form-input"
-                placeholder="Description"
-                disabled
-              />
-              <ErrorMessage name="description" class="error" />
+                    <div class="text-xs text-gray-600">
+                      📍 {{ selectedIssue.unit.location }}
+                    </div>
 
-              <Field name="status" as="select" class="form-input">
-                <option value="open">Open</option>
-                <option value="close">Close</option>
-              </Field>
+                    <div class="text-xs text-gray-500">
+                      {{ selectedIssue.unit.start_date }} → {{ selectedIssue.unit.end_date }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ISSUE INFO -->
+              <div class="text-sm">
+                <div class="font-medium">Issue title</div>
+                <div class="text-gray-600">
+                  {{ selectedIssue?.title }}
+                </div>
+              </div>
+
+              <div class="text-sm">
+                <div class="font-medium">Description</div>
+                <div class="text-gray-600 whitespace-pre-line">
+                  {{ selectedIssue?.description }}
+                </div>
+              </div>
+
+              <!-- STATUS -->
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Status</label>
+                <Field name="status" as="select" class="form-input">
+                  <option value="open">Open</option>
+                  <option value="close">Close</option>
+                </Field>
+                <ErrorMessage name="status" class="error" />
+              </div>
 
             </div>
 
@@ -164,6 +145,7 @@
               <button type="button" class="px-4 py-2 border rounded" @click="closeModal">
                 Cancel
               </button>
+
               <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">
                 Save
               </button>
@@ -184,11 +166,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { UnitIssuesApi } from '@/Services/unitIssues'
 import { UnitsApi } from '@/Services/units'
 import { UsersApi } from '@/Services/users'
-
+import { useServerError } from '@/composables/useServerError'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 
+const { show } = useServerError()
+
 /* ================= STATE ================= */
+const selectedIssue = ref(null)
+
 const issues = ref([])
 const units = ref([])
 const users = ref([])
@@ -203,10 +189,6 @@ const form = ref({})
 
 /* ================= VALIDATION ================= */
 const schema = yup.object({
-//   unit_id: yup.number().required(),
-//   user_id: yup.number().required(),
-//   title: yup.string().required(),
-  description: yup.string().required(),
   status: yup.string().oneOf(['open', 'close']).required(),
 })
 
@@ -248,6 +230,7 @@ const paginatedIssues = computed(() => {
 /* ================= MODAL ================= */
 function openEdit(issue) {
   currentId.value = issue.id
+  selectedIssue.value = issue
   form.value = {
     // unit_id: issue.unit_id,
     // user_id: issue.user_id,
@@ -261,18 +244,22 @@ function openEdit(issue) {
 function closeModal() {
   modalOpen.value = false
   form.value = {}
+  selectedIssue.value = null
 }
 
 /* ================= SAVE ================= */
-async function submit(values) {
-  await UnitIssuesApi.update(currentId.value, {
-    ...values,
-    // unit_id: Number(values.unit_id),
-    // user_id: Number(values.user_id),
-  })
 
-  closeModal()
-  load()
+async function submit(values) {
+  try {
+    await UnitIssuesApi.update(currentId.value, {
+      status: values.status,
+    })
+
+    closeModal()
+    load()
+  } catch (e) {
+    show(e)
+  }
 }
 
 /* ================= DELETE ================= */
@@ -288,9 +275,11 @@ onMounted(load)
 .form-input {
   @apply w-full border border-gray-300 rounded px-3 py-2;
 }
+
 .error {
   @apply text-red-600 text-xs;
 }
+
 .back-drop {
   margin-top: -25px !important;
 }
