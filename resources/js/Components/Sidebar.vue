@@ -2,7 +2,7 @@
   <aside
     class="w-64 h-screen bg-dash-gray custom-background flex flex-col justify-between fixed border-r-2 border-black shadow-lg"
   >
-    <div>
+    <
       <!-- Logo -->
       <div class="px-6 pt-8 pb-10 text-xl font-bold tracking-wide border-b-2 border-black">
         <Link :href="route('dashboard')" class="flex items-center justify-center">
@@ -11,6 +11,7 @@
       </div>
 
       <!-- Navigation -->
+       <div class="flex-1 overflow-y-auto">
       <nav class="mt-2">
         <NavItem
           icon="mdi:view-dashboard"
@@ -106,7 +107,8 @@
           :href="route('unit-issues')"
         />
       </nav>
-    </div>
+      </div>
+    
   </aside>
 </template>
 

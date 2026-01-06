@@ -43,48 +43,84 @@
         <h3 class="text-lg font-semibold mb-4">Unit Payment</h3>
 
         <!-- 🟢 CASE 1: No payment yet -->
-        <div v-if="!payment">
-          <p class="text-gray-600 mb-4">No payment created yet for this unit.</p>
+     <Form
+  v-if="!payment"
+  :validation-schema="paymentSchema"
+  :initial-values="newPayment"
+  @submit="createPayment"
+  v-slot="{ submitCount }"
+>
+  <p class="text-gray-600 mb-4">
+    No payment created yet for this unit.
+  </p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Total Price *</label>
-              <input v-model.number="newPayment.total_price" type="number"
-                class="form-control w-full border p-2 rounded" />
-            </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Installments Count *</label>
-              <input v-model.number="newPayment.installments_count" type="number"
-                class="form-control w-full border p-2 rounded" />
-            </div>
+    <!-- Total Price -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Total Price *</label>
+      <Field
+        name="total_price"
+        type="number"
+        class="form-control w-full border p-2 rounded"
+      />
+      <ErrorMessage name="total_price" class="text-red-600 text-xs mt-1" />
+    </div>
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Payment Type *</label>
-              <select v-model="newPayment.payment_type" class="form-control w-full border p-2 rounded">
-                <option value="installments">Installments</option>
-                <option value="cash">Cash</option>
-              </select>
-            </div>
+    <!-- Installments Count -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Installments Count *</label>
+      <Field
+        name="installments_count"
+        type="number"
+        class="form-control w-full border p-2 rounded"
+      />
+      <ErrorMessage name="installments_count" class="text-red-600 text-xs mt-1" />
+    </div>
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Overall Status *</label>
-              <select v-model="newPayment.overall_status" class="form-control w-full border p-2 rounded">
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="overdue">Overdue</option>
-              </select>
-            </div>
-          </div>
+    <!-- Payment Type -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Payment Type *</label>
+      <Field
+        name="payment_type"
+        as="select"
+        class="form-control w-full border p-2 rounded"
+      >
+        <option value="installments">Installments</option>
+        <option value="cash">Cash</option>
+      </Field>
+      <ErrorMessage name="payment_type" class="text-red-600 text-xs mt-1" />
+    </div>
 
-          <div class="mt-4 text-right">
-            <button @click="createPayment" :disabled="creating"
-              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50">
-              {{ creating ? 'Saving…' : 'Create Payment' }}
-            </button>
-          </div>
-        </div>
+    <!-- Overall Status -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Overall Status *</label>
+      <Field
+        name="overall_status"
+        as="select"
+        class="form-control w-full border p-2 rounded"
+      >
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+        <option value="overdue">Overdue</option>
+      </Field>
+      <ErrorMessage name="overall_status" class="text-red-600 text-xs mt-1" />
+    </div>
+
+  </div>
+
+  <div class="mt-4 text-right">
+    <button
+      type="submit"
+      :disabled="creating"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
+    >
+      {{ creating ? 'Saving…' : 'Create Payment' }}
+    </button>
+  </div>
+</Form>
+
 
         <!-- 🟣 CASE 2: Payment exists -->
         <div v-else class="space-y-6">
@@ -232,6 +268,8 @@ import InvoiceModal from '@/Components/InvoiceModal.vue'
 import PaymentLogsModal from '@/Components/PaymentLogsModal.vue'
 import { UnitPaymentLogsApi } from '@/Services/unitPaymentLogs'
 import { useServerError } from '@/composables/useServerError'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import * as yup from 'yup'
 
 const { show } = useServerError()
 
@@ -245,6 +283,30 @@ const newPayment = ref({
   payment_type: 'installments',
   overall_status: 'pending',
 })
+
+const paymentSchema = yup.object({
+  total_price: yup
+    .number()
+    .typeError('Total price is required')
+    .required('Total price is required')
+    .positive('Total price must be greater than 0'),
+
+  installments_count: yup
+    .number()
+    .typeError('Installments count is required')
+    .required('Installments count is required')
+    .integer('Installments count must be an integer')
+    .min(1, 'At least 1 installment is required'),
+
+  payment_type: yup
+    .string()
+    .required('Payment type is required'),
+
+  overall_status: yup
+    .string()
+    .required('Overall status is required'),
+})
+
 const creating = ref(false)
 const loadingPayment = ref(false)
 
@@ -307,18 +369,19 @@ async function fetchPayment() {
 
 
 
-
-async function createPayment() {
-  try{
-  creating.value = true
-  const fd = buildUnitPaymentCreateFD(props.unitId, [newPayment.value])
-  await UnitPaymentsApi.create(fd)
-  await fetchPayment()
-  creating.value = false
+async function createPayment(values) {
+  try {
+    creating.value = true
+    const fd = buildUnitPaymentCreateFD(props.unitId, [values])
+    await UnitPaymentsApi.create(fd)
+    await fetchPayment()
   } catch (e) {
     show(e)
+  } finally {
+    creating.value = false
   }
 }
+
 
 async function savePayment() {
 

@@ -33,7 +33,7 @@
               <td class="px-4 py-3">{{ c.title_en }}</td>
               <td class="px-4 py-3">{{ c.email }}</td>
               <td class="px-4 py-3 text-right space-x-2">
-                <button class="text-blue-600" @click="openEdit(c)">Details</button>
+                <button class="text-blue-600" @click="openEdit(c)">Edit</button>
                 <button class="text-red-600" @click="remove(c.id)">Delete</button>
               </td>
             </tr>
