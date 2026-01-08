@@ -4,13 +4,13 @@
 
       <!-- Back Button -->
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Unit Details</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Details</h2>
 
         <Link
           href="/units-management"
           class="px-3 py-2 rounded border hover:bg-gray-50 text-gray-700"
         >
-          ← Back to Units
+          ← Back to Projects
         </Link>
       </div>
 
@@ -26,7 +26,7 @@
             v-if="d.cover_image_url"
             :src="d.cover_image_url"
             class="absolute inset-0 w-full h-full object-cover"
-            alt="Unit Cover"
+            alt="Project Cover"
           />
 
           <div
@@ -41,7 +41,7 @@
             class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-6 flex flex-col justify-end"
           >
             <h1 class="text-3xl font-bold text-white">
-              {{ d.name_en || 'Unnamed Unit' }}
+              {{ d.name_en || 'Unnamed Project' }}
             </h1>
             <div v-if="d.name_ar" class="text-gray-200 text-sm" dir="rtl">
               {{ d.name_ar }}

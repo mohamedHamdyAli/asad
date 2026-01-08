@@ -4,9 +4,9 @@
 
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Unit Phases</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Phases</h2>
         <a :href="backToUnits" class="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100">
-          ← Back to Units
+          ← Back to Projects
         </a>
       </div>
 
