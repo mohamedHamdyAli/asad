@@ -76,14 +76,30 @@
 
               <!-- User Selection (if not sending to all) -->
               <div v-if="!sendToAll">
-                <label class="block text-sm font-medium mb-1">Select User</label>
-                <Field name="user_id" as="select" class="form-input">
-                  <option value="">-- Select User --</option>
-                  <option v-for="user in users" :key="user.id" :value="user.id">
-                    {{ user.name }} ({{ user.email }})
-                  </option>
-                </Field>
-                <ErrorMessage name="user_id" class="error" />
+                <label class="block text-sm font-medium mb-2">Select Users</label>
+                <div class="border border-gray-300 rounded px-3 py-2 max-h-[300px] overflow-y-auto">
+                  <div class="space-y-2">
+                    <label
+                      v-for="user in users"
+                      :key="user.id"
+                      class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                    >
+                      <input
+                        type="checkbox"
+                        :value="user.id"
+                        v-model="selectedUsers"
+                        class="form-checkbox h-4 w-4 text-blue-600"
+                      />
+                      <span class="text-sm">{{ user.name }} ({{ user.email }})</span>
+                    </label>
+                  </div>
+                </div>
+                <!-- Hidden Field for validation -->
+                <Field name="user_ids" v-model="selectedUsers" type="hidden" />
+                <ErrorMessage name="user_ids" class="error" />
+                <div v-if="selectedUsers.length > 0" class="text-xs text-gray-600 mt-1">
+                  {{ selectedUsers.length }} user(s) selected
+                </div>
               </div>
 
               <!-- Title -->
@@ -140,13 +156,14 @@ const perPage = 10
 const modalOpen = ref(false)
 const sendToAll = ref(true)
 const formKey = ref(0)
+const selectedUsers = ref([])
 
 const form = ref({})
 
 const schema = computed(() => yup.object({
   title: yup.string().required('Title is required'),
   body: yup.string().required('Message body is required'),
-  user_id: sendToAll.value ? yup.string() : yup.string().required('Please select a user'),
+  user_ids: sendToAll.value ? yup.array() : yup.array().min(1, 'Please select at least one user').required('Please select at least one user'),
 }))
 
 async function load() {
@@ -175,11 +192,12 @@ const paginatedRows = computed(() =>
 
 function openCreate() {
   sendToAll.value = true
+  selectedUsers.value = []
 
   form.value = {
     title: '',
     body: '',
-    user_id: '',
+    user_ids: [],
   }
 
   formKey.value++
@@ -188,11 +206,13 @@ function openCreate() {
 
 function closeModal() {
   modalOpen.value = false
+  selectedUsers.value = []
 }
 
 function onSendToAllChange() {
   if (sendToAll.value) {
-    form.value.user_id = ''
+    selectedUsers.value = []
+    form.value.user_ids = []
   }
 }
 
@@ -202,8 +222,9 @@ async function submit(values) {
     body: values.body,
   }
 
-  if (!sendToAll.value && values.user_id) {
-    payload.user_id = parseInt(values.user_id)
+  // If not sending to all, send to selected users
+  if (!sendToAll.value && selectedUsers.value.length > 0) {
+    payload.user_ids = selectedUsers.value.map(id => parseInt(id))
   }
 
   try {
