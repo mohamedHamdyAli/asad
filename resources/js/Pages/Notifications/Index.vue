@@ -19,7 +19,7 @@
           <thead class="bg-gray-100">
             <tr>
               <th class="px-4 py-3">ID</th>
-              <th class="px-4 py-3">User Name</th>
+              <th class="px-4 py-3">Users</th>
               <th class="px-4 py-3">Title</th>
               <th class="px-4 py-3">Body</th>
               <th class="px-4 py-3">Date</th>
@@ -28,11 +28,21 @@
           </thead>
 
           <tbody>
-            <tr v-for="n in paginatedRows" :key="n.id" class="border-t">
-              <td class="px-4 py-3">{{ n.id }}</td>
+            <tr v-for="(n, index) in paginatedRows" :key="n.id" class="border-t">
+              <td class="px-4 py-3">{{ (currentPage - 1) * perPage + index + 1 }}</td>
               <td class="px-4 py-3">
-                <div v-if="n.user_name">{{ n.user_name }}</div>
-                <div v-else class="text-gray-400 italic">All Users</div>
+                <div v-if="n.users_count">
+                  <button
+                    @click="showUsers(n)"
+                    class="text-blue-600 hover:underline flex items-center gap-1"
+                  >
+                    <span>{{ n.users_count }} user(s)</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                </div>
+                <div v-else class="text-gray-400 italic">No users</div>
               </td>
               <td class="px-4 py-3 max-w-xs truncate">{{ n.title }}</td>
               <td class="px-4 py-3 max-w-md truncate">{{ n.body }}</td>
@@ -132,6 +142,63 @@
         </div>
       </div>
 
+      <!-- USERS MODAL -->
+      <div v-if="usersModalOpen" class="fixed back-drop inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 p-6">
+          <h3 class="text-lg font-bold mb-4">
+            Users who received this notification
+            <span class="text-sm text-gray-500 font-normal">({{ selectedNotificationUsers.length }} total)</span>
+          </h3>
+
+          <div class="space-y-2 mb-4">
+            <div
+              v-for="user in paginatedModalUsers"
+              :key="user.id"
+              class="flex items-center gap-3 p-3 border rounded hover:bg-gray-50"
+            >
+              <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+                {{ user.name?.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <div class="font-medium">{{ user.name }}</div>
+                <div class="text-xs text-gray-500">{{ user.email }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="totalModalPages > 1" class="flex justify-between items-center mb-4 text-sm">
+            <span class="text-gray-600">Page {{ modalCurrentPage }} of {{ totalModalPages }}</span>
+            <div class="space-x-2">
+              <button
+                @click="modalCurrentPage--"
+                :disabled="modalCurrentPage === 1"
+                class="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Prev
+              </button>
+              <button
+                @click="modalCurrentPage++"
+                :disabled="modalCurrentPage === totalModalPages"
+                class="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              class="border px-4 py-2 rounded"
+              @click="closeUsersModal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </AuthenticatedLayout>
 </template>
@@ -154,9 +221,13 @@ const currentPage = ref(1)
 const perPage = 10
 
 const modalOpen = ref(false)
+const usersModalOpen = ref(false)
 const sendToAll = ref(true)
 const formKey = ref(0)
 const selectedUsers = ref([])
+const selectedNotificationUsers = ref([])
+const modalCurrentPage = ref(1)
+const modalPerPage = 5
 
 const form = ref({})
 
@@ -188,6 +259,18 @@ const totalPages = computed(() =>
 
 const paginatedRows = computed(() =>
   filteredRows.value.slice((currentPage.value - 1) * perPage, currentPage.value * perPage)
+)
+
+// Modal pagination
+const totalModalPages = computed(() =>
+  Math.ceil(selectedNotificationUsers.value.length / modalPerPage)
+)
+
+const paginatedModalUsers = computed(() =>
+  selectedNotificationUsers.value.slice(
+    (modalCurrentPage.value - 1) * modalPerPage,
+    modalCurrentPage.value * modalPerPage
+  )
 )
 
 function openCreate() {
@@ -241,6 +324,18 @@ async function remove(id) {
   if (!confirm('Delete notification?')) return
   await NotificationsApi.remove(id)
   load()
+}
+
+function showUsers(notification) {
+  selectedNotificationUsers.value = notification.users || []
+  modalCurrentPage.value = 1
+  usersModalOpen.value = true
+}
+
+function closeUsersModal() {
+  usersModalOpen.value = false
+  modalCurrentPage.value = 1
+  selectedNotificationUsers.value = []
 }
 
 function formatDate(dateString) {
