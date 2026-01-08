@@ -93,6 +93,13 @@
           class="border-b border-gray-300/70"
         />
         <NavItem
+          icon="mdi:bell-outline"
+          label="Notifications Management"
+          :to="route('notifications-management')"
+          :href="route('notifications-management')"
+          class="border-b border-gray-300/70"
+        />
+        <NavItem
           icon="mdi:people"
           label="Users Roles & Permissions"
           :to="route('roles-management')"

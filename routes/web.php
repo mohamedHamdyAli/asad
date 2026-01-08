@@ -31,6 +31,7 @@ Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro
 Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
 Route::get('/contractors-management', fn() => inertia('Contractors/Index'))->name('contractors-management');
 Route::get('/Consultants-management', fn() => inertia('Consultants/Index'))->name('Consultants-management');
+Route::get('/notifications-management', fn() => inertia('Notifications/Index'))->name('notifications-management');
 Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
 Route::get('/unit-quotes', fn() => inertia('UnitQuotes'))->name('unit-quotes');
 Route::get('/unit-quote-responses', fn() => inertia('UnitQuoteResponses'))->name('unit-quotes-responses');
