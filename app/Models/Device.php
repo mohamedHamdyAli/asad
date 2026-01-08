@@ -21,7 +21,11 @@ class Device extends Model
 
         public static function storeDevice($request)
     {
-        $user = userAuth() != null ? userAuth() : vendorAuth();
+        $user = userOrGuestAuth();
+        if(!$user){
+            return failReturnMsg('Unauthorized user');
+        }
+
         Device::updateOrCreate([
             'device_id'         => $request['device_id'],
             'user_id'           => $user->id,
