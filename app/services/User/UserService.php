@@ -130,7 +130,7 @@ public function login(array $data)
 
     public function UserProfile()
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
         if (!$user) {
             return failReturnMsg('User not authenticated');
         }
@@ -139,7 +139,7 @@ public function login(array $data)
 
     public function updateProfile($data)
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
 
         return DB::transaction(function () use ($user, $data) {
             $filteredData = array_filter($data, function ($value) {
