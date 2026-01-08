@@ -37,6 +37,12 @@ class Notification extends Model
     {
         return self::whereType('vendor')->whereUserId(vendorAuth()->id)->get();
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function objectable()
     {
         return $this->morphTo();

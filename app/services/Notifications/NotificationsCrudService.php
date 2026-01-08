@@ -48,7 +48,7 @@ class NotificationsCrudService
 
     public function getAllNotifications()
     {
-        return Notification::latest()->get();
+        return Notification::with('user:id,name,email')->latest()->get();
     }
 
 
