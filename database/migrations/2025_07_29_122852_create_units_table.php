@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->string('cover_image')->nullable();
             $table->text('description')->nullable();
             $table->enum('status', ['under_construction', 'completed'])->default('under_construction');
-
+            $table->json('extension_dates')->nullable()->after('end_date');
             $table->timestamps();
         });
     }

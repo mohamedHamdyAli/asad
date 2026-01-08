@@ -41,50 +41,50 @@ Route::get('/unit-issues', fn() => inertia('UnitIssues'))->name('unit-issues');
 // Route::get('/unit-contractors', fn() => inertia('Unit/UnitContractors'))->name('unit-contractors');
 
 // ** unit routes **
-Route::get('/units-management', fn() => inertia('Units/Index'))->name('unit-management');
-Route::get('/units-management/{unitId}/gallery', function ($unitId) {
+Route::get('/projects-management', fn() => inertia('Units/Index'))->name('unit-management');
+Route::get('/projects-management/{unitId}/gallery', function ($unitId) {
     return Inertia::render('Units/Gallery', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.gallery');
 
-Route::get('/units-management/{unitId}/docs', function ($unitId) {
+Route::get('/projects-management/{unitId}/docs', function ($unitId) {
     return Inertia::render('Units/Docs', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.docs');
 
-Route::get('/units-management/{unitId}/contractors', function ($unitId) {
+Route::get('/projects-management/{unitId}/contractors', function ($unitId) {
     return Inertia::render('Units/UnitContractors', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.docs');
 
-Route::get('/units-management/{unitId}/drawing', function ($unitId) {
+Route::get('/projects-management/{unitId}/drawing', function ($unitId) {
     return Inertia::render('Units/Drawings', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.drawing');
 
-Route::get('/units-management/{unitId}/reports', function ($unitId) {
+Route::get('/projects-management/{unitId}/reports', function ($unitId) {
     return Inertia::render('Units/Reports', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.reports');
 
-Route::get('/units-management/{unitId}/timeline', function ($unitId) {
+Route::get('/projects-management/{unitId}/timeline', function ($unitId) {
     return Inertia::render('Units/Timeline', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.timeline');
 
-Route::get('/units-management/{unitId}/phases', function ($unitId) {
+Route::get('/projects-management/{unitId}/phases', function ($unitId) {
     return Inertia::render('Units/Phases', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.phases');
 
-Route::get('/units-management/{id}/details', function ($id) {
+Route::get('/projects-management/{id}/details', function ($id) {
     return Inertia::render('Units/Details', ['id' => (int) $id]);
 });
 
@@ -115,14 +115,14 @@ Route::prefix('language')->group(function () {
 });
 
 
-Route::get('/units-management/{unitId}/payments', function ($unitId) {
+Route::get('/projects-management/{unitId}/payments', function ($unitId) {
     return Inertia::render('UnitPaymentsAndInstallments', [
         'unitId' => (int) $unitId,
     ]);
 })->name('units.payments');
 
 
-Route::get('/units-management/{unitId}/payments/{unitPaymentId}/installments', function ($unitId, $unitPaymentId) {
+Route::get('/projects-management/{unitId}/payments/{unitPaymentId}/installments', function ($unitId, $unitPaymentId) {
     return Inertia::render('Units/UnitInstallments', [
         'unitId' => (int) $unitId,
         'unitPaymentId' => (int) $unitPaymentId,

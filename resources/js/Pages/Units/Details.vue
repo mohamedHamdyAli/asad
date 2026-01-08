@@ -7,7 +7,7 @@
         <h2 class="text-2xl font-bold text-gray-800">Project Details</h2>
 
         <Link
-          href="/units-management"
+          href="/projects-management"
           class="px-3 py-2 rounded border hover:bg-gray-50 text-gray-700"
         >
           ← Back to Projects
@@ -151,28 +151,28 @@ onMounted(async () => {
 })
 
 function docsPath(id) {
-  return `/units-management/${id}/docs`
+  return `/projects-management/${id}/docs`
 }
 function galleryPath(id) {
-  return `/units-management/${id}/gallery`
+  return `/projects-management/${id}/gallery`
 }
 function drawingPath(id) {
-  return `/units-management/${id}/drawing`
+  return `/projects-management/${id}/drawing`
 }
 function reportsPath(id) {
-  return `/units-management/${id}/reports`
+  return `/projects-management/${id}/reports`
 }
 function phasesPath(id) {
-  return `/units-management/${id}/phases`
+  return `/projects-management/${id}/phases`
 }
 function timelinePath(id) {
-  return `/units-management/${id}/timeline`
+  return `/projects-management/${id}/timeline`
 }
 function unitContractorsPath(id) {
-  return `/units-management/${id}/contractors`
+  return `/projects-management/${id}/contractors`
 }
 function unitPaymentsPath(id) {
-  return `/units-management/${id}/payments`
+  return `/projects-management/${id}/payments`
 }
 </script>
 

@@ -188,7 +188,6 @@
           <table class="min-w-full text-sm text-left border">
             <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
               <tr>
-                <th class="p-2 border"></th>
                 <th class="p-2 border">Title</th>
                 <th class="p-2 border">Amount</th>
                 <th class="p-2 border">Percentage</th>
@@ -200,7 +199,6 @@
             </thead>
             <tbody>
               <tr v-for="i in installments" :key="i.id" class="hover:bg-gray-50 transition">
-                <td class="p-2 border">{{ i.id }}</td>
                 <td class="p-2 border">{{ i.title.en }}</td>
                 <td class="p-2 border">{{ i.amount }}</td>
                 <td class="p-2 border">{{ i.percentage }}</td>
