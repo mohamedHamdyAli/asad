@@ -21,7 +21,7 @@ class Device extends Model
 
         public static function storeDevice($request)
     {
-        $user = userOrGuestAuth();
+        $user = auth('api')->user();
         if(!$user){
             return failReturnMsg('Unauthorized user');
         }
