@@ -92,9 +92,11 @@
             <div>
               <label class="block text-xs text-gray-500 mb-1">Status</label>
               <Field name="status" as="select" class="form-input">
-                <option value="pending">Pending</option>
-                <option value="paid">Paid</option>
-                <option value="overdue">Overdue</option>
+                <option value="pending">pending</option>
+                <option value="completed">paid</option>
+                <option value="in_progress">partial</option>
+                <option value="paid">unpaid</option>
+                <option value="overdue">overdue</option>
               </Field>
             </div>
           </div>

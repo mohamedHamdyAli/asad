@@ -3,9 +3,9 @@
     <div class="p-6 space-y-6">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-dash-title">Units</h2>
+        <h2 class="text-2xl font-bold text-dash-title">Projects</h2>
         <button @click="openCreate" class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700">
-          + Add Unit
+          + Add Project
         </button>
       </div>
 
@@ -79,7 +79,7 @@
             </tr>
 
             <tr v-if="!loading && !filtered.length">
-              <td colspan="6" class="px-4 py-8 text-center text-gray-500">No units found.</td>
+              <td colspan="6" class="px-4 py-8 text-center text-gray-500">No Projects found.</td>
             </tr>
           </tbody>
         </table>
@@ -119,7 +119,7 @@
             <div
               class="sticky top-0 bg-gradient-to-r from-yellow-50 to-yellow-100 border-b px-6 py-4 rounded-t-2xl flex items-center justify-between">
               <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                Unit Details
+                Project Details
               </h3>
               <button @click="closeDetails"
                 class="text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-full p-2">
@@ -134,7 +134,7 @@
             <div v-else class="p-6 space-y-6">
               <!-- Cover Section -->
               <div class="relative rounded-xl overflow-hidden shadow-md h-64 sm:h-72 md:h-80">
-                <img v-if="d.cover_image_url" :src="d.cover_image_url" alt="Unit Cover"
+                <img v-if="d.cover_image_url" :src="d.cover_image_url" alt="Project Cover"
                   class="absolute inset-0 w-full h-full object-cover" />
                 <div v-else class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
                   No Cover Image
@@ -144,7 +144,7 @@
                 <div
                   class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
                   <div class="text-2xl font-bold">
-                    {{ d.name_en || 'Unnamed Unit' }}
+                    {{ d.name_en || 'Unnamed Project' }}
                   </div>
                   <div v-if="d.name_ar" class="text-sm text-gray-200" dir="rtl">
                     {{ d.name_ar }}
@@ -244,7 +244,7 @@
             <!-- Header -->
             <div class="sticky top-0 z-10 bg-white border-b rounded-t-2xl">
               <div class="flex items-center justify-between px-5 py-3">
-                <h3 class="text-lg font-bold">{{ editingId ? 'Edit Unit' : 'Add Unit' }}</h3>
+                <h3 class="text-lg font-bold">{{ editingId ? 'Edit Project' : 'Add Project' }}</h3>
                 <button @click="closeModal" class="text-gray-400 hover:text-gray-600" aria-label="Close">✕</button>
               </div>
             </div>

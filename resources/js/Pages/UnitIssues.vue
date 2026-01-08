@@ -91,7 +91,7 @@
               <div v-if="selectedIssue?.unit" class="border rounded-lg p-3 bg-gray-50">
 
                 <div class="flex gap-4 items-start">
-                  <img v-if="selectedIssue.unit.cover_image" :src="`/${selectedIssue.unit.cover_image}`"
+                  <img v-if="selectedIssue.unit.cover_image" :src="`/storage/${selectedIssue.unit.cover_image}`"
                     class="w-28 h-20 object-cover rounded border" />
 
                   <div class="space-y-1 text-sm">
