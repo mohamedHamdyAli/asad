@@ -29,7 +29,7 @@ class Device extends Model
         Device::updateOrCreate([
             'device_id'         => $request['device_id'],
             'user_id'           => $user->id,
-            'type'              => $user->role,
+            'type'              => 'user',
         ], [
             'device_id'         => $request['device_id'],
             'device_type'       => $request['device_type'],
