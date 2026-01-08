@@ -62,7 +62,32 @@ class NotificationsCrudService
 
     public function getAllNotifications()
     {
-        return Notification::with('user:id,name,email')->latest()->get();
+        $notifications = Notification::with('user:id,name,email')
+            ->latest()
+            ->get()
+            ->groupBy(function ($notification) {
+                return $notification->title . '|' . $notification->body . '|' . $notification->created_at->format('Y-m-d H:i');
+            })
+            ->map(function ($group) {
+                $first = $group->first();
+
+                $users = $group->map(function ($notif) {
+                    return $notif->user;
+                })->filter()->values();
+
+                return [
+                    'id' => $first->id,
+                    'title' => $first->title,
+                    'body' => $first->body,
+                    'type' => $first->type,
+                    'created_at' => $first->created_at,
+                    'users' => $users,
+                    'users_count' => $users->count(),
+                ];
+            })
+            ->values();
+
+        return $notifications;
     }
 
 
@@ -79,7 +104,12 @@ class NotificationsCrudService
         $notification = Notification::find($id);
         if (!$notification) return false;
 
-        $notification->delete();
+        Notification::where('title', $notification->title)
+            ->where('body', $notification->body)
+            ->where('created_at', '>=', $notification->created_at->startOfMinute())
+            ->where('created_at', '<', $notification->created_at->copy()->addMinute())
+            ->delete();
+
         return true;
     }
 }
