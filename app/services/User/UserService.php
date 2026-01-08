@@ -131,6 +131,7 @@ public function login(array $data)
     public function UserProfile()
     {
         $user = userAuth();
+        dd($user);
         return successReturnData(new UserResource($user), 'profile fetched successfully');
     }
 
