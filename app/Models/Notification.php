@@ -31,7 +31,11 @@ class Notification extends Model
 
     public static function getUserNotification()
     {
-        return self::whereUserId(userAuth()->id)->get();
+        $user = userAuth();
+        if (!$user) {
+            return failReturnMsg('User not authenticated');
+        }
+        return self::whereUserId($user->id)->get();
     }
     public static function getvendorNotification()
     {

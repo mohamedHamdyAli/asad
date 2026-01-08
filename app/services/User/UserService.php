@@ -131,6 +131,9 @@ public function login(array $data)
     public function UserProfile()
     {
         $user = userAuth();
+        if (!$user) {
+            return failReturnMsg('User not authenticated');
+        }
         return successReturnData(new UserResource($user), 'profile fetched successfully');
     }
 
