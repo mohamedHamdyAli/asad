@@ -156,7 +156,7 @@ if (!function_exists('userAuth')) {
         if ($user != null && $user->role === 'user') {
             return $user;
         }
-        return failReturnMsg('this user is not authenticated or not a user role');
+        return null;
     }
 }
 if (!function_exists('guestAuth')) {
