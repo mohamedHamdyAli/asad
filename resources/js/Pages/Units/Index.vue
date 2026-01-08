@@ -59,23 +59,27 @@
                   {{ u.status || '—' }}
                 </span>
               </td>
-              <td class="px-4 py-2 space-x-2">
-                <!-- <button class="px-2 py-1.5 border rounded hover:bg-gray-50" @click="openDetails(u)">Details</button> -->
-           <a
-  :href="detailsPath(u.id)"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="px-2 py-1.5 border rounded hover:bg-gray-50"
->
-  Details
-</a>
+              <td class="px-4 py-2">
+                <div class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                  <a :href="detailsPath(u.id)" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center h-9 px-3 text-xs font-medium border rounded-md hover:bg-gray-50">
+                    Details
+                  </a>
 
+                  <button
+                    class="inline-flex items-center justify-center h-9 px-3 text-xs font-medium border rounded-md hover:bg-gray-50"
+                    @click="openEdit(u)">
+                    Edit
+                  </button>
 
-                <button class="px-2 py-1.5 border rounded hover:bg-gray-50" @click="openEdit(u)">Edit</button>
-                <button class="px-2 py-1.5 border rounded text-red-600 hover:bg-red-50" @click="remove(u)">
-                  Delete
-                </button>
+                  <button
+                    class="inline-flex items-center justify-center h-9 px-3 text-xs font-medium border rounded-md text-red-600 hover:bg-red-50"
+                    @click="remove(u)">
+                    Delete
+                  </button>
+                </div>
               </td>
+
             </tr>
 
             <tr v-if="!loading && !filtered.length">
@@ -198,28 +202,28 @@
               <!-- Navigation Buttons -->
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 pt-4 border-t">
                 <Link :href="docsPath(d.id)" class="nav-btn">
-                📄 Docs
+                  📄 Docs
                 </Link>
                 <Link :href="galleryPath(d.id)" class="nav-btn">
-                🖼️ Gallery
+                  🖼️ Gallery
                 </Link>
                 <Link :href="drawingPath(d.id)" class="nav-btn">
-                ✏️ Drawings
+                  ✏️ Drawings
                 </Link>
                 <Link :href="reportsPath(d.id)" class="nav-btn">
-                📊 Reports
+                  📊 Reports
                 </Link>
                 <Link :href="phasesPath(d.id)" class="nav-btn">
-                🧩 Phases
+                  🧩 Phases
                 </Link>
                 <Link :href="timelinePath(d.id)" class="nav-btn">
-                🕒 Timeline
+                  🕒 Timeline
                 </Link>
                 <Link :href="unitContractorsPath(d.id)" class="nav-btn">
-                👷 Assignments
+                  👷 Assignments
                 </Link>
                 <Link :href="unitPaymentsPath(d.id)" class="nav-btn">
-                💰 Payments & Installment
+                  💰 Payments & Installment
                 </Link>
               </div>
 
@@ -458,6 +462,15 @@ const filtered = computed(() => {
   if (filters.status) r = r.filter(x => x.status === filters.status)
   if (filters.from) r = r.filter(x => !x.start_date || x.start_date >= filters.from)
   if (filters.to) r = r.filter(x => !x.end_date || x.end_date <= filters.to)
+
+  // order sorting
+
+  r.sort((a, b) => {
+    const da = Date.parse(a.created_at || a.createdAt || '')
+    const db = Date.parse(b.created_at || b.createdAt || '')
+    if (Number.isNaN(da) || Number.isNaN(db)) return (b.id || 0) - (a.id || 0)
+    return db - da
+  })
   return r
 })
 
