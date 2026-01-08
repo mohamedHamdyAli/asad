@@ -55,8 +55,12 @@ export function buildNotificationPayload(notification = {}) {
     body: notification.body,
   };
 
-  // If user_id is provided, send to specific user; otherwise, send to all
-  if (notification.user_id) {
+  // If user_ids array is provided, send to specific users
+  if (notification.user_ids && Array.isArray(notification.user_ids) && notification.user_ids.length > 0) {
+    payload.user_ids = notification.user_ids;
+  }
+  // Legacy support: if user_id is provided, send to specific user
+  else if (notification.user_id) {
     payload.user_id = notification.user_id;
   }
 

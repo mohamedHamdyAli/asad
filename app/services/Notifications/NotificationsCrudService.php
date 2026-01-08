@@ -17,6 +17,20 @@ class NotificationsCrudService
             $title = $data['title'];
             $body  = $data['body'];
 
+            if (!empty($data['user_ids']) && is_array($data['user_ids'])) {
+                foreach ($data['user_ids'] as $userId) {
+                    $user = User::find($userId);
+                    if ($user) {
+                        $this->appNotification([
+                            'title'   => $title,
+                            'message' => $body,
+                            'user'    => $user,
+                        ]);
+                    }
+                }
+                return true;
+            }
+
             if (!empty($data['user_id'])) {
                 $user = User::find($data['user_id']);
                 if (!$user) {
