@@ -39,6 +39,7 @@ trait NotificationTrait
             'user_id' => $user->id,
             'title'   => $title,
             'body'    => $body,
+            'type'    => 'all', 
         ];
 
 
@@ -48,7 +49,12 @@ trait NotificationTrait
         }
 
         $notification = Notification::create($arr);
-        $this->devicesFcm($notification, $data);
+
+        try {
+            $this->devicesFcm($notification, $data);
+        } catch (\Exception $e) {
+            \Log::error('FCM Error: ' . $e->getMessage());
+        }
     }
 
     public function AppDuplicatedNotification($data)
