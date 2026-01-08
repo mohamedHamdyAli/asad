@@ -38,7 +38,12 @@ class NotificationsController extends Controller
 
     public function getUserNotification()
     {
-        $data = NotificationResource::collection(Notification::getUserNotification());
+
+        $user = userAuth();
+        if (!$user) {
+            return failReturnMsg('User not authenticated');
+        }
+        $data = NotificationResource::collection(Notification::getUserNotification($user->id));
         return successReturnData($data, ('User notifications retrieved successfully'));
     }
 }
