@@ -24,27 +24,28 @@ function unwrapOne(payload) {
 function toUrl(path) {
   return path ? `/storage/${path}` : "";
 }
-function dateOnly(s) {
+function datetimeLocal(s) {
   if (!s) return "";
-  // handle "YYYY-MM-DD" or "YYYY-MM-DDTHH:mm:ss"
-  return String(s).slice(0, 10);
+  // "YYYY-MM-DD HH:mm:ss" or ISO => "YYYY-MM-DDTHH:mm"
+  return String(s).replace(" ", "T").slice(0, 16);
 }
+
 function normalize(u = {}) {
   const name = extractLang(u.name);
   const description = extractLang(u.description);
   const gallery = Array.isArray(u.home_unit_gallery)
     ? u.home_unit_gallery.map(g => ({
-        id: g.id ?? undefined,
-        image: g.image,
-        image_url: toUrl(g.image),
-      }))
+      id: g.id ?? undefined,
+      image: g.image,
+      image_url: toUrl(g.image),
+    }))
     : Array.isArray(u.gallery)
-    ? u.gallery.map(g => ({
+      ? u.gallery.map(g => ({
         id: g.id ?? undefined,
         image: g.image,
         image_url: toUrl(g.image),
       }))
-    : [];
+      : [];
 
   return {
     ...u,
@@ -55,8 +56,11 @@ function normalize(u = {}) {
     location: u.location ?? "",
     lat: u.lat ?? null,
     long: u.long ?? null,
-    start_date: dateOnly(u.start_date),
-    end_date: dateOnly(u.end_date),
+    start_date: datetimeLocal(u.start_date),
+    end_date: datetimeLocal(u.end_date),
+    extension_dates: Array.isArray(u.extension_dates)
+      ? u.extension_dates.map(datetimeLocal)
+      : [],
     status: u.status ?? "",
     user_id: u.user_id ?? null,
     vendor_id: u.vendor_id ?? null,
@@ -100,13 +104,13 @@ export const UnitsApi = {
     return data;
   },
   deleteCover: async (unitId) => {
-  const { data } = await axios.delete(`/api/units/${unitId}/cover`);
-  return data;
-},
-deleteGalleryImage: async (unitId, imageId) => {
-  const { data } = await axios.delete(`/api/units/${unitId}/gallery/${imageId}`);
-  return data;
-},
+    const { data } = await axios.delete(`/api/units/${unitId}/cover`);
+    return data;
+  },
+  deleteGalleryImage: async (unitId, imageId) => {
+    const { data } = await axios.delete(`/api/units/${unitId}/gallery/${imageId}`);
+    return data;
+  },
 
 };
 
@@ -125,6 +129,7 @@ export function buildUnitCreateFD({
   vendor_id,
   // optional on create
   status,
+  extension_dates = [],
   ...rest
 }) {
   const fd = new FormData();
@@ -139,6 +144,11 @@ export function buildUnitCreateFD({
   fd.append("long", String(long ?? ""));
   fd.append("start_date", start_date ?? "");
   fd.append("end_date", end_date ?? "");
+  (extension_dates || [])
+  .filter(v => v)
+  .forEach((v, i) => {
+    fd.append(`extension_dates[${i}]`, v);
+  });
 
   if (cover_image) fd.append("cover_image", cover_image);
 
@@ -166,6 +176,7 @@ export function buildUnitUpdateFD(partial = {}) {
     long,
     start_date,
     end_date,
+    extension_dates,
     cover_image,
     gallery,
     user_id,
@@ -191,6 +202,16 @@ export function buildUnitUpdateFD(partial = {}) {
   if (long !== undefined) fd.append("long", String(long ?? ""));
   if (start_date !== undefined) fd.append("start_date", start_date ?? "");
   if (end_date !== undefined) fd.append("end_date", end_date ?? "");
+  if (extension_dates !== undefined) {
+  if (Array.isArray(extension_dates)) {
+    extension_dates
+      .filter(v => v)
+      .forEach((v, i) => fd.append(`extension_dates[${i}]`, v))
+  } else {
+    fd.append("extension_dates[0]", String(extension_dates))
+  }
+}
+
   if (cover_image) fd.append("cover_image", cover_image);
 
   if (Array.isArray(gallery) && gallery.length) {

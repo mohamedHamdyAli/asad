@@ -21,6 +21,7 @@ class Unit extends Model
         'user_id',
         'vendor_id',
         'status',
+        'extension_dates',
     ];
 
     protected function asJson($value)

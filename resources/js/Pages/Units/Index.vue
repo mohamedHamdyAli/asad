@@ -310,15 +310,46 @@
 
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Start Date*</label>
-                    <input :class="inputClass('start_date')" v-model="form.start_date" type="date"
+                    <input :class="inputClass('start_date')" v-model="form.start_date" type="datetime-local"
                       :required="!editingId" />
                     <p v-if="err('start_date')" class="mt-1 text-xs text-red-600">{{ err('start_date') }}</p>
                   </div>
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">End Date*</label>
-                    <input :class="inputClass('end_date')" v-model="form.end_date" type="date" :required="!editingId" />
+                    <input :class="inputClass('end_date')" v-model="form.end_date" type="datetime-local"
+                      :required="!editingId" />
                     <p v-if="err('end_date')" class="mt-1 text-xs text-red-600">{{ err('end_date') }}</p>
                   </div>
+                  <!-- Extension Dates -->
+                  <div class="md:col-span-2">
+                    <div class="flex items-center justify-between mb-2">
+                      <label class="block text-xs text-gray-500">
+                        Extension Dates (optional)
+                      </label>
+
+                      <button type="button" class="text-xs px-2 py-1 border rounded hover:bg-gray-50"
+                        @click="form.extension_dates.push('')">
+                        + Add extension
+                      </button>
+                    </div>
+
+                    <div v-if="form.extension_dates?.length > 0" class="space-y-2">
+                      <div v-for="(ex, i) in form.extension_dates" :key="i" class="flex items-center gap-2">
+                        <input class="form-input" type="datetime-local" v-model="form.extension_dates[i]"
+                          placeholder="YYYY-MM-DDTHH:mm" />
+
+                        <button type="button" class="px-2 py-2 border rounded text-red-600 hover:bg-red-50"
+                          @click="form.extension_dates.splice(i, 1)" title="Remove">
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+
+                    <p v-if="err('extension_dates')" class="mt-1 text-xs text-red-600">
+                      {{ err('extension_dates') }}
+                    </p>
+                  </div>
+
                 </div>
 
                 <!-- associations + status -->
@@ -326,7 +357,7 @@
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">User *</label>
                     <select :class="inputClass('user_id')" v-model.number="form.user_id" :required="!editingId">
-                      <option value="" disabled>Select a user</option>
+                      <option value="" disabled>Select an Owner</option>
                       <option v-for="u in userOptions" :key="u.id" :value="u.id">
                         {{ u.name }} — {{ u.email }}
                       </option>
@@ -537,6 +568,7 @@ const form = ref({
   long: null,
   start_date: '',
   end_date: '',
+  extension_dates: [],
   user_id: null,
   vendor_id: null,
   status: 'under_construction',
@@ -563,32 +595,38 @@ const inputClass = (field) => ['form-input', hasErr(field) ? 'border-red-400 foc
 
 
 function docsPath(id) {
-  return `/units-management/${id}/docs`
+  return `/projects-management/${id}/docs`
 }
 function galleryPath(id) {
-  return `/units-management/${id}/gallery`
+  return `/projects-management/${id}/gallery`
 }
 function drawingPath(id) {
-  return `/units-management/${id}/drawing`
+  return `/projects-management/${id}/drawing`
 }
 function reportsPath(id) {
-  return `/units-management/${id}/reports`
+  return `/projects-management/${id}/reports`
 }
 function phasesPath(id) {
-  return `/units-management/${id}/phases`
+  return `/projects-management/${id}/phases`
 }
 function timelinePath(id) {
-  return `/units-management/${id}/timeline`
+  return `/projects-management/${id}/timeline`
 }
 function unitContractorsPath(id) {
-  return `/units-management/${id}/contractors`
+  return `/projects-management/${id}/contractors`
 }
 function unitPaymentsPath(id) {
-  return `/units-management/${id}/payments`
+  return `/projects-management/${id}/payments`
 }
 
 function detailsPath(id) {
-  return `/units-management/${id}/details`
+  return `/projects-management/${id}/details`
+}
+
+function toDatetimeLocal(v) {
+  if (!v) return ''
+  const s = String(v).replace(' ', 'T')
+  return s.slice(0, 16)
 }
 
 
@@ -648,8 +686,9 @@ async function openEdit(u) {
   form.value.location = data.location || ''
   form.value.lat = data.lat
   form.value.long = data.long
-  form.value.start_date = data.start_date || ''
-  form.value.end_date = data.end_date || ''
+  form.value.start_date = toDatetimeLocal(data.start_date)
+  form.value.end_date = toDatetimeLocal(data.end_date)
+  form.value.extension_dates = Array.isArray(data.extension_dates) ? data.extension_dates.map(toDatetimeLocal) : []
   form.value.user_id = data.user_id ?? null
   form.value.vendor_id = data.vendor_id ?? null
   form.value.status = data.status || 'under_construction'
@@ -668,6 +707,7 @@ function resetForm() {
     long: null,
     start_date: '',
     end_date: '',
+    extension_dates: [],
     user_id: null,
     vendor_id: null,
     status: 'under_construction',

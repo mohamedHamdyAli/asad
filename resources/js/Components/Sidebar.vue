@@ -46,7 +46,7 @@
                     <div v-show="open.management" class="pb-2">
                         <NavItem icon="mdi:responsive" label="Project Managers (PM)" :to="route('pm-management')"
                             :href="route('pm-management')" class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Units management" :to="route('unit-management')"
+                        <NavItem icon="mdi:responsive" label="Projects management" :to="route('unit-management')"
                             :href="route('unit-management')" class="border-b border-gray-300/50" />
                         <NavItem icon="mdi:responsive" label="Contractors management"
                             :to="route('contractors-management')" :href="route('contractors-management')"
