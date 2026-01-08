@@ -39,7 +39,7 @@ class NotificationsController extends Controller
     public function getUserNotification()
     {
 
-        $user = userAuth();
+        $user = userOrGuestAuth();
         if (!$user) {
             return failReturnMsg('User not authenticated');
         }
