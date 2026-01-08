@@ -52,7 +52,7 @@ trait NotificationTrait
 
         try {
             $this->devicesFcm($notification, $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Log::error('FCM Error: ' . $e->getMessage());
         }
     }
