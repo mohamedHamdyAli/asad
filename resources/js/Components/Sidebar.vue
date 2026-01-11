@@ -106,8 +106,10 @@
                             :href="route('language-management')" class="border-b border-gray-300/50" />
                         <NavItem icon="mdi:world" label="Contact Us Management" :to="route('contactus-management')"
                             :href="route('contactus-management')"  class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:bell-outline" label="Notifications Management"
-                            :to="route('notifications-management')" :href="route('notifications-management')" />
+                        <NavItem icon="mdi:bell-outline" label="Notifications Management" class="border-b border-gray-300/50"
+                            :to="route('notifications-management')" :href="route('notifications-management')" /> 
+                            <NavItem icon="mdi:bell-outline" label="Users Management"
+                            :to="route('users-management')" :href="route('users-management')" />
                     </div>
                 </div>
 
