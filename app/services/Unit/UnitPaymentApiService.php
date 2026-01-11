@@ -13,7 +13,7 @@ class UnitPaymentApiService
 
     public function allInstallments($request)
     {
-        $statuses = ['partial', 'overdue', 'unpaid'];
+        $statuses = ['partial', 'overdue', 'unpaid', 'pending', 'paid'];
 
         $installments = UnitPayment::where('unit_id', $request['unit_id'])->with([
             'installments' => function ($q) use ($statuses) {
