@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
+
 
 
 class UserRequest extends FormRequest
@@ -14,7 +16,6 @@ class UserRequest extends FormRequest
     {
 
         $request->merge([
-            'is_enabled' => 1,
             'role' => 'user',
         ]);
     }
@@ -23,34 +24,44 @@ class UserRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
-    {
-        $rules = (Route::is('users.store')) ? [
+  public function rules(): array
+{
+    $userId = $this->route('id');
+
+    if (Route::is('users.store')) {
+        return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|unique:users,phone',
             'password' => 'required|string|min:6|regex:/^(?=.*\d).+$/',
             'country_code' => 'required|string|max:10',
             'country_name' => 'required|string|max:255',
-            'role' => 'required|string|in:user',
+            'gender' => 'required|in:male,female,other',
             'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'gender' => 'required|string|in:male,female,other',
             'is_enabled' => 'required|boolean',
-        ] : [
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:users,email',
-            'phone' => 'nullable|string|unique:users,phone',
-            'password' => 'nullable|string|min:6|regex:/^(?=.*\d).+$/',
-            'country_code' => 'nullable|string|max:10',
-            'country_name' => 'nullable|string|max:255',
-            'role' => 'nullable|string|in:user',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'gender' => 'nullable|string|in:male,female,other',
-            'is_enabled' => 'nullable|boolean',
         ];
-
-        return $rules;
     }
+
+    return [
+        'name' => 'nullable|string|max:255',
+        'email' => [
+            'nullable',
+            'email',
+            Rule::unique('users', 'email')->ignore($userId),
+        ],
+        'phone' => [
+            'nullable',
+            Rule::unique('users', 'phone')->ignore($userId),
+        ],
+        'password' => 'nullable|string|min:6|regex:/^(?=.*\d).+$/',
+        'country_code' => 'nullable|string|max:10',
+        'country_name' => 'nullable|string|max:255',
+        'gender' => 'nullable|in:male,female,other',
+        'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'is_enabled' => 'nullable|boolean',
+    ];
+}
+
 
     protected function failedValidation(Validator $validator)
     {
