@@ -4,7 +4,19 @@ use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+/*
+|--------------------------------------------------------------------------
+| PUBLIC PAGES
+|--------------------------------------------------------------------------
+*/
+Route::get('/', fn() => view('home.home'));
+Route::get('/about', fn() => view('about.about'));
+Route::get('/contact', fn() => view('contact.contact'));
+Route::get('/project', fn() => view('portfolio.portfolio'));
+Route::get('/project-details/{id}', fn($id) => view('portfolio.project-details.project-details', ['id' => $id]));
+Route::get('/our-services', fn() => view('services.services'));
+Route::get('/qhse-policy', fn() => view('qhse_policy.qhsePolicy'));
+Route::get('lang/{locale}', [LanguageController::class, 'setLanguage']);
 /*
 |--------------------------------------------------------------------------
 | AUTH PAGES (guest only)
