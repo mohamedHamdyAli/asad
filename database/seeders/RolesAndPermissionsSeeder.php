@@ -7,13 +7,20 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // Clear cached permissions
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Permissions
+        |--------------------------------------------------------------------------
+        */
         $permissions = [
             // Dashboard
             'view dashboard',
@@ -24,7 +31,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'edit users',
             'delete users',
 
-            // Roles
+            // Roles & permissions
             'view roles',
             'create roles',
             'edit roles',
@@ -36,46 +43,81 @@ class RolesAndPermissionsSeeder extends Seeder
             'edit languages',
             'delete languages',
 
+            // Project managers
             'manage project managers',
+
+            // Reports
             'view reports',
         ];
 
-        foreach ($permissions as $perm) {
-            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web',
+            ]);
         }
 
-   
+
         $roles = [
-            'super-admin' => Permission::all()->pluck('name')->toArray(), // all permissions
-            'admin'       => [
+            'admin' => [
                 'view dashboard',
+
                 'view users',
                 'create users',
                 'edit users',
+                'delete users',
+
                 'view roles',
+                'create roles',
+                'edit roles',
+                'delete roles',
+
                 'view languages',
+                'create languages',
                 'edit languages',
+                'delete languages',
+
+                'manage project managers',
+                'view reports',
             ],
-            'viewer'      => ['view dashboard', 'view users', 'view roles'],
+
+            'user' => [
+                'view dashboard',
+                'view users',
+                'view languages',
+                'view reports',
+            ],
+
+            'vendor' => [
+                'view dashboard',
+            ],
+
+            'guest' => [
+                'view dashboard',
+            ],
         ];
 
-        foreach ($roles as $roleName => $perms) {
-            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
-            $role->syncPermissions($perms);
+        foreach ($roles as $roleName => $permissions) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+            ]);
+
+            $role->syncPermissions($permissions);
         }
 
-    
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@dashboard.com'],
             [
-                'name' => 'Super Admin',
+                'name' => 'Admin',
                 'password' => Hash::make('password'),
             ]
         );
 
-        $admin->assignRole('super-admin');
+        $admin->syncRoles(['admin']);
 
-        $this->command->info(' Roles, permissions, and admin user seeded successfully!');
-        $this->command->info('   Login with: admin@example.com / password');
+        $this->command->info('Roles & permissions seeded successfully');
+        $this->command->info('Admin login: admin@dashboard.com / password');
     }
 }
