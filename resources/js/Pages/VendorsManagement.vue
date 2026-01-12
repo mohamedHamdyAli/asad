@@ -210,7 +210,18 @@ const schema = yup.object({
   phone: yup.string().required(),
   gender: yup.string().required(),
   country_name: yup.string().required(),
-  password: yup.string().min(8).nullable(),
+ password: yup
+  .string()
+  .transform((value) => (value === "" ? null : value))
+  .nullable()
+  .when([], {
+    is: () => !editingId.value,
+    then: (schema) =>
+      schema.required("Password is required").min(8, "Minimum 8 characters"),
+    otherwise: (schema) =>
+      schema.notRequired().min(8, "Minimum 8 characters"),
+  }),
+
   is_enabled: yup.boolean(),
 
   profile_image: yup

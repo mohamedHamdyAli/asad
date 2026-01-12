@@ -149,14 +149,15 @@
 
 
               <!-- Image -->
-              <div class="md:col-span-2">
-                <input type="file" accept="image/*" @change="(e) => {
-                  imageFile = e.target.files?.[0] || null
-                  setFieldValue('image', imageFile)
-                }" />
+              <div class="md:col-span-2 space-y-2">
+
+                <!-- Existing / New Preview -->
+                <img v-if="imagePreview" :src="imagePreview" class="w-32 h-24 object-cover rounded border" />
+
+                <input type="file" accept="image/*" @change="(e) => onFileChange(e, setFieldValue)" />
+
                 <ErrorMessage v-if="submitCount > 0" name="image" class="error" />
               </div>
-
             </div>
 
             <!-- Actions -->
@@ -251,6 +252,9 @@ const schema = yup.object({
 
 })
 
+const imagePreview = ref(null)
+
+
 /* LOAD */
 async function load() {
   rows.value = await ConsultantsApi.list()
@@ -292,6 +296,7 @@ function openCreate() {
   }
 
   imageFile.value = null
+  imagePreview.value = null
   formKey.value++
   modalOpen.value = true
 }
@@ -313,6 +318,7 @@ function openEdit(c) {
   }
 
   imageFile.value = null
+  imagePreview.value = c.image_url || null
   formKey.value++
   modalOpen.value = true
 }
@@ -326,6 +332,17 @@ function onFile(e) {
   imageFile.value = e.target.files?.[0] || null
 }
 
+function onFileChange(e, setFieldValue) {
+  const file = e.target.files?.[0] || null
+  imageFile.value = file
+  setFieldValue('image', file)
+
+  if (file) {
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
+
+
 /* SAVE */
 async function submit(values) {
   const payload = {
@@ -338,17 +355,17 @@ async function submit(values) {
     representative_name: values.representative_name || { en: '', ar: '' },
     image: imageFile.value,
   }
-try {
-  if (editing.value) {
-    await ConsultantsApi.update(currentId.value, buildConsultantsUpdateFD(payload))
-  } else {
-    await ConsultantsApi.create(buildConsultantsCreateFD([payload]))
-  }
+  try {
+    if (editing.value) {
+      await ConsultantsApi.update(currentId.value, buildConsultantsUpdateFD(payload))
+    } else {
+      await ConsultantsApi.create(buildConsultantsCreateFD([payload]))
+    }
     closeModal()
-  load()
-} catch (e) {
-  show(e)
-}
+    load()
+  } catch (e) {
+    show(e)
+  }
 
 }
 
