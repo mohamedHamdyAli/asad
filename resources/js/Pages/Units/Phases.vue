@@ -189,7 +189,7 @@ const creating = ref(false)
 const createErr = ref('')
 
 
-async function createOrUpsertValidated(values) {
+async function createOrUpsertValidated(values, { resetForm }) {
   creating.value = true
   createErr.value = ""
 
@@ -197,6 +197,13 @@ async function createOrUpsertValidated(values) {
     const payload = buildCreatePayload(props.unitId, [values])
     await UnitPhasesApi.create(payload)
     await fetchList()
+
+    resetForm({
+      values: {
+        status: '',
+        description: { en: '', ar: '' },
+      },
+    })
 
     // reset
     newPhase.value = { status: "", description: { en: "", ar: "" } }

@@ -66,14 +66,14 @@ const props = defineProps({
 })
 
 const hrefs = {
-  docs: id => `/units-management/${id}/docs`,
-  gallery: id => `/units-management/${id}/gallery`,
-  drawing: id => `/units-management/${id}/drawing`,
-  reports: id => `/units-management/${id}/reports`,
-  phases: id => `/units-management/${id}/phases`,
-  timeline: id => `/units-management/${id}/timeline`,
-  assignments: id => `/units-management/${id}/contractors`,
-  payments: id => `/units-management/${id}/payments`
+  docs: id => `/projects-management/${id}/docs`,
+  gallery: id => `/projects-management/${id}/gallery`,
+  drawing: id => `/projects-management/${id}/drawing`,
+  reports: id => `/projects-management/${id}/reports`,
+  phases: id => `/projects-management/${id}/phases`,
+  timeline: id => `/projects-management/${id}/timeline`,
+  assignments: id => `/projects-management/${id}/contractors`,
+  payments: id => `/projects-management/${id}/payments`
 }
 
 const items = [

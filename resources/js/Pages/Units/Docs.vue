@@ -44,7 +44,7 @@
 
           <!-- Files -->
           <div class="mt-4">
-            <input type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
+            <input ref="filesInputRef" type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
             <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
 
             <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
@@ -198,6 +198,7 @@ const createSchema = yup.object({
     ),
 })
 
+
 const editSchema = yup.object({
   folder_id: yup
     .number()
@@ -230,6 +231,10 @@ async function fetchFolders() {
     folderLoading.value = false
   }
 }
+
+const filesInputRef = ref(null)
+
+
 
 function onFolderCreated(f) {
   folders.value.unshift(f)
@@ -284,7 +289,7 @@ function getFileName(file) {
   }
 }
 
-async function createBatchValidated(values) {
+async function createBatchValidated(values, { resetForm }) {
   creating.value = true
   createErr.value = ""
 
@@ -299,9 +304,20 @@ async function createBatchValidated(values) {
     await UnitDocsApi.create(fd)
     await fetchList()
 
+    resetForm({
+      values: {
+        folder_id: null,
+        title: { en: "", ar: "" },
+        files: [],
+      },
+    })
+
     // reset
+    createForm.value.folder_id = null
     newFiles.value = []
     createForm.value.title = { en: "", ar: "" }
+
+    if (filesInputRef.value) filesInputRef.value.value = null
 
   } catch (e) {
     console.error(e)

@@ -34,7 +34,8 @@
 
           <!-- Files -->
           <div class="mt-4">
-            <input type="file" multiple :accept="accepts" @change="(e) => onNewFilesValidated(e, setFieldValue)" />
+            <input ref="filesInputRef" type="file" multiple :accept="accepts"
+              @change="(e) => onNewFilesValidated(e, setFieldValue)" />
             <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
 
             <div v-if="newFiles.length" class="mt-3 text-sm text-gray-600">
@@ -149,7 +150,7 @@ const editSchema = yup.object({
 })
 
 const editErrors = reactive({})
-
+const filesInputRef = ref(null)
 
 const props = defineProps({
   unitId: { type: [Number, String], required: true },
@@ -180,7 +181,7 @@ function onNewFilesValidated(e, setFieldValue) {
 }
 
 
-async function createBatchValidated(values) {
+async function createBatchValidated(values, { resetForm }) {
   creating.value = true
   createErr.value = ""
 
@@ -194,9 +195,20 @@ async function createBatchValidated(values) {
     await UnitReportsApi.create(fd)
     await fetchList()
 
+    resetForm({
+      values: {
+        title: { en: "", ar: "" },
+        files: [],
+      },
+    })
+
     // reset
     newFiles.value = []
     createForm.value.title = { en: "", ar: "" }
+
+    if (filesInputRef.value) {
+      filesInputRef.value.value = null
+    }
 
   } catch (e) {
     console.error(e)
