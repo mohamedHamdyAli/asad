@@ -69,10 +69,9 @@
 
               <div class="Lang-image">
                 <img
-                  :src="lang.icon_url || `/images/flags/${lang.code}.png`"
+                  :src="lang.icon_url"
                   :alt="lang.name"
                   class="w-8 h-6 object-cover"
-                  @error="useRandomInternetFlag"
                 />
               </div>
 
@@ -244,7 +243,10 @@ function validate() {
 
 async function fetchLanguages() {
   const { data } = await languagesApi.list()
-  languages.value = data.data || []
+  languages.value = (data.data || []).map(l => ({
+    ...l,
+    icon_url: l.icon_url || null,
+  }))
 }
 onMounted(fetchLanguages)
 
