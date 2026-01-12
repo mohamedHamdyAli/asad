@@ -62,7 +62,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true }
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 const tabs = ['Contractors', 'Consultants']
 const activeTab = ref('Contractors')

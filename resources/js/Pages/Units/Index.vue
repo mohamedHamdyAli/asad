@@ -28,7 +28,7 @@
         <table class="min-w-full text-sm">
           <thead class="bg-gray-50 text-gray-600">
             <tr>
-              <th class="px-4 py-2 text-left">ID</th>
+              <th class="px-4 py-2 text-left"></th>
               <th class="px-4 py-2 text-left">Name (EN / AR)</th>
               <th class="px-4 py-2 text-left">Location</th>
               <th class="px-4 py-2 text-left">Period</th>
@@ -42,7 +42,7 @@
             </tr>
 
             <tr v-for="u in paginated" :key="u.id" class="border-t">
-              <td class="px-4 py-2">#{{ u.id }}</td>
+              <td class="px-4 py-2"></td>
               <td class="px-4 py-2">
                 <div class="font-medium text-gray-900">{{ u.name_en || '—' }}</div>
                 <div class="text-gray-500" dir="rtl">{{ u.name_ar }}</div>
@@ -355,7 +355,7 @@
                 <!-- associations + status -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label class="block text-xs text-gray-500 mb-1">User *</label>
+                    <label class="block text-xs text-gray-500 mb-1">Owner *</label>
                     <select :class="inputClass('user_id')" v-model.number="form.user_id" :required="!editingId">
                       <option value="" disabled>Select an Owner</option>
                       <option v-for="u in userOptions" :key="u.id" :value="u.id">

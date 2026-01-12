@@ -199,7 +199,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 const accepts =
   '.pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -222,7 +222,7 @@ function onNewFilesValidated(e, setFieldValue) {
 }
 
 
-async function createBatchValidated(values) {
+async function createBatchValidated(values , { resetForm }) {
   creating.value = true
   createErr.value = ""
 
@@ -236,9 +236,17 @@ async function createBatchValidated(values) {
     await UnitTimelineApi.create(fd)
     await fetchList()
 
+    resetForm({
+      values: {
+        title: { en: '', ar: '' },
+        files: [],
+      },
+    })
     // reset
     newFiles.value = []
     createForm.value.title = { en: "", ar: "" }
+
+    if (filesInputRef.value) filesInputRef.value.value = null
 
   } catch (e) {
     console.error(e)

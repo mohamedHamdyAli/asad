@@ -54,7 +54,7 @@
 
 
           <div class="mt-4">
-            <input type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
+            <input ref="filesInputRef" type="file" multiple @change="(e) => onNewFilesValidated(e, setFieldValue)" />
             <ErrorMessage v-if="submitCount > 0" name="files" class="error" />
             <div v-if="newPreviews.length" class="mt-3 flex flex-wrap gap-2">
               <a v-for="(src, i) in newPreviews" :key="i" :href="src" target="_blank" rel="noopener">
@@ -136,7 +136,7 @@
 
               <!-- Folder -->
               <FolderPicker type="drawing" :label="'Folder *'" v-model="edit[g.id].folder_id" :options="folders"
-                @created="folders.unshift($event)" @refresh="fetchFolders" />
+                :unitId="props.unitId" @created="folders.unshift($event)" @refresh="fetchFolders" />
               <p v-if="editErrors?.[g.id]?.folder_id" class="error">
                 {{ editErrors[g.id].folder_id }}
               </p>
@@ -236,6 +236,7 @@ const editSchema = yup.object({
 
 
 const editErrors = reactive({})
+const filesInputRef = ref(null)
 
 const folders = ref([])
 const folderLoading = ref(false)
@@ -252,7 +253,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 /* Create (batch) */
 const createForm = ref({
@@ -303,7 +304,7 @@ function getFileName(file) {
 }
 
 
-async function createBatchValidated(values) {
+async function createBatchValidated(values, { resetForm }) {
   creating.value = true
   createErr.value = ''
   createForm.value.files = []
@@ -319,10 +320,23 @@ async function createBatchValidated(values) {
     await UnitDrawingsApi.create(fd)
     await fetchList()
 
+    resetForm({
+      values: {
+        folder_id: null,
+        date: '',
+        title: { en: '', ar: '' },
+        files: [],
+      },
+    })
+
     // reset (unchanged logic)
+    createForm.value.folder_id = null
     newFiles.value = []
     newPreviews.value = []
     createForm.value.title = { en: '', ar: '' }
+
+    if (filesInputRef.value) filesInputRef.value.value = null
+
 
   } catch (e) {
     console.error(e)
