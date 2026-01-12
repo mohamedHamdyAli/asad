@@ -23,6 +23,7 @@ class UnitDetailsResource extends JsonResource
         'description' => getLocalizedValue($this, 'description'),
         'cover_image' => getImageassetUrl($this->cover_image),
         "location" => $this->location,
+        "address" => $this->address,
         "lat" => $this->lat,
         "long" => $this->long,
         "start_date" => Carbon::parse($this->start_date)->format('d M Y, h:i A'),
