@@ -13,7 +13,7 @@ class UnitPhase extends Model
 
     public const STATUS_CODE = [
         'site_handover' => 1,
-        'sekelton'     => 2,
+        'skeleton'      => 2,
         'finishing'     => 3,
         'handover'      => 4,
     ];
