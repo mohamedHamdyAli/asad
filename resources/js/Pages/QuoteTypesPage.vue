@@ -183,14 +183,28 @@ function openCreate(type) {
     modal.value = { open: true, mode: "add", type, item: null }
 }
 
-function openEdit(item) {
-    modal.value = {
-        open: true,
-        mode: "edit",
-        type: item.type,
-        item,
-    }
+async function openEdit(item) {
+  modal.value = {
+    open: true,
+    mode: "edit",
+    type: item.type,
+    item: null,
+  }
+
+  try {
+    const data =
+      item.type === "building"
+        ? await TypeOfBuildingApi.show(item.id)
+        : await TypeOfPriceApi.show(item.id)
+
+    modal.value.item = data
+  } catch (e) {
+    console.error(e)
+    alert("Failed to load item data")
+    modal.value.open = false
+  }
 }
+
 
 function deleteOne(item) {
     if (!confirm("Delete this item?")) return
@@ -314,6 +328,14 @@ function safeTitle(data) {
 watch([search, filterType, priceFilter], () => {
   page.value = 1
 })
+
+const allSelected = computed(() => {
+  return (
+    selected.value.length > 0 &&
+    selected.value.length === merged.value.length
+  )
+})
+
 
 
 onMounted(fetchAll)

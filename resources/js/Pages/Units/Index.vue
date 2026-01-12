@@ -388,24 +388,6 @@
                 <!-- files -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs text-gray-500 mb-1">
-                      Cover Image* {{ editingId ? '(optional to replace)' : '' }}
-                    </label>
-                    <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover"
-                      :required="!editingId" />
-                    <p v-if="err('cover_image')" class="mt-1 text-xs text-red-600">{{ err('cover_image') }}</p>
-
-                    <div v-if="coverPreview" class="mt-2 relative inline-block">
-                      <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
-                      <button type="button"
-                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600"
-                        @click="removeCover">
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
                     <label class="block text-xs text-gray-500 mb-1">Gallery* (multiple on create)</label>
                     <input :class="inputClass('gallery')" type="file" accept="image/*" multiple @change="onGallery"
                       :required="!editingId" />
@@ -435,6 +417,25 @@
                       </div>
                     </div>
                   </div>
+
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">
+                      Cover Image* {{ editingId ? '(optional to replace)' : '' }}
+                    </label>
+                    <input :class="inputClass('cover_image')" type="file" accept="image/*" @change="onCover"
+                      :required="!editingId" />
+                    <p v-if="err('cover_image')" class="mt-1 text-xs text-red-600">{{ err('cover_image') }}</p>
+
+                    <div v-if="coverPreview" class="mt-2 relative inline-block">
+                      <img :src="coverPreview" class="w-40 h-28 object-cover rounded border" />
+                      <button type="button"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-600"
+                        @click="removeCover">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
 
                 <!-- top alert -->
@@ -653,8 +654,8 @@ function validate() {
     if (!need(f.start_date)) setFieldError('start_date', 'Start date is required')
     if (!need(f.end_date)) setFieldError('end_date', 'End date is required')
     if (need(f.start_date) && need(f.end_date) && new Date(f.end_date) < new Date(f.start_date)) setFieldError('end_date', 'End date must be after or equal to start date')
-    if (!need(f.user_id)) setFieldError('user_id', 'User is required')
-    if (!need(f.vendor_id)) setFieldError('vendor_id', 'Vendor is required')
+    if (!need(f.user_id)) setFieldError('user_id', 'Owner is required')
+    if (!need(f.vendor_id)) setFieldError('vendor_id', 'Project Manager is required')
     if (!f.cover_image) setFieldError('cover_image', 'Cover image is required')
     if (!Array.isArray(f.gallery) || f.gallery.length === 0) setFieldError('gallery', 'Add at least one gallery image')
   } else {
@@ -730,10 +731,19 @@ function onCover(e) {
   coverPreview.value = f ? URL.createObjectURL(f) : coverPreview.value
 }
 function onGallery(e) {
-  const files = Array.from(e.target.files || [])
-  form.value.gallery = files
-  galleryPreviews.value = files.map(f => URL.createObjectURL(f))
+  const picked = Array.from(e.target.files || [])
+  if (!picked.length) return
+
+  form.value.gallery = [...form.value.gallery, ...picked]
+
+  galleryPreviews.value = [
+    ...galleryPreviews.value,
+    ...picked.map(f => URL.createObjectURL(f)),
+  ]
+
+  e.target.value = null
 }
+
 
 async function removeCover() {
   if (!confirm('Delete cover image?')) return

@@ -1,27 +1,22 @@
 <template>
   <Teleport to="body">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div
-        class="bg-white rounded-xl shadow-xl w-full max-w-xl relative overflow-hidden max-h-[85vh] animate-fadeIn"
-      >
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-xl relative max-h-[85vh] flex flex-col">
         <!-- Close -->
-        <button
-          @click="$emit('close')"
-          class="absolute top-3 right-4 text-gray-500 hover:text-black z-20"
-        >
+        <button @click="$emit('close')" class="absolute top-3 right-4 text-gray-500 hover:text-black z-20">
           ✕
         </button>
 
         <!-- Header (sticky) -->
-        <div class="sticky top-0 bg-white z-10 px-6 pt-5 pb-3 border-b">
+        <div class="px-6 pt-5 pb-3 border-b">
           <h3 class="text-lg font-semibold">
             {{ mode === 'add' ? 'Add Installment' : 'Edit Installment' }}
           </h3>
         </div>
 
         <!-- Body (scrollable) -->
-        <div class="px-6 py-4 overflow-y-auto max-h-[calc(85vh-120px)]">
-          <!-- FORM (Vee Validate Form) -->
+<div class="px-6 py-4 overflow-y-auto flex-1">
+            <!-- FORM (Vee Validate Form) -->
           <Form @submit="handleSubmit" :initial-values="initialValues" :validation-schema="schema">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Title EN -->
@@ -104,20 +99,12 @@
             </div>
 
             <!-- Footer (sticky) -->
-            <div class="sticky bottom-0 bg-white pt-4 mt-6 border-t flex justify-end gap-3">
-              <button
-                class="px-4 py-2 border rounded hover:bg-gray-100"
-                @click="$emit('close')"
-                type="button"
-              >
+ <div class="px-6 py-4 bg-white flex justify-end gap-3">              <button class="px-4 py-2 border rounded hover:bg-gray-100" @click="$emit('close')" type="button">
                 Cancel
               </button>
 
-              <button
-                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                type="submit"
-                :disabled="saving"
-              >
+              <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" type="submit"
+                :disabled="saving">
                 {{ saving ? 'Saving…' : 'Save' }}
               </button>
             </div>
@@ -130,7 +117,7 @@
 
 
 <script setup>
-import { ref , watch} from 'vue'
+import { ref, watch } from 'vue'
 import * as yup from 'yup'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import { useServerError } from '@/composables/useServerError'
@@ -201,7 +188,7 @@ function normalize(obj, fallback) {
   return obj
 }
 
-const initialValues =ref({
+const initialValues = ref({
   title: normalize(props.data?.title, { en: '', ar: '' }),
   description: normalize(props.data?.description, { en: '', ar: '' }),
   amount: props.data?.amount ?? '',
@@ -210,7 +197,7 @@ const initialValues =ref({
   submission_date: props.data?.submission_date ?? '',
   consultant_approval_date: props.data?.consultant_approval_date ?? '',
   due_date: props.data?.due_date ?? '',
-...(props.mode === 'edit' ? { status: props.data?.status ?? 'pending' } : {}),
+  ...(props.mode === 'edit' ? { status: props.data?.status ?? 'pending' } : {}),
   // status: props.data?.status ?? 'pending',
 })
 
@@ -265,7 +252,10 @@ async function handleSubmit(values) {
 
 <style scoped>
 .form-input {
-  @apply w-full border border-gray-300 rounded-md px-3 py-2
-         focus:outline-none focus:ring-2 focus:ring-blue-500;
+  @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
+.modal-body {
+  overscroll-behavior: contain;
+}
+
 </style>

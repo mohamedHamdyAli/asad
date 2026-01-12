@@ -130,13 +130,16 @@
               </div>
 
               <!-- Image -->
-              <div class="col-span-2">
-                <input type="file" accept="image/*" @change="(e) => {
-                  onFile(e)
-                  setFieldValue('image', e.target.files?.[0] || null)
-                }" />
+              <div class="md:col-span-2 space-y-2">
+
+                <!-- Existing / New Preview -->
+                <img v-if="imagePreview" :src="imagePreview" class="w-32 h-24 object-cover rounded border" />
+
+                <input type="file" accept="image/*" @change="(e) => onFileChange(e, setFieldValue)" />
+
                 <ErrorMessage v-if="submitCount > 0" name="image" class="error" />
               </div>
+
 
             </div>
 
@@ -180,6 +183,7 @@ const currentId = ref(null)
 const imageFile = ref(null)
 const formKey = ref(0)
 
+const imagePreview = ref(null)
 
 const form = ref({})
 
@@ -258,6 +262,7 @@ function openCreate() {
   }
 
   imageFile.value = null
+  imagePreview.value = null
   formKey.value++
   modalOpen.value = true
 }
@@ -279,10 +284,20 @@ function openEdit(c) {
   }
 
   imageFile.value = null
+  imagePreview.value = c.image_url || null
   formKey.value++
   modalOpen.value = true
 }
 
+function onFileChange(e, setFieldValue) {
+  const file = e.target.files?.[0] || null
+  imageFile.value = file
+  setFieldValue('image', file)
+
+  if (file) {
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
 
 function closeModal() {
   modalOpen.value = false

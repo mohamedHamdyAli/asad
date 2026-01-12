@@ -24,7 +24,13 @@
         </div>
 
         <!-- FORM -->
-        <Form @submit="submitForm" :validation-schema="schema" v-slot="{ errors }">
+<Form
+  :key="props.item?.id || 'add'"
+  :initial-values="formValues"
+  :validation-schema="schema"
+  @submit="submitForm"
+  v-slot="{ errors }"
+>
 
           <!-- Title EN -->
           <div class="mb-3">
@@ -69,7 +75,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { Form, Field } from "vee-validate";
+import { Form, Field, useForm } from "vee-validate";
 import * as yup from "yup";
 
 import { TypeOfBuildingApi } from "@/Services/typeOfBuilding";
@@ -84,6 +90,12 @@ const emit = defineEmits(["close", "saved"]);
 
 const saving = ref(false);
 const serverError = ref("");
+
+const formValues = ref({
+  title_en: "",
+  title_ar: "",
+  price: null,
+})
 
 // ----------------------------
 //  VALIDATION SCHEMA
@@ -105,21 +117,32 @@ const initialValues = ref({
   price: null,
 });
 
+const { resetForm } = useForm({
+  validationSchema: schema,
+  initialValues: {
+    title_en: "",
+    title_ar: "",
+    price: null,
+  },
+});
+
+
 // Load edit item values
 watch(
   () => props.item,
   (item) => {
-    if (!item) return;
-    const parsed = safeTitle(item.title);
+    if (!item) return
 
-    initialValues.value = {
-      title_en: parsed.en,
-      title_ar: parsed.ar,
+    formValues.value = {
+      title_en: item.title?.en ?? "",
+      title_ar: item.title?.ar ?? "",
       price: item.price ?? null,
-    };
+    }
   },
   { immediate: true }
-);
+)
+
+
 
 // Safe title parse
 function safeTitle(val) {
