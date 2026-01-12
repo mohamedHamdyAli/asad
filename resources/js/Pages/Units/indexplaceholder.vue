@@ -414,14 +414,14 @@ onMounted(async () => {
 })
 
 // ===== Quick links =====
-function docsPath(id) { return `/units-management/${id}/docs` }
-function drawingPath(id) { return `/units-management/${id}/drawing` }
-function galleryPath(id) { return `/units-management/${id}/gallery` }
-function timelinePath(id) { return `/units-management/${id}/timeline` }
-function reportsPath(id) { return `/units-management/${id}/reports` }
-function unitContractorsPath(id) { return `/units-management/${id}/contractors` }
-function unitPaymentsPath(id) { return `/units-management/${id}/payments` }
-function phasesPath(id) { return `/units-management/${id}/phases` }
+function docsPath(id) { return `/projects-management/${id}/docs` }
+function drawingPath(id) { return `/projects-management/${id}/drawing` }
+function galleryPath(id) { return `/projects-management/${id}/gallery` }
+function timelinePath(id) { return `/projects-management/${id}/timeline` }
+function reportsPath(id) { return `/projects-management/${id}/reports` }
+function unitContractorsPath(id) { return `/projects-management/${id}/contractors` }
+function unitPaymentsPath(id) { return `/projects-management/${id}/payments` }
+function phasesPath(id) { return `/projects-management/${id}/phases` }
 
 // ===== Details modal =====
 const details = ref({ open: false, loading: false, id: null, data: null })

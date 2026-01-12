@@ -199,7 +199,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 const accepts =
   '.pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

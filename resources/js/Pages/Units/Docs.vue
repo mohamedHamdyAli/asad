@@ -217,7 +217,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 /* Folders */
 const folders = ref([])

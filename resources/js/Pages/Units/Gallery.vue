@@ -286,7 +286,7 @@ const props = defineProps({
   unitId: { type: [Number, String], required: true },
 })
 
-const backToUnits = computed(() => '/units-management')
+const backToUnits = computed(() => '/projects-management')
 
 /* Create (batch) */
 const createForm = ref({
