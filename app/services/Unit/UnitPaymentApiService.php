@@ -87,10 +87,10 @@ class UnitPaymentApiService
                 $installment->update(['status' => 'pending']);
             }
 
-            $unitPayment = UnitPayment::find($installment->unit_payment_id);
-            if ($unitPayment && $unitPayment->remaining_installments > 0) {
-                $unitPayment->decrement('remaining_installments');
-            }
+            // $unitPayment = UnitPayment::find($installment->unit_payment_id);
+            // if ($unitPayment && $unitPayment->remaining_installments > 0) {
+            //     $unitPayment->decrement('remaining_installments');
+            // }
 
             return successReturnData($invoice, 'Invoice uploaded successfully and is under processing');
 

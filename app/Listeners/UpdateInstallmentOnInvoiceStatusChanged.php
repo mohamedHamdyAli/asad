@@ -27,7 +27,7 @@ class UpdateInstallmentOnInvoiceStatusChanged implements ShouldQueue
         }
 
         // Use transaction for consistency
-        DB::transaction(function () use ($invoice, $installment, $event) {
+        DB::transaction(function () use ($invoice, $installment) {
             $oldInstallmentStatus = $installment->status;
 
             // Sum confirmed invoices for this installment
@@ -64,20 +64,29 @@ class UpdateInstallmentOnInvoiceStatusChanged implements ShouldQueue
                 event(new PaymentStatusChanged($installment, $oldInstallmentStatus, $newInstallmentStatus));
             }
 
-            // Update parent unit payment summary (remaining_installments, overall_status)
+            // Update parent unit payment summary
             $unitPayment = UnitPayment::query()->lockForUpdate()->find($installment->unit_payment_id);
 
             if ($unitPayment) {
-                $totalInstallments = $unitPayment->installments()->count();
+                // Count confirmed invoices for this unit payment
+                $confirmedInvoicesCount = UnitPaymentInstallmentInvoice::query()
+                    ->whereHas('installment', function ($q) use ($unitPayment) {
+                        $q->where('unit_payment_id', $unitPayment->id);
+                    })
+                    ->where('status', 'confirmed')
+                    ->count();
+
+                // Calculate remaining based on total installments minus confirmed invoices
+                $newRemaining = max(0, $unitPayment->installments_count - $confirmedInvoicesCount);
+                $unitPayment->remaining_installments = $newRemaining;
+
+                // Update overall_status based on remaining_installments
                 $paidInstallments = $unitPayment->installments()->where('status', 'paid')->count();
                 $overdueInstallments = $unitPayment->installments()->where('status', 'overdue')->count();
-                $remaining = max(0, $totalInstallments - $paidInstallments);
 
-                $unitPayment->remaining_installments = $remaining;
-
-                if ($remaining === 0) {
+                if ($unitPayment->remaining_installments === 0) {
                     $unitPayment->overall_status = 'completed';
-                } elseif ($paidInstallments > 0) {
+                } elseif ($paidInstallments > 0 || $unitPayment->remaining_installments < $unitPayment->installments_count) {
                     $unitPayment->overall_status = 'in_progress';
                 } elseif ($overdueInstallments > 0) {
                     $unitPayment->overall_status = 'overdue';
