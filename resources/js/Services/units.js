@@ -128,6 +128,7 @@ export function buildUnitCreateFD({
   user_id,
   vendor_id,
   // optional on create
+  address,
   status,
   extension_dates = [],
   ...rest
@@ -140,6 +141,7 @@ export function buildUnitCreateFD({
   fd.append("description[ar]", description.ar ?? "");
 
   fd.append("location", location ?? "");
+  fd.append("address", address ?? "");
   fd.append("lat", String(lat ?? ""));
   fd.append("long", String(long ?? ""));
   fd.append("start_date", start_date ?? "");
@@ -172,6 +174,7 @@ export function buildUnitUpdateFD(partial = {}) {
     name,
     description,
     location,
+    address,
     lat,
     long,
     start_date,
@@ -198,6 +201,7 @@ export function buildUnitUpdateFD(partial = {}) {
   }
 
   if (location !== undefined) fd.append("location", location ?? "");
+  if(address !== undefined) fd.append("address", address ?? "");
   if (lat !== undefined) fd.append("lat", String(lat ?? ""));
   if (long !== undefined) fd.append("long", String(long ?? ""));
   if (start_date !== undefined) fd.append("start_date", start_date ?? "");
