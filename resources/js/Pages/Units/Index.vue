@@ -48,7 +48,7 @@
                 <div class="text-gray-500" dir="rtl">{{ u.name_ar }}</div>
               </td>
               <td class="px-4 py-2">
-                <div class="text-gray-900">{{ u.location || '—' }}</div>
+                <div class="text-gray-900">{{ u.location || u.address || '—' }}</div>
                 <div v-if="u.lat && u.long" class="text-xs text-gray-500">({{ u.lat }}, {{ u.long }})</div>
               </td>
               <td class="px-4 py-2">
@@ -294,6 +294,12 @@
                     <input :class="inputClass('location')" v-model="form.location" type="text" :required="!editingId"
                       disabled />
                     <p v-if="err('location')" class="mt-1 text-xs text-red-600">{{ err('location') }}</p>
+                  </div>                  
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Address(optional)</label>
+                    <input :class="inputClass('address')" v-model="form.address" type="text" :required="!editingId"
+                       />
+                    <p v-if="err('address')" class="mt-1 text-xs text-red-600">{{ err('address') }}</p>
                   </div>
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Latitude (-90..90)*</label>
@@ -565,6 +571,7 @@ const form = ref({
   name: { en: '', ar: '' },
   description: { en: '', ar: '' },
   location: '',
+  address: '',
   lat: null,
   long: null,
   start_date: '',
@@ -685,6 +692,7 @@ async function openEdit(u) {
   form.value.description.en = data.description_en || ''
   form.value.description.ar = data.description_ar || ''
   form.value.location = data.location || ''
+  form.value.address = data.address || ''
   form.value.lat = data.lat
   form.value.long = data.long
   form.value.start_date = toDatetimeLocal(data.start_date)
@@ -704,6 +712,7 @@ function resetForm() {
     name: { en: '', ar: '' },
     description: { en: '', ar: '' },
     location: '',
+    address: '',
     lat: null,
     long: null,
     start_date: '',

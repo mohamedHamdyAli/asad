@@ -1,4 +1,5 @@
 <template>
+
   <Head title="Roles & Permissions" />
 
   <AuthenticatedLayout>
@@ -10,58 +11,92 @@
 
         <!-- Create Role -->
         <div class="flex gap-2">
-          <input
-            v-model="newRole"
-            placeholder="Role name"
-            class="form-input w-64"
-          />
+          <input v-model="newRole" placeholder="Role name" class="form-input w-64" />
           <button class="btn-primary" @click="createRole">
             Add Role
           </button>
         </div>
 
-        <!-- Roles List -->
-        <table class="w-full text-sm border">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="p-2 text-left">Role</th>
-              <th class="p-2">Permissions</th>
-              <th class="p-2">Actions</th>
-            </tr>
-          </thead>
+        <!-- ROLES ACCORDION -->
+        <div v-for="role in roles" :key="role.id" class="border rounded-lg overflow-hidden">
+          <!-- ROLE HEADER -->
+          <div class="flex items-center justify-between bg-gray-100 px-4 py-3 cursor-pointer"
+            @click="toggleRole(role.id)">
+            <span class="font-semibold">{{ role.name }}</span>
 
-          <tbody>
-            <tr v-for="role in roles" :key="role.id" class="border-t">
-              <td class="p-2 font-medium">{{ role.name }}</td>
-
-              <td class="p-2">
-                <div class="grid grid-cols-3 gap-2">
-                  <label
-                    v-for="p in permissions"
-                    :key="p.id"
-                    class="flex items-center gap-1 text-xs"
-                  >
-<input
-  type="checkbox"
-  :checked="role.permissions?.some(rp => rp.name === p.name)"
-  @change="onPermissionToggle(role.id, p.name, $event)"
-/>
+            <div class="flex items-center gap-3">
+            <button
+  v-if="role.name !== 'admin'"
+  class="btn-danger"
+  @click="deleteRole(role.id)"
+>
+  Delete
+</button>
 
 
-                    {{ p.name }}
-                  </label>
-                </div>
-              </td>
+              <span class="text-sm">
+                {{ openRoles[role.id] ? '▲' : '▼' }}
+              </span>
+            </div>
+          </div>
 
-              <td class="p-2">
-                <button class="btn-danger" @click="deleteRole(role.id)">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <!-- ROLE BODY -->
+          <transition name="slide">
+            <div v-if="openRoles[role.id]" class="p-4">
+              <table class="w-full text-sm border">
+                <thead class="bg-yellow-600 text-white">
+                  <tr>
+                    <th class="p-3 text-left">Module</th>
+                    <th class="p-3 text-center">View</th>
+                    <th class="p-3 text-center">Create</th>
+                    <th class="p-3 text-center">Edit</th>
+                    <th class="p-3 text-center">Delete</th>
+                    <th class="p-3 text-center"></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <template v-for="(group, module) in groupedPermissions" :key="module">
+                    <!-- MODULE ROW -->
+                    <tr class="border-t">
+                      <td class="p-3 font-medium capitalize">
+                        {{ module }}
+                      </td>
+
+                      <td v-for="action in ['view', 'create', 'update', 'delete']" :key="action" class="text-center">
+                        <input v-if="group.crud[action]" type="checkbox"
+                          :checked="role.permissions?.some(p => p.name === group.crud[action])"
+                          @change="onPermissionToggle(role.id, group.crud[action])" />
+                      </td>
+
+                      <td class="text-center">
+                        <button v-if="group.extra.length" class="px-3 py-1 text-xs bg-yellow-600 text-white rounded"
+                          @click.stop="toggleModule(role.id, module)">
+                          {{ isModuleOpen(role.id, module) ? 'Less' : 'More' }}
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- EXTRA PERMISSIONS -->
+                    <tr v-if="group.extra.length && isModuleOpen(role.id, module)">
+                      <td colspan="6" class="bg-gray-50 p-4">
+                        <div class="grid grid-cols-4 gap-4 text-xs">
+                          <label v-for="perm in group.extra" :key="perm" class="flex items-center gap-2">
+                            <input type="checkbox" :checked="role.permissions?.some(p => p.name === perm)"
+                              @change="onPermissionToggle(role.id, perm)" />
+                            {{ perm.split('.').slice(1).join(' ') }}
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </transition>
+        </div>
       </section>
+
 
       <!-- ================= USERS ================= -->
       <section class="bg-white p-6 rounded shadow space-y-4">
@@ -69,11 +104,7 @@
 
         <!-- SEARCH & FILTER -->
         <div class="flex flex-wrap gap-4 items-center">
-          <input
-            v-model="search"
-            placeholder="Search name or email"
-            class="form-input w-64"
-          />
+          <input v-model="search" placeholder="Search name or email" class="form-input w-64" />
 
           <select v-model="roleFilter" class="form-input w-48">
             <option value="">All roles</option>
@@ -96,11 +127,7 @@
           </thead>
 
           <tbody>
-            <tr
-              v-for="user in paginatedUsers"
-              :key="user.id"
-              class="border-t"
-            >
+            <tr v-for="user in paginatedUsers" :key="user.id" class="border-t">
               <td class="px-4 py-3">{{ user.name }}</td>
               <td class="px-4 py-3">{{ user.email }}</td>
 
@@ -111,17 +138,10 @@
 
               <!-- CHANGE ROLE -->
               <td class="px-4 py-3">
-                <select
-                  class="form-input"
-                  :value="selectedRoles[user.id]"
-                  @change="onRoleChange(user.id, $event.target.value)"
-                >
+                <select class="form-input" :value="selectedRoles[user.id]"
+                  @change="onRoleChange(user.id, $event.target.value)">
                   <option value="">— Select role —</option>
-                  <option
-                    v-for="role in roles"
-                    :key="role.id"
-                    :value="role.name"
-                  >
+                  <option v-for="role in roles" :key="role.id" :value="role.name">
                     {{ role.name }}
                   </option>
                 </select>
@@ -129,11 +149,8 @@
 
               <!-- SAVE -->
               <td class="px-4 py-3 text-right">
-                <button
-                  class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-                  :disabled="saving[user.id]"
-                  @click="saveRole(user.id)"
-                >
+                <button class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50" :disabled="saving[user.id]"
+                  @click="saveRole(user.id)">
                   {{ saving[user.id] ? 'Saving…' : 'Save' }}
                 </button>
               </td>
@@ -148,19 +165,11 @@
           </span>
 
           <div class="flex gap-2">
-            <button
-              class="px-3 py-1 border rounded"
-              :disabled="currentPage === 1"
-              @click="currentPage--"
-            >
+            <button class="px-3 py-1 border rounded" :disabled="currentPage === 1" @click="currentPage--">
               Prev
             </button>
 
-            <button
-              class="px-3 py-1 border rounded"
-              :disabled="currentPage === totalPages"
-              @click="currentPage++"
-            >
+            <button class="px-3 py-1 border rounded" :disabled="currentPage === totalPages" @click="currentPage++">
               Next
             </button>
           </div>
@@ -204,6 +213,9 @@ const roleFilter = ref('')
 const currentPage = ref(1)
 const perPage = ref(10)
 
+const openRoles = ref({})
+const openModules = ref({})
+
 /* ================= FETCH ================= */
 async function fetchAll() {
   const rolesRes = await RolesApi.list()
@@ -219,6 +231,31 @@ async function fetchAll() {
     saving.value[user.id] = false
   })
 }
+
+//  grouped permissions
+
+const groupedPermissions = computed(() => {
+  const map = {}
+
+  permissions.value.forEach(p => {
+    const [module, action] = p.name.split('.')
+
+    if (!map[module]) {
+      map[module] = {
+        crud: {},
+        extra: [],
+      }
+    }
+
+    if (['view', 'create', 'update', 'delete'].includes(action)) {
+      map[module].crud[action] = p.name
+    } else {
+      map[module].extra.push(p.name)
+    }
+  })
+
+  return map
+})
 
 
 /* ================= FILTERING ================= */
@@ -320,6 +357,25 @@ async function saveRole(userId) {
   }
 }
 
+// helper 
+
+
+function toggleRole(roleId) {
+  openRoles.value[roleId] = !openRoles.value[roleId]
+}
+
+function toggleModule(roleId, module) {
+  if (!openModules.value[roleId]) {
+    openModules.value[roleId] = {}
+  }
+  openModules.value[roleId][module] =
+    !openModules.value[roleId][module]
+}
+
+function isModuleOpen(roleId, module) {
+  return !!openModules.value[roleId]?.[module]
+}
+
 onMounted(fetchAll)
 </script>
 
@@ -327,10 +383,29 @@ onMounted(fetchAll)
 .form-input {
   @apply border rounded px-3 py-1 text-sm;
 }
+
 .btn-primary {
   @apply bg-blue-600 text-white px-3 py-1 rounded;
 }
+
 .btn-danger {
   @apply bg-red-600 text-white px-3 py-1 rounded;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.25s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.slide-enter-to,
+.slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

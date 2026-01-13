@@ -59,9 +59,9 @@
             </div>
           </div>
 
-          <div v-if="createErr" class="text-sm text-red-600 mt-3">
+          <!-- <div v-if="createErr" class="text-sm text-red-600 mt-3">
             {{ createErr }}
-          </div>
+          </div> -->
         </div>
       </Form>
 
@@ -158,7 +158,11 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { UnitPhasesApi, buildCreatePayload, buildUpdatePayload } from '@/Services/unitPhases'
 import { Form, Field, ErrorMessage } from "vee-validate"
 import * as yup from "yup"
+import { useServerError } from '@/composables/useServerError'
 
+const { show } = useServerError()
+
+/* ------------------ Schemas ------------------ */
 const createSchema = yup.object({
   status: yup.string().required("Status is required"),
   description: yup.object({
@@ -177,21 +181,22 @@ const editSchema = yup.object({
 
 const editErrors = reactive({})
 
+/* ------------------ Props & Constants ------------------ */
+const props = defineProps({
+  unitId: { type: [Number, String], required: true }
+})
 
-const props = defineProps({ unitId: { type: [Number, String], required: true } })
 const backToUnits = computed(() => '/projects-management')
-
 const STATUSES = UnitPhasesApi.statuses()
 
-/* Create */
+/* ------------------ Create ------------------ */
 const newPhase = ref({ status: '', description: { en: '', ar: '' } })
 const creating = ref(false)
 const createErr = ref('')
 
-
 async function createOrUpsertValidated(values, { resetForm }) {
   creating.value = true
-  createErr.value = ""
+  createErr.value = ''
 
   try {
     const payload = buildCreatePayload(props.unitId, [values])
@@ -205,18 +210,17 @@ async function createOrUpsertValidated(values, { resetForm }) {
       },
     })
 
-    // reset
-    newPhase.value = { status: "", description: { en: "", ar: "" } }
+    newPhase.value = { status: '', description: { en: '', ar: '' } }
 
   } catch (e) {
-    createErr.value = e?.response?.data?.message || "Save failed"
+    createErr.value = e?.response?.data?.message || 'Save failed'
+    show(e)
   } finally {
     creating.value = false
   }
 }
 
-
-/* List + Edit */
+/* ------------------ List + Edit ------------------ */
 const rows = ref([])
 const edit = reactive({})
 const saving = reactive({})
@@ -227,20 +231,27 @@ function seedEditState(arr) {
   arr.forEach(p => {
     edit[p.id] = {
       status: p.status,
-      description: { en: p.desc_en || '', ar: p.desc_ar || '' }
+      description: {
+        en: p.desc_en || '',
+        ar: p.desc_ar || ''
+      }
     }
   })
 }
+
 async function fetchList() {
   loading.value = true
   try {
     const data = await UnitPhasesApi.list(props.unitId)
     rows.value = data
     seedEditState(data)
+  } catch (e) {
+    show(e)
   } finally {
     loading.value = false
   }
 }
+
 async function saveOne(id) {
   const item = edit[id]
   if (!item) return
@@ -266,6 +277,9 @@ async function saveOne(id) {
 
     await UnitPhasesApi.update(payload)
     await fetchList()
+
+  } catch (e) {
+    show(e)
   } finally {
     saving[id] = false
   }
@@ -273,11 +287,18 @@ async function saveOne(id) {
 
 async function remove(id) {
   if (!confirm('Delete this phase?')) return
-  await UnitPhasesApi.remove(id)
-  await fetchList()
+
+  try {
+    await UnitPhasesApi.remove(id)
+    await fetchList()
+  } catch (e) {
+    show(e)
+  }
 }
+
 onMounted(fetchList)
 </script>
+
 
 <style scoped>
 .form-input {
