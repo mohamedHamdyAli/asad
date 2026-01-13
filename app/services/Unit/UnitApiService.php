@@ -135,6 +135,7 @@ class UnitApiService
 
         $note = UnitPhaseNote::create([
             'unit_id' => $unit->id,
+            'unit_phase_id' => $lastPhase->id,
             'user_id' => $user->id,
             'note' => $request['note'],
         ]);
