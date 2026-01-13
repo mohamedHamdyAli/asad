@@ -20,9 +20,9 @@
         <!-- ROLES ACCORDION -->
         <div v-for="role in roles" :key="role.id" class="border rounded-lg overflow-hidden">
           <!-- ROLE HEADER -->
-          <div class="flex items-center justify-between bg-gray-100 px-4 py-3 cursor-pointer"
+          <div  v-if="role.name !== 'guest' && role.name !== 'user'" class="flex items-center justify-between bg-gray-100 px-4 py-3 cursor-pointer"
             @click="toggleRole(role.id)">
-            <span class="font-semibold">{{ role.name }}</span>
+            <span  class="font-semibold">{{ role.name }}</span>
 
             <div class="flex items-center gap-3">
             <button
