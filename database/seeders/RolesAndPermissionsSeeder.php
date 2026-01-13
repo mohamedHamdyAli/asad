@@ -30,7 +30,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'intro',
             'banners',
             'users',
-            'vendors',
+            'PMS',
             'units',
             'folders',
             'unit_docs',
