@@ -9,18 +9,18 @@ class UnitPhaseNoteService
     public function getAll()
     {
         return UnitPhaseNote::select([
-                'id', 'unit_id', 'user_id', 'note' ,'status',
+                'id', 'unit_id', 'unit_phase_id', 'user_id', 'note', 'status',
             ])
-            ->with(['unit', 'user:id,name'])
+            ->with(['unit', 'unitPhase', 'user:id,name'])
             ->get();
     }
 
     public function getById(int $id)
     {
         return UnitPhaseNote::select([
-                'id', 'unit_id', 'user_id', 'note', 'status',
+                'id', 'unit_id', 'unit_phase_id', 'user_id', 'note', 'status',
             ])
-            ->with(['unit', 'user:id,name'])
+            ->with(['unit', 'unitPhase', 'user:id,name'])
             ->find($id);
     }
 

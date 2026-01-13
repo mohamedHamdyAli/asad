@@ -36,4 +36,9 @@ class UnitPhase extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
+    public function notes()
+    {
+        return $this->hasMany(UnitPhaseNote::class);
+    }
 }
