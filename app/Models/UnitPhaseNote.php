@@ -9,11 +9,16 @@ class UnitPhaseNote extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['unit_id', 'user_id', 'note' ,'status'];
+    protected $fillable = ['unit_id', 'unit_phase_id', 'user_id', 'note', 'status'];
 
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function unitPhase()
+    {
+        return $this->belongsTo(UnitPhase::class);
     }
 
     public function user()
