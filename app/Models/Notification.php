@@ -29,9 +29,10 @@ class Notification extends Model
         ];
     }
 
-    public static function getUserNotification()
+    public static function getUserNotification($id)
     {
-        return self::whereUserId(userAuth()->id)->get();
+
+        return self::whereUserId($id)->get();
     }
     public static function getvendorNotification()
     {

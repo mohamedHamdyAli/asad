@@ -44,9 +44,9 @@ trait NotificationTrait
 
 
         // restrict guest type
-        if (!empty($user->role) && $user->role !== 'guest') {
-            $arr['type'] = $user->role;
-        }
+        // if (!empty($user->role) && $user->role !== 'guest') {
+        //     $arr['type'] = $user->role;
+        // }
 
         $notification = Notification::create($arr);
 

@@ -135,13 +135,16 @@ class UserService
 
     public function UserProfile()
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
+        if (!$user) {
+            return failReturnMsg('User not authenticated');
+        }
         return successReturnData(new UserResource($user), 'profile fetched successfully');
     }
 
     public function updateProfile($data)
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
 
         return DB::transaction(function () use ($user, $data) {
             $filteredData = array_filter($data, function ($value) {

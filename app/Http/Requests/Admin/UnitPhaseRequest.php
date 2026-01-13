@@ -25,7 +25,7 @@ class UnitPhaseRequest extends FormRequest
         return Route::is('phases.store') ? [
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',
-            'data.*.status' => 'required|in:site_handover,sekelton,finishing,handover',
+            'data.*.status' => 'required|in:site_handover,skeleton,finishing,handover',
             'data.*.description' => 'required|array',
             'data.*.description.*' => 'required|string',
 
@@ -33,7 +33,7 @@ class UnitPhaseRequest extends FormRequest
             'unit_id' => 'required|exists:units,id',
             'data' => 'required|array',
             'data.*.id' => 'required|exists:unit_phases,id',
-            'data.*.status' => 'nullable|in:site_handover,sekelton,finishing,handover',
+            'data.*.status' => 'nullable|in:site_handover,skeleton,finishing,handover',
             'data.*.description' => 'nullable|array',
             'data.*.description.*' => 'required_with:data.*.description|string',
         ];
