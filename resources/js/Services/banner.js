@@ -58,16 +58,42 @@ export const BannerApi = {
 };
 
 /* ---------- FormData builders ---------- */
-export function buildCreateBannerFD({ image, is_enabled = true }) {
-  const fd = new FormData();
-  if (image) fd.append("image", image);
-  fd.append("is_enabled", (is_enabled ? 1 : 0).toString());
-  return fd;
+// Services/banner.js
+
+export function buildCreateBannerFD({ image, is_enabled = true, page, name = {}, description = {} }) {
+  const fd = new FormData()
+
+  if (image) fd.append("image", image)
+  fd.append("is_enabled", is_enabled ? "1" : "0")
+  if (page) fd.append("page", page)
+
+  if (name?.en) fd.append("name[en]", name.en)
+  if (name?.ar) fd.append("name[ar]", name.ar)
+
+  if (description?.en) fd.append("description[en]", description.en)
+  if (description?.ar) fd.append("description[ar]", description.ar)
+
+  return fd
 }
 
-export function buildUpdateBannerFD({ image = null, is_enabled = null }) {
-  const fd = new FormData();
-  if (image) fd.append("image", image);
-  if (is_enabled !== null) fd.append("is_enabled", (is_enabled ? 1 : 0).toString());
-  return fd;
+export function buildUpdateBannerFD({ image = null, is_enabled = null, page = null, name = null, description = null }) {
+  const fd = new FormData()
+
+  if (image) fd.append("image", image)
+  if (is_enabled !== null) fd.append("is_enabled", is_enabled ? "1" : "0")
+  if (page) fd.append("page", page)
+
+  if (name) {
+    if (name?.en !== undefined) fd.append("name[en]", name.en ?? "")
+    if (name?.ar !== undefined) fd.append("name[ar]", name.ar ?? "")
+  }
+
+  if (description) {
+    if (description?.en !== undefined) fd.append("description[en]", description.en ?? "")
+    if (description?.ar !== undefined) fd.append("description[ar]", description.ar ?? "")
+  }
+
+  return fd
 }
+
+
