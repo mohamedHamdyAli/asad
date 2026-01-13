@@ -112,20 +112,20 @@ class RolesAndPermissionsSeeder extends Seeder
             'admin' => Permission::where('guard_name', 'web')->pluck('name')->toArray(),
 
             // Limited dashboard/operator user
-            'user' => [
-                'languages.view',
-                'units.view',
-                'unit_docs.view',
-                'unit_gallery.view',
-                'unit_drawings.view',
-                'unit_reports.view',
-                'unit_timeline.view',
-                'unit_phases.view',
-                'unit_issues.view',
-                'unit_quotes.view',
-                'unit_quote_responses.view',
-                'notifications.view',
-            ],
+            // 'user' => [
+            //     'languages.view',
+            //     'units.view',
+            //     'unit_docs.view',
+            //     'unit_gallery.view',
+            //     'unit_drawings.view',
+            //     'unit_reports.view',
+            //     'unit_timeline.view',
+            //     'unit_phases.view',
+            //     'unit_issues.view',
+            //     'unit_quotes.view',
+            //     'unit_quote_responses.view',
+            //     'notifications.view',
+            // ],
 
             // Example: can manage units and unit content but not RBAC
             'project manager' => [
@@ -144,9 +144,9 @@ class RolesAndPermissionsSeeder extends Seeder
                 'unit_phase_notes.view', 'unit_phase_notes.create', 'unit_phase_notes.update', 'unit_phase_notes.delete',
             ],
 
-            'guest' => [
-                // keep empty or very limited (admin panel usually none)
-            ],
+            // 'guest' => [
+            //     // keep empty or very limited (admin panel usually none)
+            // ],
         ];
 
         // Create roles & sync permissions
