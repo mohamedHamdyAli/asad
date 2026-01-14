@@ -43,7 +43,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="(q , index) in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition">
+              <tr v-for="(q, index) in paginatedQuotes" :key="q.id" class="border-t hover:bg-gray-50 transition">
                 <!-- ID -->
                 <td class="py-2 px-3 font-medium">{{ (currentPage - 1) * perPage + index + 1 }}</td>
 
@@ -97,9 +97,10 @@
 
                   <!-- Details button -->
                   <button class="px-2 py-1 text-xs border rounded-lg text-gray-700 hover:bg-gray-100"
-                    @click="openDetails(q)">
+                    @click="goDetails(q.id)">
                     Details
                   </button>
+
 
                   <!-- Save -->
                   <button v-if="!q.has_response"
@@ -181,7 +182,7 @@
             }}
           </div>
 
-          <div><b>Vendor:</b>
+          <div><b>Project Manager:</b>
             {{ vendorName(selectedQuote.response.vendor_id) }}
           </div>
 
@@ -228,6 +229,11 @@ import { VendorsApi } from '@/Services/vendors.js'
 import { UsersApi } from '@/Services/users.js'
 import { TypeOfBuildingApi } from '@/Services/typeOfBuilding.js'
 import { TypeOfPriceApi } from '@/Services/typeOfPrice.js'
+import { router } from '@inertiajs/vue3'
+
+function goDetails(id) {
+  router.visit(route('unit-quotes.details', id))
+}
 
 const quotes = ref([])
 const users = ref([])
