@@ -7,7 +7,6 @@
       <div class="flex items-start justify-between gap-4">
         <div>
           <h2 class="text-2xl font-semibold text-dash-title">Intro Management</h2>
-          <p class="text-sm text-gray-500 mt-1">Manage intro screens (EN/AR), order, status, and image.</p>
         </div>
 
         <div class="flex gap-2">
