@@ -1,134 +1,310 @@
 <template>
-
   <Head title="Admin Dashboard" />
 
   <AuthenticatedLayout>
-    <div class="p-6 space-y-10">
-
+    <div class="p-6 space-y-8">
       <!-- ================= HEADER ================= -->
-      <div class="flex justify-between items-center">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
         </div>
 
-        <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
-          System Online
-        </span>
+
+      </div>
+
+      <!-- ================= TOP ALERT ================= -->
+      <div
+        v-if="pageError"
+        class="rounded-2xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 flex items-start gap-3"
+      >
+        <Icon icon="mdi:alert-circle-outline" class="text-xl mt-0.5" />
+        <div class="text-sm">
+          <div class="font-semibold">Some data couldn’t be loaded</div>
+          <div class="text-red-700/90">{{ pageError }}</div>
+        </div>
       </div>
 
       <!-- ================= KPI CARDS ================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <SmartCard
+          title="Units"
+          :value="stats.units"
+          icon="mdi:domain"
+          color="blue"
+          hint="All units"
+          :loading="loadingStats"
+          @click="go('unit-management')"
+        />
 
-        <SmartCard title="Units" :value="stats.units" icon="mdi:domain" color="blue" hint="Active projects"
-          @click="go('unit-management')" />
+        <SmartCard
+          title="Users"
+          :value="stats.users"
+          icon="mdi:account-group-outline"
+          color="indigo"
+          hint="Registered users"
+          :loading="loadingStats"
+          @click="go('roles-management')"
+        />
 
-        <SmartCard title="Users" :value="stats.users" icon="mdi:account-group-outline" color="indigo"
-          hint="Registered users" @click="go('roles-management')" />
+        <SmartCard
+          title="Open Issues"
+          :value="stats.openIssues"
+          icon="mdi:alert-circle-outline"
+          color="red"
+          hint="Requires attention"
+          pulse
+          :loading="loadingStats"
+          @click="go('unit-issues')"
+        />
 
-        <SmartCard title="Open Issues" :value="stats.openIssues" icon="mdi:alert-circle-outline" color="red"
-          hint="Requires attention" pulse @click="go('unit-issues')" />
-
-        <SmartCard title="Quotations" :value="stats.quotations" icon="mdi:file-document-outline" color="emerald"
-          hint="Client requests" @click="go('unit-quotes-responses')" />
-
+        <SmartCard
+          title="Quotations"
+          :value="stats.quotations"
+          icon="mdi:file-document-outline"
+          color="emerald"
+          hint="Client requests"
+          :loading="loadingStats"
+          @click="go('unit-quotes-responses')"
+        />
       </div>
 
-      <!-- ================= QUICK ACTIONS ================= -->
-      <div class="bg-white rounded-2xl shadow p-6">
-        <h3 class="font-semibold mb-4">Quick Actions</h3>
+      <!-- ================= MANAGEMENT (replaces quick actions) ================= -->
+      <div class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Management</h3>
+          </div>
+        </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <ActionTile icon="mdi:plus-box" label="Add Unit" @click="go('unit-management')" />
-          <ActionTile icon="mdi:account-hard-hat" label="Add Contractor" @click="go('contractors-management')" />
-          <ActionTile icon="mdi:account-hard-hat" label="Add Consultant" @click="go('Consultants-management')" />
-          <ActionTile icon="mdi:alert" label="Review Issues" @click="go('unit-issues')" />
-          <ActionTile icon="mdi:file-document" label="View Quotations" @click="go('unit-quotes-responses')" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <button
+            v-for="m in management"
+            :key="m.route"
+            @click="go(m.route)"
+            class="text-left rounded-2xl border bg-white hover:bg-gray-50 p-4 transition shadow-sm hover:shadow flex items-start gap-3"
+          >
+            <span class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+              <Icon :icon="m.icon" class="text-xl text-gray-800" />
+            </span>
+
+            <span class="min-w-0">
+              <span class="block font-semibold text-gray-900 truncate">{{ m.title }}</span>
+              <span class="block text-xs text-gray-500 mt-0.5 truncate">{{ m.subtitle }}</span>
+            </span>
+          </button>
         </div>
       </div>
 
-      <!-- ================= MAIN GRID ================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- ===== PRIORITY ISSUES ===== -->
-        <div class="bg-white rounded-2xl shadow p-6 lg:col-span-2">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-semibold">Latest Quotations</h3>
-            <button class="text-sm text-blue-600" @click="go('unit-issues')">
-              View all
-            </button>
+      <!-- ================= LATEST QUOTATIONS (BOTTOM) ================= -->
+      <div class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Latest Quotations</h3>
+            <p class="text-sm text-gray-500">Most recent quotation requests.</p>
           </div>
 
-          <div v-if="recentIssues.length === 0" class="text-gray-500 text-sm">
-            No Current Quotations
-          </div>
+          <button class="text-sm text-blue-600 hover:underline" @click="go('unit-quotes-responses')">
+            View all
+          </button>
+        </div>
 
-          <div v-else class="space-y-3">
-            <div v-for="issue in recentIssues" :key="issue.id"
-              class="flex items-center justify-between border rounded-xl p-4 hover:bg-gray-50">
-              <div class="flex gap-3 items-start">
-                <Icon icon="mdi:alert-circle" class="text-red-500 text-xl mt-1" />
+        <div v-if="loadingQuotes" class="text-sm text-gray-500">Loading…</div>
 
-                <div>
-                  <div class="font-medium text-gray-900">
-                    {{ issue.title }}
-                  </div>
+        <div v-else-if="!latestQuotations.length" class="text-sm text-gray-500">
+          No quotations yet.
+        </div>
 
-                  <div class="text-xs text-gray-500">
-                    {{ issue.unit?.name?.en ?? 'Unit #' + issue.unit_id }}
-                  </div>
-                </div>
+        <div v-else class="space-y-3">
+          <div
+            v-for="q in latestQuotations"
+            :key="q.id"
+            class="flex items-start justify-between gap-4 border rounded-2xl p-4 hover:bg-gray-50 transition"
+          >
+            <div class="flex gap-3">
+              <div class="mt-0.5">
+                <Icon icon="mdi:file-document-outline" class="text-xl text-emerald-600" />
               </div>
 
-              <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
-                OPEN
-              </span>
+              <div class="space-y-1">
+                <div class="font-semibold text-gray-900 leading-5">
+                  {{ q.title || `Quotation #${q.id}` }}
+                </div>
+
+                <div class="text-xs text-gray-500">
+                  <span v-if="q.unit_name">{{ q.unit_name }}</span>
+                  <span v-else-if="q.unit_id">Unit #{{ q.unit_id }}</span>
+                  <span v-else>—</span>
+
+                  <span class="mx-2">•</span>
+                  <span>{{ formatDate(q.created_at) }}</span>
+                </div>
+
+                <div v-if="q.client_name || q.client_phone" class="text-xs text-gray-600">
+                  <span v-if="q.client_name">{{ q.client_name }}</span>
+                  <span v-if="q.client_name && q.client_phone" class="mx-2">•</span>
+                  <span v-if="q.client_phone">{{ q.client_phone }}</span>
+                </div>
+              </div>
             </div>
+
+            <span class="shrink-0 inline-flex items-center px-2 py-1 text-[11px] rounded-full border bg-emerald-50 text-emerald-700">
+              NEW
+            </span>
           </div>
         </div>
 
-        <!-- ===== NAVIGATION HUB ===== -->
-        <div class="bg-white rounded-2xl shadow p-6">
-          <h3 class="font-semibold mb-4">Management</h3>
-
-          <div class="space-y-3">
-            <NavCard icon="mdi:domain" label="Units" @click="go('unit-management')" />
-            <NavCard icon="mdi:account-hard-hat" label="Contractors" @click="go('contractors-management')" />
-            <NavCard icon="mdi:account-hard-hat" label="Consultants" @click="go('Consultants-management')" />
-            <NavCard icon="mdi:file-document" label="Quotations" @click="go('unit-quotes-responses')" />
-            <NavCard icon="mdi:account-key" label="Users & Roles" @click="go('roles-management')" />
-          </div>
+        <div v-if="quotesError" class="mt-4 text-sm text-red-600">
+          {{ quotesError }}
         </div>
-
       </div>
-
     </div>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { Head, router } from '@inertiajs/vue3'
 import { Icon } from '@iconify/vue'
-import SmartCard from '@/Components/SmartCard.vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import ActionTile from '@/Components/ActionTile.vue'
-import NavCard from '@/Components/NavCard.vue'
 
-// ===== MOCKED DATA (replace with APIs) =====
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import SmartCard from '@/Components/SmartCard.vue'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
+
+/* ---------------- endpoints ---------------- */
+const UNITS_URL = '/api/units'
+const USERS_URL = '/api/users'
+const ISSUES_URL = '/api/unit-issues'
+const QUOTES_URL = '/api/unit-quotes'
+
+/* ---------------- state ---------------- */
+const loadingAll = ref(false)
+const loadingStats = ref(false)
+const loadingQuotes = ref(false)
+
+const pageError = ref('')
+const quotesError = ref('')
+
 const stats = ref({
-  units: 12,
-  users: 48,
-  openIssues: 5,
-  quotations: 9,
+  units: 0,
+  users: 0,
+  openIssues: 0,
+  quotations: 0,
 })
 
-const recentIssues = ref([])
+const latestQuotations = ref([])
 
+/* ---------------- management cards ---------------- */
+const management = [
+  { icon: 'mdi:domain', title: 'Units', subtitle: 'Create & manage units', route: 'unit-management' },
+  { icon: 'mdi:account-hard-hat', title: 'Contractors', subtitle: 'Manage contractors', route: 'contractors-management' },
+  { icon: 'mdi:account-tie', title: 'Consultants', subtitle: 'Manage consultants', route: 'Consultants-management' },
+  { icon: 'mdi:file-document', title: 'Quotations', subtitle: 'View client requests', route: 'unit-quotes-responses' },
+  { icon: 'mdi:account-key', title: 'Users & Roles', subtitle: 'Roles & permissions', route: 'roles-management' },
+]
+
+/* ---------------- helpers ---------------- */
 function go(routeName) {
   router.visit(route(routeName))
 }
 
-onMounted(async () => {
- // fetch apis
-})
+function unwrapList(payload) {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.data)) return payload.data
+  if (Array.isArray(payload?.message)) return payload.message
+  if (Array.isArray(payload?.data?.data)) return payload.data.data
+  return []
+}
+
+function formatDate(iso) {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleString()
+  } catch {
+    return iso
+  }
+}
+
+function normalizeQuotation(row = {}) {
+  return {
+    id: row.id,
+    title: row.title?.en || row.title_en || row.title || '',
+    unit_id: row.unit_id || row.unitId || null,
+    unit_name: row.unit?.name?.en || row.unit_name || row.unitName || '',
+    client_name: row.user?.name || row.client_name || row.name || '',
+    client_phone: row.user?.phone || row.client_phone || row.phone || '',
+    created_at: row.created_at || row.createdAt || null,
+  }
+}
+
+/* ---------------- fetchers ---------------- */
+async function fetchStats() {
+  loadingStats.value = true
+  pageError.value = ''
+
+  try {
+    const [unitsRes, usersRes, issuesRes, quotesRes] = await Promise.allSettled([
+      axios.get(UNITS_URL),
+      axios.get(USERS_URL),
+      axios.get(ISSUES_URL),
+      axios.get(QUOTES_URL),
+    ])
+
+    if (unitsRes.status === 'fulfilled') stats.value.units = unwrapList(unitsRes.value.data).length
+    else pageError.value = show(unitsRes.reason)
+
+    if (usersRes.status === 'fulfilled') stats.value.users = unwrapList(usersRes.value.data).length
+    else pageError.value = pageError.value || show(usersRes.reason)
+
+    if (issuesRes.status === 'fulfilled') stats.value.openIssues = unwrapList(issuesRes.value.data).length
+    else pageError.value = pageError.value || show(issuesRes.reason)
+
+    if (quotesRes.status === 'fulfilled') stats.value.quotations = unwrapList(quotesRes.value.data).length
+    else pageError.value = pageError.value || show(quotesRes.reason)
+  } finally {
+    loadingStats.value = false
+  }
+}
+
+async function fetchLatestQuotations() {
+  loadingQuotes.value = true
+  quotesError.value = ''
+
+  try {
+    const { data } = await axios.get(QUOTES_URL)
+
+    latestQuotations.value = unwrapList(data)
+      .map(normalizeQuotation)
+      .sort((a, b) => {
+        const da = a.created_at ? new Date(a.created_at).getTime() : 0
+        const db = b.created_at ? new Date(b.created_at).getTime() : 0
+        return db - da
+      })
+      .slice(0, 6)
+  } catch (e) {
+    quotesError.value = show(e) || 'Failed to load quotations.'
+    latestQuotations.value = []
+  } finally {
+    loadingQuotes.value = false
+  }
+}
+
+async function refreshAll() {
+  loadingAll.value = true
+  pageError.value = ''
+  quotesError.value = ''
+  try {
+    await Promise.all([fetchStats(), fetchLatestQuotations()])
+  } finally {
+    loadingAll.value = false
+  }
+}
+
+onMounted(refreshAll)
 </script>
+
+<style scoped>
+/* no extra styles needed */
+</style>
