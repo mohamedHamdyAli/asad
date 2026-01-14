@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Validation\Rule;
+
 class UpdateProfileRequest extends BaseApiRequest
 {
     public function authorize(): bool
@@ -11,7 +13,7 @@ class UpdateProfileRequest extends BaseApiRequest
 
     public function rules(): array
     {
-        $userId = userAuth()->id;
+        $userId = userOrGuestAuth()?->id;
 
         return [    
             'name' => 'nullable|string|max:191',
