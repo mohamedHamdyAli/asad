@@ -152,17 +152,6 @@
             </div>
           </div>
 
-          <!-- Quick meta -->
-          <div class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-5">
-            <h4 class="font-semibold text-gray-900 mb-3">Meta</h4>
-            <div class="text-sm text-gray-700 space-y-2">
-              <div><b>ID:</b> {{ quote.id }}</div>
-              <div><b>User ID:</b> {{ quote.user_id }}</div>
-              <div><b>Building ID:</b> {{ quote.type_of_building_id ?? '—' }}</div>
-              <div><b>Price Type ID:</b> {{ quote.type_of_price_id ?? '—' }}</div>
-              <div><b>Updated:</b> {{ formatDate(quote.updated_at) }}</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
