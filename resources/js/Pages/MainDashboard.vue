@@ -1,4 +1,5 @@
 <template>
+
   <Head title="Admin Dashboard" />
 
   <AuthenticatedLayout>
@@ -13,10 +14,8 @@
       </div>
 
       <!-- ================= TOP ALERT ================= -->
-      <div
-        v-if="pageError"
-        class="rounded-2xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 flex items-start gap-3"
-      >
+      <div v-if="pageError"
+        class="rounded-2xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 flex items-start gap-3">
         <Icon icon="mdi:alert-circle-outline" class="text-xl mt-0.5" />
         <div class="text-sm">
           <div class="font-semibold">Some data couldn’t be loaded</div>
@@ -26,46 +25,17 @@
 
       <!-- ================= KPI CARDS ================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SmartCard
-          title="Units"
-          :value="stats.units"
-          icon="mdi:domain"
-          color="blue"
-          hint="All units"
-          :loading="loadingStats"
-          @click="go('unit-management')"
-        />
+        <SmartCard title="Units" :value="stats.units" icon="mdi:domain" color="blue" hint="All units"
+          :loading="loadingStats" @click="go('unit-management')" />
 
-        <SmartCard
-          title="Users"
-          :value="stats.users"
-          icon="mdi:account-group-outline"
-          color="indigo"
-          hint="Registered users"
-          :loading="loadingStats"
-          @click="go('roles-management')"
-        />
+        <SmartCard title="Users" :value="stats.users" icon="mdi:account-group-outline" color="indigo"
+          hint="Registered users" :loading="loadingStats" @click="go('roles-management')" />
 
-        <SmartCard
-          title="Open Issues"
-          :value="stats.openIssues"
-          icon="mdi:alert-circle-outline"
-          color="red"
-          hint="Requires attention"
-          pulse
-          :loading="loadingStats"
-          @click="go('unit-issues')"
-        />
+        <SmartCard title="Open Issues" :value="stats.openIssues" icon="mdi:alert-circle-outline" color="red"
+          hint="Requires attention" pulse :loading="loadingStats" @click="go('unit-issues')" />
 
-        <SmartCard
-          title="Quotations"
-          :value="stats.quotations"
-          icon="mdi:file-document-outline"
-          color="emerald"
-          hint="Client requests"
-          :loading="loadingStats"
-          @click="go('unit-quotes-responses')"
-        />
+        <SmartCard title="Quotations" :value="stats.quotations" icon="mdi:file-document-outline" color="emerald"
+          hint="Client requests" :loading="loadingStats" @click="go('unit-quotes-responses')" />
       </div>
 
       <!-- ================= MANAGEMENT (replaces quick actions) ================= -->
@@ -77,12 +47,8 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <button
-            v-for="m in management"
-            :key="m.route"
-            @click="go(m.route)"
-            class="text-left rounded-2xl border bg-white hover:bg-gray-50 p-4 transition shadow-sm hover:shadow flex items-start gap-3"
-          >
+          <button v-for="m in management" :key="m.route" @click="go(m.route)"
+            class="text-left rounded-2xl border bg-white hover:bg-gray-50 p-4 transition shadow-sm hover:shadow flex items-start gap-3">
             <span class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
               <Icon :icon="m.icon" class="text-xl text-gray-800" />
             </span>
@@ -115,11 +81,8 @@
         </div>
 
         <div v-else class="space-y-3">
-          <div
-            v-for="q in latestQuotations"
-            :key="q.id"
-            class="flex items-start justify-between gap-4 border rounded-2xl p-4 hover:bg-gray-50 transition"
-          >
+          <div v-for="q in latestQuotations" :key="q.id"
+            class="flex items-start justify-between gap-4 border rounded-2xl p-4 hover:bg-gray-50 transition">
             <div class="flex gap-3">
               <div class="mt-0.5">
                 <Icon icon="mdi:file-document-outline" class="text-xl text-emerald-600" />
@@ -147,7 +110,8 @@
               </div>
             </div>
 
-            <span class="shrink-0 inline-flex items-center px-2 py-1 text-[11px] rounded-full border bg-emerald-50 text-emerald-700">
+            <span
+              class="shrink-0 inline-flex items-center px-2 py-1 text-[11px] rounded-full border bg-emerald-50 text-emerald-700">
               NEW
             </span>
           </div>
@@ -258,7 +222,10 @@ async function fetchStats() {
     if (usersRes.status === 'fulfilled') stats.value.users = unwrapList(usersRes.value.data).length
     else pageError.value = pageError.value || show(usersRes.reason)
 
-    if (issuesRes.status === 'fulfilled') stats.value.openIssues = unwrapList(issuesRes.value.data).length
+    if (issuesRes.status === 'fulfilled') {
+      const issues = unwrapList(issuesRes.value.data)
+      stats.value.openIssues = issues.filter(i => String(i?.status).toLowerCase() === 'open').length
+    }
     else pageError.value = pageError.value || show(issuesRes.reason)
 
     if (quotesRes.status === 'fulfilled') stats.value.quotations = unwrapList(quotesRes.value.data).length
