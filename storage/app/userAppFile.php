@@ -12,6 +12,7 @@ return [
     "ContinueAsAGuest" => "Continue as a Guest",
     "ByCreatingANewAccountYouAgreeToRabbit" => "By creating a new account you agree to Rabbit",
     "PrivacyPolicy" => "Privacy Policy",
+    "&" => "&",
     "CreateAccount" => "Create Account",
     "FillYourInformationBelowOrRegisterWithYourSocialAccounts" => "Fill your information below or register\nwith your social accounts",
     "FullName" => "Full Name",
@@ -73,8 +74,8 @@ return [
     "WriteYourNote" => "Write your note",
     "TheNoteFieldIsRequired" => "The note field is required",
     "SaveNote" => "Save note",
-    "ProjectForConstructionCompletionAndMaintenanceOfPrivateResidenceVillaMonerahAlGhanam"
-        => "Project for construction, completion and maintenance of private residence Villa- Monerah Al-Ghanam",
+    "ProjectForConstructionCompletionAndMaintenanceOfPrivateResidenceVillaMonerahAlGhanam" => 
+        "Project for construction, completion and maintenance of private residence Villa- Monerah Al-Ghanam",
     "UnitDetails" => "Unit Details",
     "Gallery" => "gallery",
     "Drawings" => "Drawings",
@@ -93,6 +94,7 @@ return [
     "YouNeedToLogin" => "You need to login",
     "Ok" => "Ok",
     "PricingResponse" => "Pricing Response: ",
+    "Pricing" => "Pricing",
     "IssuesAndNotes" => "Issues & Notes",
     "NoDataFound" => "No Data Found",
     "ProjectTitle" => "Project Title",
