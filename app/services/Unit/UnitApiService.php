@@ -121,7 +121,7 @@ class UnitApiService
 
     public function storeUnitPhaseNote($request)
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
         $unit = Unit::find($request['unit_id']);
         if (!$unit) {
             return failReturnMsg('Unit not found');
@@ -201,7 +201,7 @@ class UnitApiService
 
     public function reportUnitIssue($request)
     {
-        $user = userAuth();
+        $user = userOrGuestAuth();
         $unit = Unit::find($request['unit_id']);
 
         if (!$unit) {
