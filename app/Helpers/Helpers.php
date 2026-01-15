@@ -152,8 +152,9 @@ if (!function_exists('getLocalizedSettingValue')) {
 if (!function_exists('userAuth')) {
     function userAuth()
     {
+        /** @var \App\Models\User|null $user */
         $user = auth('api')->user();
-        if ($user != null && $user->role === 'user') {
+        if ($user != null && $user->hasRole('user')) {
             return $user;
         }
         return null;
@@ -162,8 +163,9 @@ if (!function_exists('userAuth')) {
 if (!function_exists('guestAuth')) {
     function guestAuth()
     {
+        /** @var \App\Models\User|null $user */
         $user = auth('api')->user();
-        if ($user != null && $user->role === 'guest') {
+        if ($user != null && $user->hasRole('guest')) {
             return $user;
         }
         return null;
@@ -173,8 +175,9 @@ if (!function_exists('guestAuth')) {
 if (!function_exists('vendorAuth')) {
     function vendorAuth()
     {
+        /** @var \App\Models\User|null $user */
         $user = auth('api')->user();
-        if ($user != null && $user->role === 'vendor') {
+        if ($user != null && $user->hasRole('vendor')) {
             return $user;
         }
         return null;
@@ -184,8 +187,9 @@ if (!function_exists('vendorAuth')) {
 if (!function_exists('userOrGuestAuth')) {
     function userOrGuestAuth()
     {
+        /** @var \App\Models\User|null $user */
         $user = auth('api')->user();
-        if ($user != null && in_array($user->role, ['user', 'guest'])) {
+        if ($user != null && $user->hasAnyRole(['user', 'guest'])) {
             return $user;
         }
         return null;
