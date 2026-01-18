@@ -47,6 +47,8 @@ function normalize(u = {}) {
       }))
       : [];
 
+  const ext = tryJson(u.extension_dates);
+
   return {
     ...u,
     name_en: name.en,
@@ -58,8 +60,8 @@ function normalize(u = {}) {
     long: u.long ?? null,
     start_date: datetimeLocal(u.start_date),
     end_date: datetimeLocal(u.end_date),
-    extension_dates: Array.isArray(u.extension_dates)
-      ? u.extension_dates.map(datetimeLocal)
+    extension_dates: Array.isArray(ext)
+      ? ext.map(datetimeLocal)
       : [],
     status: u.status ?? "",
     user_id: u.user_id ?? null,
@@ -147,10 +149,10 @@ export function buildUnitCreateFD({
   fd.append("start_date", start_date ?? "");
   fd.append("end_date", end_date ?? "");
   (extension_dates || [])
-  .filter(v => v)
-  .forEach((v, i) => {
-    fd.append(`extension_dates[${i}]`, v);
-  });
+    .filter(v => v)
+    .forEach((v, i) => {
+      fd.append(`extension_dates[${i}]`, v);
+    });
 
   if (cover_image) fd.append("cover_image", cover_image);
 
@@ -201,20 +203,20 @@ export function buildUnitUpdateFD(partial = {}) {
   }
 
   if (location !== undefined) fd.append("location", location ?? "");
-  if(address !== undefined) fd.append("address", address ?? "");
+  if (address !== undefined) fd.append("address", address ?? "");
   if (lat !== undefined) fd.append("lat", String(lat ?? ""));
   if (long !== undefined) fd.append("long", String(long ?? ""));
   if (start_date !== undefined) fd.append("start_date", start_date ?? "");
   if (end_date !== undefined) fd.append("end_date", end_date ?? "");
   if (extension_dates !== undefined) {
-  if (Array.isArray(extension_dates)) {
-    extension_dates
-      .filter(v => v)
-      .forEach((v, i) => fd.append(`extension_dates[${i}]`, v))
-  } else {
-    fd.append("extension_dates[0]", String(extension_dates))
+    if (Array.isArray(extension_dates)) {
+      extension_dates
+        .filter(v => v)
+        .forEach((v, i) => fd.append(`extension_dates[${i}]`, v))
+    } else {
+      fd.append("extension_dates[0]", String(extension_dates))
+    }
   }
-}
 
   if (cover_image) fd.append("cover_image", cover_image);
 
