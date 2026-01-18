@@ -9,17 +9,10 @@
         </div>
 
         <div class="flex gap-2">
-          <button
-            class="px-3 py-2 border rounded-lg hover:bg-gray-50"
-            @click="goBack"
-          >
+          <button class="px-3 py-2 border rounded-lg hover:bg-gray-50" @click="goBack">
             Back
           </button>
-          <button
-            class="px-3 py-2 border rounded-lg hover:bg-gray-50"
-            @click="load"
-            :disabled="loading"
-          >
+          <button class="px-3 py-2 border rounded-lg hover:bg-gray-50" @click="load" :disabled="loading">
             <span v-if="loading">Refreshing…</span>
             <span v-else>Refresh</span>
           </button>
@@ -49,14 +42,12 @@
                 <p class="text-sm text-gray-500 mt-1">Created: {{ formatDate(quote.created_at) }}</p>
               </div>
 
-              <span
-                :class="[
-                  'px-2 py-0.5 rounded-full text-xs border',
-                  hasResponse
-                    ? 'bg-green-100 text-green-700 border-green-200'
-                    : 'bg-yellow-100 text-yellow-700 border-yellow-200'
-                ]"
-              >
+              <span :class="[
+                'px-2 py-0.5 rounded-full text-xs border',
+                hasResponse
+                  ? 'bg-green-100 text-green-700 border-green-200'
+                  : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+              ]">
                 {{ hasResponse ? 'Responded' : 'Pending' }}
               </span>
             </div>
@@ -68,7 +59,7 @@
               </div>
 
               <div class="rounded-xl border p-3 bg-gray-50">
-                <div class="text-xs text-gray-500 mb-1">User</div>
+                <div class="text-xs text-gray-500 mb-1">Owner</div>
                 <div class="text-gray-900 font-medium">
                   {{ user?.name || `User ${quote.user_id}` }}
                 </div>
@@ -105,21 +96,16 @@
           <!-- Gallery -->
           <div class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-5">
             <div class="flex items-center justify-between mb-3">
-              <h4 class="font-semibold text-gray-900">Gallery</h4>
+              <h4 class="font-semibold text-gray-900">Drawings Gallery</h4>
               <span class="text-xs text-gray-500">{{ gallery.length }} image(s)</span>
             </div>
 
             <div v-if="!gallery.length" class="text-sm text-gray-500">No gallery images.</div>
 
             <div v-else class="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <a
-                v-for="img in gallery"
-                :key="img.id"
-                :href="storageUrl(img.image)"
-                target="_blank"
-                class="rounded-xl overflow-hidden border bg-gray-50"
-              >
-                <img :src="storageUrl(img.image)" class="w-full h-32 object-cover hover:scale-[1.02] transition" />
+              <a v-for="img in gallery" :key="img.id" :href="img.image_url" target="_blank"
+                class="rounded-xl overflow-hidden border bg-gray-50">
+                <img :src="img.image_url" class="w-full h-32 object-cover hover:scale-[1.02] transition" />
               </a>
             </div>
           </div>
@@ -188,13 +174,13 @@ const vendor = ref(null)
 const buildingTitle = ref('—')
 const priceTitle = ref('—')
 
-const gallery = computed(() => quote.value?.unit_quote_gallery || [])
+const gallery = computed(() => quote.value?.gallery || [])
 const hasResponse = computed(() => !!response.value)
 
 const payImageUrl = computed(() => quote.value?.pay_image ? storageUrl(quote.value.pay_image) : '')
 
 function goBack() {
-  router.visit(route('unit-quotes-responses')) // عدّل الاسم حسب route list عندك
+  router.visit(route('unit-quotes-responses'))
 }
 
 function storageUrl(path) {
@@ -217,12 +203,24 @@ async function load() {
   errorMsg.value = ''
 
   try {
-    // 1) quote نفسه (لازم يرجّع pay_image + unit_quote_gallery زي الـ structure اللي انت بعته)
-    const q = await UnitQuotesApi.show(props.id)
+    const res = await UnitQuotesApi.show(props.id)
+
+    const q = res?.data ?? res
+    if (!q || !q.id) {
+      throw new Error('Quote not found')
+    }
+
     quote.value = q
 
-    // 2) response: جيبه من list وفلتر (لو عندك endpoint showByQuote يبقى أفضل)
-    const [responses, users, vendors, buildings, prices] = await Promise.all([
+    console.log('GALLERY:', q.unit_quote_gallery) 
+
+    const [
+      responses,
+      users,
+      vendors,
+      buildings,
+      prices,
+    ] = await Promise.all([
       UnitQuoteResponsesApi.list(),
       UsersApi.list(),
       VendorsApi.list(),
@@ -230,23 +228,42 @@ async function load() {
       TypeOfPriceApi.list(),
     ])
 
-    response.value = (responses || []).find(r => r.unit_quote_id === props.id) || null
-    user.value = (users || []).find(u => u.id === q.user_id) || null
-    if (response.value?.vendor_id) {
-      vendor.value = (vendors || []).find(v => v.id === response.value.vendor_id) || null
-    }
+    response.value =
+      (responses || []).find(r => r.unit_quote_id === q.id) || null
 
-    const b = (buildings?.data ?? buildings ?? []).find(x => x.id === q.type_of_building_id)
-    buildingTitle.value = b ? (parseTitle(b.title).en || '—') : '—'
+    user.value =
+      (users || []).find(u => u.id === q.user_id) || null
 
-    const p = (prices?.data ?? prices ?? []).find(x => x.id === q.type_of_price_id)
-    priceTitle.value = p ? (parseTitle(p.title).en || '—') : '—'
+    vendor.value =
+      response.value?.vendor_id
+        ? (vendors || []).find(v => v.id === response.value.vendor_id) || null
+        : null
+
+    const b =
+      (buildings?.data ?? buildings ?? [])
+        .find(x => x.id === q.type_of_building_id)
+
+    buildingTitle.value =
+      b ? (parseTitle(b.title).en || '—') : '—'
+
+    const p =
+      (prices?.data ?? prices ?? [])
+        .find(x => x.id === q.type_of_price_id)
+
+    priceTitle.value =
+      p ? (parseTitle(p.title).en || '—') : '—'
+
   } catch (e) {
+    console.error(e)
     errorMsg.value = show(e) || 'Failed to load quote details.'
+    quote.value = null
   } finally {
     loading.value = false
   }
 }
+
+
+
 
 onMounted(load)
 </script>

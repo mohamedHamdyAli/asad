@@ -33,8 +33,8 @@
               <tr>
                 <th class="py-2 px-3 text-left"></th>
                 <th class="py-2 px-3 text-left">Title</th>
-                <th class="py-2 px-3 text-left">User</th>
-                <th class="py-2 px-3 text-left">Vendor</th>
+                <th class="py-2 px-3 text-left">Owner</th>
+                <th class="py-2 px-3 text-left">PM</th>
                 <th class="py-2 px-3 text-left">Price</th>
                 <th class="py-2 px-3 text-left">Timeline</th>
                 <th class="py-2 px-3 text-left">Status</th>
@@ -175,7 +175,7 @@
             <p><strong>Price Type:</strong> {{ priceTitle }}</p>
           </div>
 
-          <div><b>User:</b>
+          <div><b>Owner:</b>
             {{
               users.find(u => u.id === selectedQuote.user_id)?.name ||
               `User ${selectedQuote.user_id}`
