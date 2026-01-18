@@ -18,7 +18,7 @@
               <th class="px-4 py-3 text-left">Project</th>
               <th class="px-4 py-3 text-left">Owner</th>
               <th class="px-4 py-3 text-left">Title</th>
-              <th class="px-4 py-3 text-left">Date submitted</th>
+              <th class="px-4 py-3 text-left">Date Submitted</th>
               <th class="px-4 py-3 text-left">Status</th>
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
@@ -39,7 +39,7 @@
               </td>
 
               <td class="px-4 py-3 text-sm text-gray-600">
-                {{ formatDate(issue.unit?.created_at) }}
+                {{  formatDate(issue.created_at) }}
               </td>
 
               <td class="px-4 py-3">
@@ -224,11 +224,10 @@ const filteredIssues = computed(() => {
       i.user?.name?.toLowerCase().includes(q)
     )
     .sort((a, b) => {
-      const da = new Date(a.created_at || a.unit?.created_at || 0).getTime()
-      const db = new Date(b.created_at || b.unit?.created_at || 0).getTime()
+      const da = new Date(a.created_at || a.createdAt || 0).getTime()
+      const db = new Date(b.created_at || b.createdAt || 0).getTime()
       return db - da
     })
-
 })
 
 watch(search, () => {

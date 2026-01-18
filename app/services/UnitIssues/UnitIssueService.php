@@ -10,7 +10,7 @@ class UnitIssueService
     public function getAll()
     {
         return UnitIssue::select([
-                'id', 'unit_id', 'user_id', 'title', 'description', 'status'
+                'id', 'unit_id', 'user_id', 'title', 'description', 'status' , 'created_at', 'updated_at'
             ])
             ->with(['unit', 'user:id,name'])
             ->get();
@@ -19,7 +19,7 @@ class UnitIssueService
     public function getById(int $id)
     {
         return UnitIssue::select([
-                'id', 'unit_id', 'user_id', 'title', 'description', 'status'
+                'id', 'unit_id', 'user_id', 'title', 'description', 'status' , 'created_at', 'updated_at'
             ])
             ->with(['unit', 'user:id,name'])
             ->find($id);
