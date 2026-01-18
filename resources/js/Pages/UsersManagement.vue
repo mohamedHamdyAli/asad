@@ -134,7 +134,7 @@
               :validation-schema="schema"
               :initial-values="form"
               @submit="submit"
-              v-slot="{ meta }"
+              v-slot="{ meta , submitCount, errors , values, setFieldValue }"
             >
               <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
@@ -171,8 +171,10 @@
                 </div>
 
                 <div class="col-span-2">
-                  <input type="file" @change="onImage" />
-                  <ErrorMessage name="profile_image" class="error" />
+                  <Field name="profile_image" type="hidden" />
+                <input type="file" accept="image/*" @change="e => onImage(e, setFieldValue)" />
+<ErrorMessage name="profile_image" class="error" />
+
                 </div>
               </div>
 
@@ -210,6 +212,9 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { UsersApi, buildUserCreateFD, buildUserUpdateFD } from '@/Services/users'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 const rows = ref([])
 const page = ref(1)
@@ -253,10 +258,20 @@ const schema = computed(() =>
 
 const filtered = computed(() => {
   const q = search.value.toLowerCase().trim()
-  return rows.value.filter(u =>
-    [u.name, u.email, u.phone].some(v => (v || '').toLowerCase().includes(q))
-  )
+
+  return rows.value
+    .filter(u =>
+      [u.name, u.email, u.phone].some(v =>
+        (v || '').toLowerCase().includes(q)
+      )
+    )
+    .sort((a, b) => {
+      const da = new Date(a.created_at || a.createdAt || 0).getTime()
+      const db = new Date(b.created_at || b.createdAt || 0).getTime()
+      return db - da
+    })
 })
+
 
 const paginated = computed(() =>
   filtered.value.slice((page.value - 1) * perPage, page.value * perPage)
@@ -317,9 +332,14 @@ function close() {
   showModal.value = false
 }
 
-function onImage(e) {
-  imageFile.value = e.target.files?.[0] || null
+function onImage(e, setFieldValue) {
+  const file = e.target.files?.[0] || null
+  imageFile.value = file
+
+  setFieldValue('profile_image', file, true)
 }
+
+
 
 async function submit(values) {
   serverError.value = ''
@@ -334,6 +354,7 @@ async function submit(values) {
     close()
     await fetchUsers()
   } catch (e) {
+    show(e)
     serverError.value =
       Object.values(e?.response?.data?.errors || {})[0]?.[0] ||
       e?.response?.data?.msg ||
