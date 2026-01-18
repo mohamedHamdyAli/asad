@@ -142,6 +142,38 @@
                   Delete
                 </button>
               </div>
+              <!-- ================= NOTES ================= -->
+              <div class="mt-6 border-t pt-4">
+                <h4 class="text-sm font-semibold mb-2">Phase Notes</h4>
+
+                <!-- Add Note -->
+                <!-- <div class="flex gap-2 mb-3">
+                  <textarea v-model="newNote[p.id]" class="form-input flex-1 min-h-[50px]"
+                    placeholder="Add note…"></textarea>
+
+                  <button class="px-3 py-2 bg-blue-600 text-white rounded" :disabled="noteSaving[p.id]"
+                    @click="addNote(p.id)">
+                    Add
+                  </button>
+                </div> -->
+
+                <!-- Notes List -->
+                <div v-if="notes[p.id]?.length" class="space-y-2">
+                  <div v-for="n in notes[p.id]" :key="n.id" class="p-3 bg-gray-50 rounded border text-sm">
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="font-medium text-xs">{{ n.user?.name }}</span>
+                      <button class="text-xs text-red-600" @click="deleteNote(n.id, p.id)">
+                        Delete
+                      </button>
+                    </div>
+
+                    <p class="text-gray-700">{{ n.note }}</p>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-400">No notes yet.</p>
+              </div>
+
             </div>
           </div>
         </div>
@@ -159,6 +191,12 @@ import { UnitPhasesApi, buildCreatePayload, buildUpdatePayload } from '@/Service
 import { Form, Field, ErrorMessage } from "vee-validate"
 import * as yup from "yup"
 import { useServerError } from '@/composables/useServerError'
+import { UnitPhaseNotesApi } from '@/Services/unitPhaseNotes'
+
+const notes = reactive({})
+const newNote = reactive({})
+const noteSaving = reactive({})
+
 
 const { show } = useServerError()
 
@@ -245,6 +283,10 @@ async function fetchList() {
     const data = await UnitPhasesApi.list(props.unitId)
     rows.value = data
     seedEditState(data)
+    rows.value.forEach(p => {
+      loadNotes(p.id)
+    })
+
   } catch (e) {
     show(e)
   } finally {
@@ -295,6 +337,46 @@ async function remove(id) {
     show(e)
   }
 }
+
+async function loadNotes(phaseId) {
+  notes[phaseId] = await UnitPhaseNotesApi.list(props.unitId, phaseId)
+  newNote[phaseId] = ''
+}
+
+async function addNote(phaseId) {
+  if (!newNote[phaseId]) return
+
+  noteSaving[phaseId] = true
+  try {
+    await UnitPhaseNotesApi.create({
+      unit_id: props.unitId,
+      unit_phase_id: phaseId,
+      user_id: window?.auth?.user?.id, // أو من backend
+      note: newNote[phaseId],
+      status: 'open',
+    })
+
+    newNote[phaseId] = ''
+    await loadNotes(phaseId)
+  } catch (e) {
+    show(e)
+  } finally {
+    noteSaving[phaseId] = false
+  }
+}
+
+async function deleteNote(noteId, phaseId) {
+  if (!confirm('Delete this note?')) return
+
+  try {
+    await UnitPhaseNotesApi.remove(noteId)
+    await loadNotes(phaseId)
+  } catch (e) {
+    show(e)
+  }
+}
+
+
 
 onMounted(fetchList)
 </script>
