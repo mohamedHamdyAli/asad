@@ -6,14 +6,24 @@ use Illuminate\Support\Facades\DB;
 
 class UnitPhaseNoteService
 {
-    public function getAll()
-    {
-        return UnitPhaseNote::select([
-                'id', 'unit_id', 'unit_phase_id', 'user_id', 'note', 'status',
-            ])
-            ->with(['unit', 'unitPhase', 'user:id,name'])
-            ->get();
-    }
+    // public function getAll()
+    // {
+    //     return UnitPhaseNote::select([
+    //             'id', 'unit_id', 'unit_phase_id', 'user_id', 'note', 'status',
+    //         ])
+    //         ->with(['unit', 'unitPhase', 'user:id,name'])
+    //         ->get();
+    // }
+
+    public function getAll($unitId = null, $phaseId = null)
+{
+    return UnitPhaseNote::when($unitId, fn($q) => $q->where('unit_id', $unitId))
+        ->when($phaseId, fn($q) => $q->where('unit_phase_id', $phaseId))
+        ->with(['user:id,name'])
+        ->orderByDesc('id')
+        ->get();
+}
+
 
     public function getById(int $id)
     {

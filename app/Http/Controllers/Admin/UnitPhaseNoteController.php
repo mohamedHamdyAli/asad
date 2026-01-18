@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UnitPhaseNoteRequest;
 use App\services\UnitPhaseNotes\UnitPhaseNoteService;
+use Illuminate\Http\Request;
 
 class UnitPhaseNoteController extends Controller
 {
@@ -15,13 +16,17 @@ class UnitPhaseNoteController extends Controller
         $this->service = $service;
     }
 
-    public function index()
-    {
-        return response()->json([
-            'status' => 'success',
-            'data' => $this->service->getAll()
-        ]);
-    }
+  public function index(Request $request)
+{
+    return response()->json([
+        'status' => 'success',
+        'data' => $this->service->getAll(
+            $request->unit_id,
+            $request->unit_phase_id
+        )
+    ]);
+}
+
 
     public function show($id)
     {
