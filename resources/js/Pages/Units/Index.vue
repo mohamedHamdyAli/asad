@@ -478,6 +478,9 @@ import { UnitsApi, buildUnitCreateFD, buildUnitUpdateFD } from '@/Services/units
 import { Link } from '@inertiajs/vue3'
 import { UsersApi } from '@/Services/users'
 import { VendorsApi } from '@/Services/vendors'
+import { useServerError } from '@/composables/useServerError'
+
+const { show } = useServerError()
 
 /* ------------------ table state ------------------ */
 const rows = ref([])
@@ -792,6 +795,7 @@ async function submit() {
     await fetchUnits()
     closeModal()
   } catch (e) {
+    show(e)
     const status = e?.response?.status
     if (status === 422 && applyServerErrors(e)) {
       await nextTick()
