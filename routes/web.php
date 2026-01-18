@@ -67,8 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
     });
 
-    /* ================= ADMIN + VENDOR ================= */
-    Route::middleware('role_or_permission:admin|vendor')->group(function () {
+    /* ================= ADMIN + project manager ================= */
+    Route::middleware('role_or_permission:admin|project manager')->group(function () {
 
         Route::get('/pm-management', fn() => inertia('VendorsManagement'))->name('pm-management');
         Route::get('/bids-management', fn() => inertia('BidsManagement'))->name('bids-management');
@@ -80,7 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     /* ================= PROJECTS / UNITS ================= */
-    Route::middleware('role_or_permission:admin|vendor')->group(function () {
+    Route::middleware('role_or_permission:admin|project manager')->group(function () {
 
         Route::get(
             '/projects-management',
