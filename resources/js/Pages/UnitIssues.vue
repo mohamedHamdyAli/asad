@@ -5,19 +5,20 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">
 
-      <h2 class="text-2xl font-semibold">Unit Issues</h2>
+      <h2 class="text-2xl font-semibold">Projects Issues</h2>
 
       <!-- SEARCH -->
-      <input v-model="search" class="form-input w-72" placeholder="Search by title, unit or user" />
+      <input v-model="search" class="form-input w-72" placeholder="Search by title, Project or Owner" />
 
       <!-- TABLE -->
       <div class="bg-white rounded-xl shadow border overflow-hidden">
         <table class="w-full text-sm">
           <thead class="bg-gray-100">
             <tr>
-              <th class="px-4 py-3 text-left">Unit</th>
-              <th class="px-4 py-3 text-left">User</th>
+              <th class="px-4 py-3 text-left">Project</th>
+              <th class="px-4 py-3 text-left">Owner</th>
               <th class="px-4 py-3 text-left">Title</th>
+              <th class="px-4 py-3 text-left">Date submitted</th>
               <th class="px-4 py-3 text-left">Status</th>
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
@@ -35,6 +36,10 @@
 
               <td class="px-4 py-3">
                 {{ issue.title }}
+              </td>
+
+              <td class="px-4 py-3 text-sm text-gray-600">
+                {{ formatDate(issue.unit?.created_at) }}
               </td>
 
               <td class="px-4 py-3">
@@ -187,6 +192,8 @@ const modalOpen = ref(false)
 const currentId = ref(null)
 const form = ref({})
 
+
+
 /* ================= VALIDATION ================= */
 const schema = yup.object({
   status: yup.string().oneOf(['open', 'close']).required(),
@@ -205,17 +212,28 @@ async function load() {
   users.value = usersRes
 }
 
+
 /* ================= FILTER ================= */
 const filteredIssues = computed(() => {
   const q = search.value.toLowerCase()
-  return issues.value.filter(i =>
-    i.title?.toLowerCase().includes(q) ||
-    i.unit?.name?.en?.toLowerCase().includes(q) ||
-    i.user?.name?.toLowerCase().includes(q)
-  )
+
+  return issues.value
+    .filter(i =>
+      i.title?.toLowerCase().includes(q) ||
+      i.unit?.name?.en?.toLowerCase().includes(q) ||
+      i.user?.name?.toLowerCase().includes(q)
+    )
+    .sort((a, b) => {
+      const da = new Date(a.created_at || a.unit?.created_at || 0).getTime()
+      const db = new Date(b.created_at || b.unit?.created_at || 0).getTime()
+      return db - da
+    })
+
 })
 
-watch(search, () => currentPage.value = 1)
+watch(search, () => {
+  currentPage.value = 1
+})
 
 /* ================= PAGINATION ================= */
 const totalPages = computed(() =>
@@ -268,6 +286,19 @@ async function remove(id) {
   await UnitIssuesApi.remove(id)
   load()
 }
+
+function formatDate(v) {
+  if (!v) return '—'
+  const d = new Date(v)
+  return d.toLocaleString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 
 onMounted(load)
 </script>
