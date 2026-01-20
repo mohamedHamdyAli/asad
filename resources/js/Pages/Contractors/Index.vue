@@ -58,7 +58,7 @@
           </h3>
 
           <Form ref="formRef" :validate-on-mount="false" :key="formKey" :validation-schema="schema"
-            :initial-values="form" :validation-context="{ isCreate: !editing }" @submit="submit"
+            :initial-values="form" @submit="submit"
             v-slot="{ setFieldValue, submitCount }">
 
             <div class="grid grid-cols-2 gap-4">
@@ -134,7 +134,7 @@
 
                 <!-- Existing / New Preview -->
                 <img v-if="imagePreview" :src="imagePreview" class="w-32 h-24 object-cover rounded border" />
-
+                <Field name ="image" type="hidden" />
                 <input type="file" accept="image/*" @change="(e) => onFileChange(e, setFieldValue)" />
 
                 <ErrorMessage v-if="submitCount > 0" name="image" class="error" />
@@ -187,43 +187,41 @@ const imagePreview = ref(null)
 
 const form = ref({})
 
-const schema = yup.object({
-  title: yup.object({
-    en: yup.string().required('EN title is required'),
-    ar: yup.string().required('AR title is required'),
-  }),
-  description: yup.object({
-    en: yup.string().required('English description is required'),
-    ar: yup.string().required('Arabic description is required'),
-  }),
-  email: yup.string().email().required('Email is required'),
+const schema = computed(() =>
+  yup.object({
+    title: yup.object({
+      en: yup.string().required('EN title is required'),
+      ar: yup.string().required('AR title is required'),
+    }),
 
-  company_phone: yup.string().required('Company phone is required'),
-  representative_phone: yup.string().required('Representative phone is required'),
+    description: yup.object({
+      en: yup.string().required('English description is required'),
+      ar: yup.string().required('Arabic description is required'),
+    }),
 
-  company_address: yup.object({
-    en: yup.string().required('EN address is required'),
-    ar: yup.string().required('AR address is required'),
-  }),
+    email: yup.string().email('Invalid email').required('Email is required'),
 
-  representative_name: yup.object({
-    en: yup.string().required('EN representative name is required'),
-    ar: yup.string().required('AR representative name is required'),
-  }),
+    company_phone: yup.string().required('Company phone is required'),
+    representative_phone: yup.string().required('Representative phone is required'),
 
-  image: yup
-    .mixed()
-    .test(
-      'required-on-create',
-      'Image is required',
-      function (value) {
-        const { isCreate } = this.options.context || {}
-        if (!isCreate) return true
-        return value instanceof File
-      }
-    ),
+    company_address: yup.object({
+      en: yup.string().required('EN address is required'),
+      ar: yup.string().required('AR address is required'),
+    }),
 
-})
+    representative_name: yup.object({
+      en: yup.string().required('EN representative name is required'),
+      ar: yup.string().required('AR representative name is required'),
+    }),
+
+    image: editing.value
+      ? yup.mixed().nullable()
+      : yup
+          .mixed()
+          .required('Image is required')
+          .test('file', 'Invalid image', (v) => v instanceof File),
+  })
+)
 
 
 
@@ -292,7 +290,7 @@ function openEdit(c) {
 function onFileChange(e, setFieldValue) {
   const file = e.target.files?.[0] || null
   imageFile.value = file
-  setFieldValue('image', file)
+  setFieldValue('image', file, true)
 
   if (file) {
     imagePreview.value = URL.createObjectURL(file)

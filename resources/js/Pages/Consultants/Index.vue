@@ -77,7 +77,7 @@
           </h3>
 
           <Form :key="formKey" :validate-on-mount="false" :validation-schema="schema" :initial-values="form"
-            :validation-context="{ isCreate: !editing }" @submit="submit" v-slot="{ setFieldValue, submitCount }">
+           @invalid-submit="onInvalidSubmit" @submit="submit" v-slot="{ setFieldValue, submitCount }">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <!-- Title EN -->
@@ -209,51 +209,48 @@ const formKey = ref(0)
 const form = ref({})
 
 /* VALIDATION */
-const schema = yup.object({
-  title: yup.object({
-    en: yup.string().required('EN title is required'),
-    ar: yup.string().required('AR title is required'),
-  }),
+const schema = computed(() =>
+  yup.object({
+    title: yup.object({
+      en: yup.string().required('EN title is required'),
+      ar: yup.string().required('AR title is required'),
+    }),
 
-  description: yup.object({
-    en: yup.string().required('English description is required'),
-    ar: yup.string().required('Arabic description is required'),
-  }),
+    description: yup.object({
+      en: yup.string().required('English description is required'),
+      ar: yup.string().required('Arabic description is required'),
+    }),
 
-  email: yup
-    .string()
-    .email('Invalid email')
-    .required('Email is required'),
+    email: yup.string().email('Invalid email').required('Email is required'),
 
-  company_phone: yup.string().required('Company phone is required'),
-  representative_phone: yup.string().required('Representative phone is required'),
+    company_phone: yup.string().required('Company phone is required'),
+    representative_phone: yup.string().required('Representative phone is required'),
 
-  company_address: yup.object({
-    en: yup.string().required('EN address is required'),
-    ar: yup.string().required('AR address is required'),
-  }),
+    company_address: yup.object({
+      en: yup.string().required('EN address is required'),
+      ar: yup.string().required('AR address is required'),
+    }),
 
-  representative_name: yup.object({
-    en: yup.string().required('EN representative name is required'),
-    ar: yup.string().required('AR representative name is required'),
-  }),
+    representative_name: yup.object({
+      en: yup.string().required('EN representative name is required'),
+      ar: yup.string().required('AR representative name is required'),
+    }),
 
-  image: yup
-    .mixed()
-    .test(
-      'image-required-on-create',
-      'Image is required',
-      function (value) {
-        const { isCreate } = this.options.context || {}
-        if (!isCreate) return true
-        return value instanceof File
-      }
-    ),
+    image: editing.value
+      ? yup.mixed().nullable()
+      : yup
+          .mixed()
+          .required('Image is required')
+          .test('file', 'Invalid image', (v) => v instanceof File),
+  })
+)
 
-})
 
 const imagePreview = ref(null)
 
+function onInvalidSubmit(ctx) {
+  console.log('INVALID SUBMIT', ctx.errors)
+}
 
 /* LOAD */
 async function load() {

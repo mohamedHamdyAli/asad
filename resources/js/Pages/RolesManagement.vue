@@ -276,6 +276,12 @@ const filteredUsers = computed(() => {
     )
   }
 
+    list.sort((a, b) => {
+    const da = new Date(a.created_at || 0).getTime()
+    const db = new Date(b.created_at || 0).getTime()
+    return db - da
+  })
+
   return list
 })
 

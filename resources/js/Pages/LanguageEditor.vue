@@ -25,7 +25,11 @@
       <!-- Keep the grid mounted so it doesn't disappear during in-flight requests -->
       <div v-show="keys.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="key in keys" :key="key">
-          <label class="block text-sm font-medium text-gray-600 mb-1">{{ key }}</label>
+          <!-- <label class="block text-sm font-medium text-gray-600 mb-1">{{ key }}</label> -->
+         <label class="block text-sm font-medium text-gray-600 mb-1 whitespace-normal break-words line-clamp-2">
+  {{ key }}
+</label>
+
           <input
             v-model="translations[key]"
             type="text"
