@@ -21,6 +21,7 @@ class UnitDocumentResource extends JsonResource
             $this->mergeWhen($this->date !== null, [
                 'date' => $this->date,
             ]),
+            // 'created_at' => $this->created_at->format('d M Y'),
         ];
     }
 }

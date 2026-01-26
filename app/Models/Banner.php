@@ -14,6 +14,7 @@ class Banner extends Model
         'description',
         'image',
         'page',
+        'banner_type',
         'is_enabled',
     ];
 

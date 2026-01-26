@@ -60,12 +60,13 @@ export const BannerApi = {
 /* ---------- FormData builders ---------- */
 // Services/banner.js
 
-export function buildCreateBannerFD({ image, is_enabled = true, page, name = {}, description = {} }) {
+export function buildCreateBannerFD({ image, is_enabled = true, page, banner_type = 'guest', name = {}, description = {} }) {
   const fd = new FormData()
 
   if (image) fd.append("image", image)
   fd.append("is_enabled", is_enabled ? "1" : "0")
   if (page) fd.append("page", page)
+  if (banner_type) fd.append("banner_type", banner_type)
 
   if (name?.en) fd.append("name[en]", name.en)
   if (name?.ar) fd.append("name[ar]", name.ar)
@@ -76,12 +77,13 @@ export function buildCreateBannerFD({ image, is_enabled = true, page, name = {},
   return fd
 }
 
-export function buildUpdateBannerFD({ image = null, is_enabled = null, page = null, name = null, description = null }) {
+export function buildUpdateBannerFD({ image = null, is_enabled = null, page = null, banner_type = null, name = null, description = null }) {
   const fd = new FormData()
 
   if (image) fd.append("image", image)
   if (is_enabled !== null) fd.append("is_enabled", is_enabled ? "1" : "0")
   if (page) fd.append("page", page)
+  if (banner_type) fd.append("banner_type", banner_type)
 
   if (name) {
     if (name?.en !== undefined) fd.append("name[en]", name.en ?? "")

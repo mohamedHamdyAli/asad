@@ -20,9 +20,12 @@ class BannerHelperFunctionService
         return Banner::allActive();
     }
 
-    public function getAllActiveBanners()
+    public function getAllActiveBanners($bannerType = 'guest')
     {
-        return Banner::allActive(true);
+        return Banner::where('page', 'application')
+            ->where('is_enabled', 1)
+            ->where('banner_type', $bannerType)
+            ->get();
     }
 
     public function getBannerById(int $id)

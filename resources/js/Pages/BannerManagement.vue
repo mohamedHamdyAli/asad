@@ -40,8 +40,18 @@
                 <ErrorMessage name="page" class="err" />
               </div>
 
+              <!-- Banner Type -->
+              <div>
+                <label class="label">Banner Type *</label>
+                <Field as="select" name="banner_type" class="form-input">
+                  <option value="guest">Guest</option>
+                  <option value="user">User</option>
+                </Field>
+                <ErrorMessage name="banner_type" class="err" />
+              </div>
+
               <!-- Enabled -->
-              <div class="flex items-end">
+              <div class="flex items-end md:col-span-2">
                 <label class="flex items-center gap-2 bg-gray-50 border rounded-xl px-4 py-3 w-full">
                   <Field name="is_enabled" type="checkbox" :value="true" :unchecked-value="false" />
                   <div>
@@ -173,6 +183,15 @@
                 </select>
               </div>
 
+              <!-- Banner Type -->
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Banner Type</label>
+                <select v-model="editDraft[b.id].banner_type" class="w-full border rounded-lg px-2 py-1 text-xs">
+                  <option value="guest">Guest</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+
               <!-- Names -->
               <div class="grid grid-cols-2 gap-2">
                 <div>
@@ -262,6 +281,8 @@ const PAGES = [
 const createSchema = yup.object({
   page: yup.string().required('Page is required').oneOf(PAGES, 'Invalid page'),
 
+  banner_type: yup.string().required('Banner type is required').oneOf(['guest', 'user'], 'Invalid banner type'),
+
   name: yup.object({
     en: yup.string().nullable(),
     ar: yup.string().nullable(),
@@ -295,6 +316,7 @@ const MAX_SIZE = 6 * 1024 * 1024
 
 const createInitial = {
   page: 'home',
+  banner_type: 'guest',
   is_enabled: true,
   image: null,
   name: { en: '', ar: '' },
@@ -365,6 +387,7 @@ async function fetchBanners() {
       if (!editDraft[b.id]) {
         editDraft[b.id] = {
           page: b.page ?? 'home',
+          banner_type: b.banner_type ?? 'guest',
           is_enabled: b.is_enabled === true,
           name: {
             en: b?.name?.en ?? '',
@@ -388,13 +411,21 @@ async function createBanner(values, { resetForm }) {
   createErr.value = ''
 
   try {
+    console.log('Creating banner with values:', values)
+
     const fd = buildCreateBannerFD({
       image: values.image,
       is_enabled: values.is_enabled,
       page: values.page,
+      banner_type: values.banner_type,
       name: values.name,
       description: values.description,
     })
+
+    console.log('FormData entries:')
+    for (let [key, value] of fd.entries()) {
+      console.log(key, value)
+    }
 
     await BannerApi.create(fd)
     await fetchBanners()
@@ -449,7 +480,7 @@ async function saveReplace(id) {
   }
 }
 
-/* Save edits (name/page/is_enabled) */
+/* Save edits (name/page/is_enabled/banner_type) */
 async function saveBannerEdits(id) {
   const draft = editDraft[id]
   if (!draft) return
@@ -458,8 +489,10 @@ async function saveBannerEdits(id) {
   try {
     const fd = buildUpdateBannerFD({
       page: draft.page,
+      banner_type: draft.banner_type,
       is_enabled: draft.is_enabled,
       name: draft.name,
+      description: draft.description,
     })
     await BannerApi.update(id, fd)
     await fetchBanners()
