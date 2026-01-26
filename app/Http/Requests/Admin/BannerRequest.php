@@ -28,6 +28,7 @@ class BannerRequest extends FormRequest
             'description.*' => 'nullable|string',
             'is_enabled' => 'required|boolean',
             'page' => 'required|string|in:home,about,contactUs,project,application,logos,our-services,qhse-policy',
+            'banner_type' => 'required|in:guest,user',
             'image' => 'required|mimes:jpeg,png,jpg,svg|max:6144',
         ] : [
             'name' => 'nullable|array',
@@ -35,6 +36,7 @@ class BannerRequest extends FormRequest
             'description' => 'nullable|array',
             'description.*' => 'nullable|string',
             'page' => 'sometimes|string|in:home,about,contactUs,project,application,logos,our-services,qhse-policy',
+            'banner_type' => 'sometimes|in:guest,user',
             'image' => 'sometimes|mimes:jpeg,png,jpg,svg|max:6144',
             'is_enabled' => 'sometimes|boolean',
         ];

@@ -38,6 +38,7 @@ class UnitApiService
                     'foldername' => $folderName,
                     'folder_image' => $folder?->folder_image,
                     'files' => $items,
+                    'created_at' => $folder?->created_at,
                 ];
             })->values();
 
@@ -58,6 +59,7 @@ class UnitApiService
                     'foldername' => $folderName,
                     'folder_image' => $folder?->folder_image,
                     'files' => $items,
+                    'created_at' => $folder?->created_at,
                 ];
             })->values();
 
@@ -79,6 +81,7 @@ class UnitApiService
                     'foldername' => $folderName,
                     'folder_image' => $folder?->folder_image,
                     'files' => $items,
+                    'created_at' => $folder?->created_at,
                 ];
             })->values();
 

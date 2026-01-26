@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\BannerRequest;
 use App\Http\Resources\BannerResource;
 use App\services\Banner\BannerHelperFunctionService;
 use function successReturnData;
@@ -14,9 +15,10 @@ class BannerController extends Controller
     {
         $this->bannerService = $bannerService;
     }
-    public function getBanner()
+    public function getBanner(BannerRequest $request)
     {
-        $data = $this->bannerService->getAllActiveBanners();
+        $bannerType = $request->input('banner_type');
+        $data = $this->bannerService->getAllActiveBanners($bannerType);
         return successReturnData(BannerResource::collection($data), 'Data Fetched Successfully');
 
     }
