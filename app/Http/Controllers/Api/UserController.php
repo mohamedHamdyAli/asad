@@ -9,6 +9,8 @@ use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Requests\Api\ResetPasswordRequest;
 use App\Http\Requests\Api\UpdateProfileRequest;
 use App\Http\Requests\Api\ForgotPasswordRequest;
+use App\Http\Requests\Api\VerifyOtpRequest;
+use App\Http\Requests\Api\ResendOtpRequest;
 
 class UserController extends Controller
 {
@@ -21,6 +23,17 @@ class UserController extends Controller
     {
         return $this->userService->register($request->validated());
     }
+
+    public function verifyOtp(VerifyOtpRequest $request)
+    {
+        return $this->userService->verifyOtp($request->validated());
+    }
+
+    public function resendOtp(ResendOtpRequest $request)
+    {
+        return $this->userService->resendOtp($request->validated());
+    }
+
     public function login(LoginRequest $request)
     {
         return $this->userService->login($request->validated());

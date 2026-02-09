@@ -30,6 +30,7 @@ class User extends Authenticatable
         'profile_image',
         'otp',
         'otp_expiry',
+        'email_verified_at',
         'gender',
         'is_enabled',
         'created_by',

@@ -323,3 +323,10 @@ if (!function_exists('uploadOrUpdateImage')) {
         return $existingImagePath;
     }
 }
+
+function generateOtp(int $length = 4): string
+{
+    $max = (int) str_repeat('9', $length);
+    return str_pad((string) random_int(0, $max), $length, '0', STR_PAD_LEFT);
+}
+
