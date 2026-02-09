@@ -56,6 +56,8 @@ Route::prefix('user')->group(function () {
     Route::get('get-intro', [ApiIntroController::class, 'getIntro']);
     Route::get('get-banner', [ApiBannerController::class, 'getBanner']);
     Route::post('register', [UserController::class, 'register']);
+    Route::post('verify-otp', [UserController::class, 'verifyOtp']);
+    Route::post('resend-otp', [UserController::class, 'resendOtp']);
     Route::post('login', [UserController::class, 'login']);
     Route::post('sendResetLinkEmail', [UserController::class, 'sendResetLinkEmail']);
     Route::post('resetPassword', [UserController::class, 'resetPassword']);

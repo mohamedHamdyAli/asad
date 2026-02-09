@@ -3,9 +3,12 @@
 namespace App\services\User;
 
 use App\Models\User;
+use App\Mail\OtpMail;
 use App\Models\Setting;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -28,12 +31,78 @@ class UserService
     public function register(array $data)
     {
         return DB::transaction(function () use ($data) {
+            $otp = generateOtp();
+
+            $data['otp'] = $otp;
+            $data['otp_expiry'] = now()->addMinutes(5);
+
             $user = User::create($data);
             $user->assignRole('guest');
-            $role = $user->getRoleNames()->first();
-            $user->token = 'Bearer ' . $user->createToken("{$role}:{$user->id}")->accessToken;
-            return successReturnData(new RegisterResource($user), 'Data Fetched Successfully');
+
+            try {
+                Mail::to($user->email)->send(new OtpMail($otp, $user->name));
+            } catch (\Exception $e) {
+                Log::error('Failed to send OTP email: ' . $e->getMessage());
+            }
+
+            return returnSuccessMsg('OTP sent to your email. Please verify to complete registration.');
         });
+    }
+
+    public function verifyOtp(array $data)
+    {
+        $user = User::where('email', $data['email'])->first();
+
+        if (!$user) {
+            return failReturnMsg('User not found');
+        }
+
+        if ($user->email_verified_at) {
+            return failReturnMsg('Email already verified');
+        }
+
+        if ($user->otp !== $data['otp']) {
+            return failReturnMsg('Invalid OTP');
+        }
+
+        if (now()->greaterThan($user->otp_expiry)) {
+            return failReturnMsg('OTP has expired. Please request a new one.');
+        }
+
+        $user->update([
+            'otp' => null,
+            'otp_expiry' => null,
+            'email_verified_at' => now(),
+        ]);
+
+        $role = $user->getRoleNames()->first();
+        $user->token = 'Bearer ' . $user->createToken("{$role}:{$user->id}")->accessToken;
+
+        return successReturnData(new RegisterResource($user), 'Email verified successfully');
+    }
+
+    public function resendOtp(array $data)
+    {
+        $user = User::where('email', $data['email'])->first();
+
+        if (!$user) {
+            return failReturnMsg('User not found');
+        }
+
+        if ($user->email_verified_at) {
+            return failReturnMsg('Email already verified');
+        }
+
+        $otp = generateOtp();
+
+        $user->update([
+            'otp' => $otp,
+            'otp_expiry' => now()->addMinutes(5),
+        ]);
+
+        Mail::to($user->email)->send(new OtpMail($otp, $user->name));
+
+        return returnSuccessMsg('OTP resent to your email');
     }
     public function login(array $data)
     {
@@ -50,6 +119,11 @@ class UserService
 
             /** @var \App\Models\User $user */
             $user = Auth::user();
+
+            // if (!$user->email_verified_at) {
+            //     Auth::logout();
+            //     return failReturnMsg('Please verify your email first');
+            // }
 
             if (!$user->is_enabled) {
                 Auth::logout();
