@@ -4,6 +4,7 @@ namespace App\services\Unit;
 
 use App\Models\UnitPaymentInstallment;
 use App\Models\UnitPaymentInstallmentInvoice;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 use App\Events\InvoiceStatusChanged;
 use App\Events\PaymentStatusChanged;
@@ -39,6 +40,33 @@ class UnitPaymentInstallmentInvoiceService
                 'status' => true,
                 'data' => $installment,
                 'message' => 'Installment status updated successfully'
+            ];
+        });
+    }
+
+    public function uploadInvoice($data, $installmentId)
+    {
+        return DB::transaction(function () use ($data, $installmentId) {
+            $installment = UnitPaymentInstallment::find($installmentId);
+
+            if (!$installment) {
+                return ['status' => false, 'message' => 'Installment not found'];
+            }
+
+            $invoiceFilePath = FileService::upload($data['invoice_file'], 'units/invoices');
+
+            $invoice = UnitPaymentInstallmentInvoice::create([
+                'unit_payment_installment_id' => $installment->id,
+                'paid_amount' => $data['paid_amount'],
+                'invoice_file' => $invoiceFilePath,
+                'payment_date' => $data['payment_date'] ?? now(),
+                'status' => 'confirmed',
+            ]);
+
+            return [
+                'status' => true,
+                'message' => 'Invoice uploaded successfully',
+                'data' => $invoice,
             ];
         });
     }

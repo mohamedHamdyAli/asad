@@ -81,6 +81,7 @@ Route::prefix('user')->group(function () {
         Route::get('get-unit-contractors', [ApiUnitController::class, 'getUnitContractors']);
         Route::get('get-unit-consultants', [ApiUnitController::class, 'getUnitConsultants']);
         Route::post('installments/{installment}/invoices', [PaymentController::class, 'uploadInvoice']);
+        Route::get('view-invoice', [PaymentController::class, 'viewInvoice']);
         Route::get('get-all-installments', [PaymentController::class, 'allInstallments']);
         Route::get('get-all-completed-installments', [PaymentController::class, 'allCompletedInstallments']);
         Route::get('get-active-installments', [PaymentController::class, 'activeInstallments']);
@@ -362,6 +363,9 @@ Route::prefix('unit-payments')->group(function () {
     // Invoices
     Route::get('installments/{installment}/invoices', [UnitPaymentInstallmentController::class, 'getInvoices'])
         ->name('unit-payment-installments.invoices');
+
+    Route::post('installments/{installment}/upload-invoice', [UnitPaymentInstallmentController::class, 'uploadInvoice'])
+        ->name('unit-payment-installments.upload-invoice');
 
     Route::post('installments/{installment}/status', [UnitPaymentInstallmentController::class, 'updateStatus'])
         ->name('unit-payment-installments.status');

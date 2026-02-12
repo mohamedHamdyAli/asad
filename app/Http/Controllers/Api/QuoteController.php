@@ -17,16 +17,28 @@ class QuoteController extends Controller
     }
     public function getBuildingType()
     {
+        if (!guestAuth()) {
+            return failReturnMsg('Unauthorized, guest access only', 403);
+        }
         return $this->quoteApiService->getBuildingType();
     }
     public function getPriceType()
     {
+        if (!guestAuth()) {
+            return failReturnMsg('Unauthorized, guest access only', 403);
+        }
         return $this->quoteApiService->getPriceType();
     }
     public function quoteRequest(QuoteRequest $request){
+        if (!guestAuth()) {
+            return failReturnMsg('Unauthorized, guest access only', 403);
+        }
         return $this->quoteApiService->quoteRequest($request->validated());
     }
     public function getPriceResponse(UserIdRequest $request){
+        if (!guestAuth()) {
+            return failReturnMsg('Unauthorized, guest access only', 403);
+        }
         return $this->quoteApiService->priceResponse($request->validated());
     }
 }

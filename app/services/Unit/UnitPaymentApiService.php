@@ -3,7 +3,9 @@
 namespace App\services\Unit;
 
 use App\Http\Resources\UnitPaymentResource;
+use App\Http\Resources\UnitPaymentInstallmentResource;
 use App\Models\UnitPayment;
+use App\Models\UnitPaymentInstallment;
 use App\Models\UnitPaymentInstallmentInvoice;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
@@ -30,13 +32,22 @@ class UnitPaymentApiService
 
     public function allCompletedInstallments($request)
     {
-        $installments = UnitPayment::where('unit_id', $request['unit_id'])->with([
-            'installments' => fn($q) => $q->where('status', 'paid')
-        ])->get();
+        $installments = UnitPaymentInstallment::where('status', 'paid')
+            ->whereHas('paymentPlan', fn($q) => $q->where('unit_id', $request['unit_id']))
+            ->with(['paymentPlan', 'invoices'])
+            ->get();
 
-        return $installments->isEmpty()
-            ? failReturnMsg('No installments found', 404)
-            : successReturnData(UnitPaymentResource::collection($installments), 'Installments retrieved successfully');
+        if ($installments->isEmpty()) {
+            return failReturnMsg('No installments found', 404);
+        }
+
+        $paymentPlan = $installments->first()->paymentPlan;
+
+        return successReturnData([
+            'unit_id' => $paymentPlan->unit_id,
+            'total_price' => $paymentPlan->total_price,
+            'installments' => UnitPaymentInstallmentResource::collection($installments),
+        ], 'Installments retrieved successfully');
     }
 
     public function activeInstallments($request)
@@ -61,6 +72,17 @@ class UnitPaymentApiService
     }
 
 
+
+    public function viewInvoice(UnitPaymentInstallmentInvoice $invoice)
+    {
+        $path = storage_path('app/public/' . $invoice->invoice_file);
+
+        if (!file_exists($path)) {
+            return failReturnMsg('Invoice file not found', 404);
+        }
+
+        return response()->file($path);
+    }
 
     public function uploadInvoice($request, $installment)
     {

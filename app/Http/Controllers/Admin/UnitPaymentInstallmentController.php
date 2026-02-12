@@ -16,6 +16,7 @@ use App\Http\Requests\Admin\InstallmentStatusRequest;
 use App\Http\Requests\Admin\InvoiceConfirmRequest;
 use App\services\Unit\UnitPaymentInstallmentInvoiceService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UnitPaymentInstallmentController extends Controller
 {
@@ -46,6 +47,23 @@ class UnitPaymentInstallmentController extends Controller
             'message' => $result['message'] ?? ($result['status'] ? 'Status updated successfully' : 'Failed to update status'),
             'data' => $result['data'] ?? null,
         ], $result['status'] ? 200 : 404);
+    }
+
+    public function uploadInvoice(Request $request, $installmentId): JsonResponse
+    {
+        $request->validate([
+            'invoice_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'paid_amount' => 'required|numeric|min:0.01',
+            'payment_date' => 'nullable|date',
+        ]);
+
+        $result = $this->invoiceService->uploadInvoice($request->all(), $installmentId);
+
+        return response()->json([
+            'status' => $result['status'] ? 'success' : 'error',
+            'message' => $result['message'],
+            'data' => $result['data'] ?? null,
+        ], $result['status'] ? 200 : 422);
     }
 
      public function confirmInvoice(InvoiceConfirmRequest $request): JsonResponse

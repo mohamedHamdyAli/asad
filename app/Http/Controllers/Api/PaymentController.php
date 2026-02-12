@@ -8,6 +8,8 @@ use App\Http\Requests\Api\InvoiceRequest;
 use App\Http\Requests\Api\UnitIdRequest;
 use App\services\Unit\UnitPaymentApiService;
 use App\Models\UnitPaymentInstallment;
+use App\Models\UnitPaymentInstallmentInvoice;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
@@ -29,6 +31,23 @@ class PaymentController extends Controller
     public function activeInstallments(UnitIdRequest $request)
     {
         return $this->paymentService->activeInstallments($request->validated());
+    }
+
+    public function viewInvoice()
+    {
+        $validator = Validator::make(request()->all(), [
+            'invoice_id' => 'required|exists:unit_payment_installment_invoices,id',
+        ], [
+            'invoice_id.required' => 'Invoice ID is required',
+            'invoice_id.exists' => 'Invoice not found',
+        ]);
+
+        if ($validator->fails()) {
+            return failReturnMsg($validator->errors()->first());
+        }
+
+        $invoice = UnitPaymentInstallmentInvoice::find(request('invoice_id'));
+        return $this->paymentService->viewInvoice($invoice);
     }
 
     public function uploadInvoice(InvoiceRequest $request, UnitPaymentInstallment $installment)
