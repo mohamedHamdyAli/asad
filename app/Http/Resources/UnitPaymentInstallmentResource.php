@@ -18,14 +18,20 @@ class UnitPaymentInstallmentResource extends JsonResource
             "id" => $this->id,
             "title" => getLocalizedValue($this, 'title') ?? $this->title,
             "description" =>getLocalizedValue($this, 'description') ?? $this->description ?? null,
-            "percentage" => $this->percentage,
-            "amount" => $this->amount,
-            "milestone_date" => $this->milestone_date,
-            "submission_date" => $this->submission_date,
-            "consultant_approval_date" => $this->consultant_approval_date,
-            "payment_date" => $this->payment_date,
-            "due_date" => $this->due_date,
+            // "percentage" => $this->percentage,
+            // "amount" => $this->amount,
+            // "milestone_date" => $this->milestone_date,
+            // "submission_date" => $this->submission_date,
+            // "consultant_approval_date" => $this->consultant_approval_date,
+            // "due_date" => $this->due_date,
             "status" => $this->status,
+            "invoices" => $this->invoices?->map(fn($inv) => [
+                "id" => $inv->id,
+                "paid_amount" => $inv->paid_amount,
+                "payment_date" => $inv->payment_date,
+                "invoice_file" => $inv->invoice_file ? url('storage/' . $inv->invoice_file) : null,
+                "status" => $inv->status,
+            ]) ?? [],
         ];
     }
 }

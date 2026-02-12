@@ -13,4 +13,12 @@ export const UnitInvoicesApi = {
     const { data } = await axios.post(`/api/unit-payments/invoices/confirm`, { invoice_id: id, action: status });
     return data;
   },
+  uploadInvoice: async (installmentId, formData) => {
+    const { data } = await axios.post(
+      `/api/unit-payments/installments/${installmentId}/upload-invoice`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return data;
+  },
 };

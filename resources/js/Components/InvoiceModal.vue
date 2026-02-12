@@ -19,6 +19,50 @@
            Invoices
         </h3>
 
+        <!-- Upload Invoice Form -->
+        <div class="mb-6 p-4 border-2 border-dashed border-blue-200 rounded-xl bg-blue-50/50">
+          <h4 class="font-semibold text-gray-700 mb-3">Upload Invoice</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">Invoice File (PDF/Image) *</label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                @change="uploadForm.invoice_file = $event.target.files[0]"
+                class="w-full text-sm border rounded-lg p-1.5 bg-white"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">Paid Amount *</label>
+              <input
+                v-model="uploadForm.paid_amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="0.00"
+                class="w-full border rounded-lg p-2 text-sm"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">Payment Date</label>
+              <input
+                v-model="uploadForm.payment_date"
+                type="date"
+                class="w-full border rounded-lg p-2 text-sm"
+              />
+            </div>
+          </div>
+          <div class="mt-3 text-right">
+            <button
+              @click="handleUpload"
+              :disabled="uploading"
+              class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+            >
+              {{ uploading ? 'Uploading...' : 'Upload Invoice' }}
+            </button>
+          </div>
+        </div>
+
         <!-- Loader -->
         <div v-if="loading" class="text-sm text-gray-500">Loading...</div>
 
@@ -31,14 +75,14 @@
           >
             <div class="flex justify-between items-start">
               <div>
-                <p class="font-semibold text-gray-800">
+                <!-- <p class="font-semibold text-gray-800">
                   Invoice #{{ inv.id }} — <span class="text-blue-600">{{ inv.paid_amount }} EGP</span>
-                </p>
+                </p> -->
                 <!-- <p class="text-xs text-gray-500">
                   Installment ID: {{ inv.unit_payment_installment_id }}
                 </p> -->
 
-                <div class="mt-2">
+                <!-- <div class="mt-2">
                   <span
                     :class="[
                       'inline-block px-3 py-1 text-xs rounded-full font-medium border',
@@ -51,10 +95,21 @@
                   >
                     {{ inv.status ? inv.status.toUpperCase() : 'PENDING' }}
                   </span>
-                </div>
+                </div> -->
 
                 <div class="mt-3">
+                  <template v-if="isPdf(inv.invoice_file)">
+                    <a
+                      :href="toUrl(inv.invoice_file)"
+                      target="_blank"
+                      class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm hover:bg-red-100 transition"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12a2 2 0 002-2V6l-4-4H4a2 2 0 00-2 2v12a2 2 0 002 2zm1-2V4h6v4h4v8H5z"/></svg>
+                      View PDF
+                    </a>
+                  </template>
                   <img
+                    v-else
                     :src="toUrl(inv.invoice_file)"
                     alt="Invoice File"
                     class="rounded-lg shadow-sm border object-contain max-h-40 cursor-pointer hover:scale-105 transition"
@@ -64,7 +119,7 @@
               </div>
 
               <!-- Action Buttons -->
-              <div class="flex flex-col gap-2">
+              <!-- <div class="flex flex-col gap-2">
                 <button
                   @click="updateStatus(inv, 'confirm')"
                   class="px-4 py-1.5 rounded-lg text-sm font-medium text-white transition"
@@ -83,7 +138,7 @@
                 >
                   {{ inv.status === 'rejected' ? 'Rejected' : 'Reject' }}
                 </button>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -155,11 +210,63 @@ const feedbackType = ref('') // 'success' | 'error'
 const showImageModal = ref(false)
 const activeImage = ref(null)
 
+const uploading = ref(false)
+const uploadForm = ref({
+  invoice_file: null,
+  paid_amount: '',
+  payment_date: '',
+})
+
 onMounted(async () => {
   loading.value = true
   invoices.value = await UnitInvoicesApi.list(props.installment.id)
   loading.value = false
 })
+
+async function handleUpload() {
+  if (!uploadForm.value.invoice_file || !uploadForm.value.paid_amount) {
+    feedbackType.value = 'error'
+    feedbackMessage.value = 'Invoice file and paid amount are required.'
+    setTimeout(() => (feedbackMessage.value = ''), 4000)
+    return
+  }
+
+  uploading.value = true
+  feedbackMessage.value = ''
+
+  try {
+    const fd = new FormData()
+    fd.append('invoice_file', uploadForm.value.invoice_file)
+    fd.append('paid_amount', uploadForm.value.paid_amount)
+    if (uploadForm.value.payment_date) {
+      fd.append('payment_date', uploadForm.value.payment_date)
+    }
+
+    const response = await UnitInvoicesApi.uploadInvoice(props.installment.id, fd)
+
+    if (response?.status === 'success') {
+      feedbackType.value = 'success'
+      feedbackMessage.value = response.message || 'Invoice uploaded successfully.'
+      uploadForm.value = { invoice_file: null, paid_amount: '', payment_date: '' }
+      invoices.value = await UnitInvoicesApi.list(props.installment.id)
+    } else {
+      feedbackType.value = 'error'
+      feedbackMessage.value = response?.message || 'Upload failed.'
+    }
+
+    setTimeout(() => (feedbackMessage.value = ''), 4000)
+  } catch (err) {
+    feedbackType.value = 'error'
+    feedbackMessage.value = err.response?.data?.message || 'Something went wrong.'
+    setTimeout(() => (feedbackMessage.value = ''), 4000)
+  } finally {
+    uploading.value = false
+  }
+}
+
+function isPdf(path) {
+  return path && path.toLowerCase().endsWith('.pdf')
+}
 
 async function updateStatus(inv, status) {
   feedbackMessage.value = ''
