@@ -184,12 +184,24 @@ if (!function_exists('vendorAuth')) {
     }
 }
 
+if (!function_exists('consultantAuth')) {
+    function consultantAuth()
+    {
+        /** @var \App\Models\User|null $user */
+        $user = auth('api')->user();
+        if ($user != null && $user->hasRole('consultant')) {
+            return $user;
+        }
+        return null;
+    }
+}
+
 if (!function_exists('userOrGuestAuth')) {
     function userOrGuestAuth()
     {
         /** @var \App\Models\User|null $user */
         $user = auth('api')->user();
-        if ($user != null && $user->hasAnyRole(['user', 'guest'])) {
+        if ($user != null && $user->hasAnyRole(['user', 'guest', 'consultant'])) {
             return $user;
         }
         return null;

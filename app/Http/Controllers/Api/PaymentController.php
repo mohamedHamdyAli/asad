@@ -26,6 +26,10 @@ class PaymentController extends Controller
     }
     public function allCompletedInstallments(UnitIdRequest $request)
     {
+        if (!userAuth()) {
+            return failReturnMsg('Unauthorized', 401);
+        }
+
         return $this->paymentService->allCompletedInstallments($request->validated());
     }
     public function activeInstallments(UnitIdRequest $request)

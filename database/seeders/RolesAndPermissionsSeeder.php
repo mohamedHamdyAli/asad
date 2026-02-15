@@ -144,6 +144,29 @@ class RolesAndPermissionsSeeder extends Seeder
                 'unit_phase_notes.view', 'unit_phase_notes.create', 'unit_phase_notes.update', 'unit_phase_notes.delete',
             ],
 
+            // Consultant: same permissions as project manager
+            'consultant' => [
+                'units.view', 'units.create', 'units.update',
+                'unit_docs.view', 'unit_docs.create', 'unit_docs.update', 'unit_docs.delete',
+                'unit_gallery.view', 'unit_gallery.create', 'unit_gallery.update', 'unit_gallery.delete',
+                'unit_drawings.view', 'unit_drawings.create', 'unit_drawings.update', 'unit_drawings.delete',
+                'unit_reports.view', 'unit_reports.create', 'unit_reports.update', 'unit_reports.delete',
+                'unit_timeline.view', 'unit_timeline.create', 'unit_timeline.update', 'unit_timeline.delete',
+                'unit_phases.view', 'unit_phases.create', 'unit_phases.update', 'unit_phases.delete',
+                'unit_contractors.view', 'unit_contractors.create', 'unit_contractors.update', 'unit_contractors.delete',
+                'unit_consultants.view', 'unit_consultants.create', 'unit_consultants.update', 'unit_consultants.delete',
+                'unit_live_cameras.view', 'unit_live_cameras.create', 'unit_live_cameras.update', 'unit_live_cameras.delete',
+
+                'unit_issues.view', 'unit_issues.update',
+                'unit_phase_notes.view', 'unit_phase_notes.create', 'unit_phase_notes.update', 'unit_phase_notes.delete',
+
+                // Consultant management
+                'consultants.view', 'consultants.create', 'consultants.update', 'consultants.delete',
+
+                // Contractor management
+                'contractors.view', 'contractors.create', 'contractors.update', 'contractors.delete',
+            ],
+
             // 'guest' => [
             //     // keep empty or very limited (admin panel usually none)
             // ],

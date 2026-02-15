@@ -93,9 +93,15 @@
               </div>
 
               <!-- Email -->
-              <div class="md:col-span-2">
+              <div>
                 <Field name="email" type="email" class="form-input" placeholder="Email" />
                 <ErrorMessage name="email" class="error" />
+              </div>
+
+              <!-- Password -->
+              <div>
+                <Field name="password" type="password" class="form-input" :placeholder="editing ? 'Password (leave empty to keep current)' : 'Password'" />
+                <ErrorMessage name="password" class="error" />
               </div>
 
               <!-- Description EN -->
@@ -223,6 +229,13 @@ const schema = computed(() =>
 
     email: yup.string().email('Invalid email').required('Email is required'),
 
+    password: editing.value
+      ? yup.string().test('min-length', 'Password must be at least 8 characters', function(value) {
+          if (!value || value === '') return true
+          return value.length >= 8
+        })
+      : yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
+
     company_phone: yup.string().required('Company phone is required'),
     representative_phone: yup.string().required('Representative phone is required'),
 
@@ -285,6 +298,7 @@ function openCreate() {
     title: { en: '', ar: '' },
     description: { en: '', ar: '' },
     email: '',
+    password: '',
     company_phone: '',
     representative_phone: '',
     company_address: { en: '', ar: '' },
@@ -307,6 +321,7 @@ function openEdit(c) {
     title: { en: c.title_en, ar: c.title_ar },
     description: { en: c.description_en, ar: c.description_ar },
     email: c.email,
+    password: '',
     company_phone: c.company_phone || '',
     representative_phone: c.representative_phone || '',
     company_address: c.company_address || { en: '', ar: '' },
@@ -344,6 +359,7 @@ function onFileChange(e, setFieldValue) {
 async function submit(values) {
   const payload = {
     email: values.email,
+    password: values.password,
     title: values.title,
     description: values.description,
     company_phone: values.company_phone || '',

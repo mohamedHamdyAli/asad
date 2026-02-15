@@ -18,7 +18,13 @@ class Consultant extends Model
         'company_phone',
         'representative_name',
         'representative_phone',
+        'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
