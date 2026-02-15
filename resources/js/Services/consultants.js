@@ -97,6 +97,7 @@ export function buildConsultantsCreateFD(items = []) {
     fd.append(`data[${i}][description][ar]`, it?.description?.ar ?? "");
 
     fd.append(`data[${i}][email]`, it?.email ?? "");
+    fd.append(`data[${i}][password]`, it?.password ?? "");
 
     fd.append(`data[${i}][company_phone]`, it?.company_phone ?? "");
     fd.append(`data[${i}][representative_phone]`, it?.representative_phone ?? "");
@@ -133,6 +134,10 @@ export function buildConsultantsUpdateFD(data = {}) {
 
   if (data?.email !== undefined) {
     fd.append(`data[email]`, data.email);
+  }
+
+  if (data?.password !== undefined && data.password !== '') {
+    fd.append(`data[password]`, data.password);
   }
 
   if (data?.company_phone !== undefined) {

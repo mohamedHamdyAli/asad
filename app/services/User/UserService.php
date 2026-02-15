@@ -130,7 +130,7 @@ class UserService
                 return failReturnMsg('Your account is disabled');
             }
 
-            if (! $user->hasAnyRole(['user', 'guest'])) {
+            if (! $user->hasAnyRole(['user', 'guest', 'consultant'])) {
                 Auth::logout();
                 return failReturnMsg('Unauthorized role');
             }

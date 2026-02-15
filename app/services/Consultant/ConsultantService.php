@@ -3,8 +3,10 @@
 namespace App\services\Consultant;
 
 use App\Models\Consultant;
+use App\Models\User;
 use App\services\FileService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ConsultantService
 {
@@ -30,6 +32,20 @@ class ConsultantService
                 $company_address = json_encode($item['company_address'], JSON_UNESCAPED_UNICODE);
                 $image = FileService::upload($item['image'], $this->uploadFolder);
 
+                // Create user for consultant (phone + password for login)
+                $user = User::create([
+                    'name' => $item['title']['en'] ?? $item['title']['ar'] ?? $item['representative_phone'],
+                    'email' => $item['email'],
+                    'phone' => $item['representative_phone'],
+                    'password' => Hash::make($item['password']),
+                    'is_enabled' => true,
+                    'email_verified_at' => now(),
+                ]);
+
+                // Assign consultant role
+                $user->assignRole('consultant');
+
+                // Create consultant linked to user
                 Consultant::create([
                     'title' => $title,
                     'description' => $description,
@@ -38,8 +54,8 @@ class ConsultantService
                     'company_address' => $company_address,
                     'company_phone' => $item['company_phone'] ?? null,
                     'representative_name' => $representative_name,
-                    'representative_phone' => $item['representative_phone'] ?? null
-
+                    'representative_phone' => $item['representative_phone'] ?? null,
+                    'user_id' => $user->id,
                 ]);
             }
 
@@ -95,6 +111,33 @@ class ConsultantService
                 $consultant->email = $request['email'];
             }
 
+            // Update user data if provided
+            if ($consultant->user_id) {
+                $user = User::find($consultant->user_id);
+                if ($user) {
+                    $updateData = [];
+
+                    // Update email if provided
+                    if (!empty($request['email'])) {
+                        $updateData['email'] = $request['email'];
+                    }
+
+                    // Update password if provided
+                    if (!empty($request['password'])) {
+                        $updateData['password'] = Hash::make($request['password']);
+                    }
+
+                    // Update phone if representative_phone changed
+                    if (!empty($request['representative_phone'])) {
+                        $updateData['phone'] = $request['representative_phone'];
+                    }
+
+                    if (!empty($updateData)) {
+                        $user->update($updateData);
+                    }
+                }
+            }
+
              $consultant->update([
                 'title' => $request['title'] ?? $consultant->getRawOriginal('title'),
                 'description' => $request['description'] ?? $consultant->getRawOriginal('description'),
@@ -105,7 +148,6 @@ class ConsultantService
                 'representative_phone' => $request['representative_phone'] ?? $consultant->representative_phone,
                 'email' => $request['email'] ?? $consultant->email,
             ]);
-;
 
             return true;
         });
