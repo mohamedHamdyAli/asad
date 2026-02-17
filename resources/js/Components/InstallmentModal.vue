@@ -10,7 +10,7 @@
         <!-- Header (sticky) -->
         <div class="px-6 pt-5 pb-3 border-b">
           <h3 class="text-lg font-semibold">
-            {{ mode === 'add' ? 'Add Installment' : 'Edit Installment' }}
+            {{ mode === 'add' ? 'Add Invoice' : 'Edit Invoice' }}
           </h3>
         </div>
 
@@ -47,11 +47,11 @@
                 <ErrorMessage name="description.ar" class="text-red-600 text-xs mt-1" />
               </div>
 
-              <!-- Amount -->
+              <!-- Paid Amount -->
               <div>
-                <label class="block text-xs text-gray-500 mb-1">Amount *</label>
-                <Field name="amount" as="input" type="number" class="form-input" />
-                <ErrorMessage name="amount" class="text-red-600 text-xs mt-1" />
+                <label class="block text-xs text-gray-500 mb-1">Paid Amount *</label>
+                <Field name="paid_amount" as="input" type="number" class="form-input" />
+                <ErrorMessage name="paid_amount" class="text-red-600 text-xs mt-1" />
               </div>
 
               <!-- Percentage -->
@@ -61,28 +61,20 @@
                 <ErrorMessage name="percentage" class="text-red-600 text-xs mt-1" />
               </div>
 
-              <!-- Milestone Date -->
+              <!-- Payment Date -->
               <div>
-                <label class="block text-xs text-gray-500 mb-1">Milestone Date</label>
-                <Field name="milestone_date" as="input" type="date" class="form-input" />
+                <label class="block text-xs text-gray-500 mb-1">Payment Date *</label>
+                <Field name="payment_date" as="input" type="date" class="form-input" />
+                <ErrorMessage name="payment_date" class="text-red-600 text-xs mt-1" />
               </div>
 
-              <!-- Submission Date -->
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Submission Date</label>
-                <Field name="submission_date" as="input" type="date" class="form-input" />
-              </div>
-
-              <!-- Consultant Approval -->
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Consultant Approval Date</label>
-                <Field name="consultant_approval_date" as="input" type="date" class="form-input" />
-              </div>
-
-              <!-- Due Date -->
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">Due Date</label>
-                <Field name="due_date" as="input" type="date" class="form-input" />
+              <!-- Invoice File -->
+              <div class="md:col-span-2">
+                <label class="block text-xs text-gray-500 mb-1">Invoice File *</label>
+                <input type="file" accept=".jpg,.jpeg,.png,.pdf" @change="onFileChange" class="form-input" />
+                <p v-if="props.data?.invoice_file && props.mode === 'edit'" class="text-xs text-green-600 mt-1">
+                  Current file: {{ props.data.invoice_file.split('/').pop() }}
+                </p>
               </div>
 
               <!-- Status -->
@@ -138,6 +130,11 @@ const props = defineProps({
 const emit = defineEmits(['close', 'saved'])
 
 const saving = ref(false)
+const invoiceFile = ref(null)
+
+function onFileChange(e) {
+  invoiceFile.value = e.target.files[0] || null
+}
 
 /* ----------------------- SCHEMA ----------------------- */
 const schema = yup.object({
@@ -149,21 +146,18 @@ const schema = yup.object({
     en: yup.string().nullable(),
     ar: yup.string().nullable(),
   }),
-  amount: yup
+  paid_amount: yup
     .number()
-    .typeError('Amount must be a number')
-    .required('Amount is required')
-    .min(0, 'Amount must be >= 0'),
+    .typeError('Paid amount must be a number')
+    .required('Paid amount is required')
+    .min(0, 'Paid amount must be >= 0'),
   percentage: yup
     .number()
     .nullable()
     .min(0, 'Min 0')
     .max(100, 'Max 100')
     .typeError('Percentage must be a number'),
-  milestone_date: yup.string().nullable(),
-  submission_date: yup.string().nullable(),
-  consultant_approval_date: yup.string().nullable(),
-  due_date: yup.string().nullable(),
+  payment_date: yup.string().required('Payment date is required'),
   status: yup
     .string()
     .nullable()
@@ -172,7 +166,6 @@ const schema = yup.object({
       then: (s) => s.required('Status is required'),
       otherwise: (s) => s.notRequired(),
     }),
-  // status: yup.string().required(),
 })
 
 /* ----------------------- INITIAL VALUES ----------------------- */
@@ -191,14 +184,10 @@ function normalize(obj, fallback) {
 const initialValues = ref({
   title: normalize(props.data?.title, { en: '', ar: '' }),
   description: normalize(props.data?.description, { en: '', ar: '' }),
-  amount: props.data?.amount ?? '',
+  paid_amount: props.data?.paid_amount ?? '',
   percentage: props.data?.percentage ?? '',
-  milestone_date: props.data?.milestone_date ?? '',
-  submission_date: props.data?.submission_date ?? '',
-  consultant_approval_date: props.data?.consultant_approval_date ?? '',
-  due_date: props.data?.due_date ?? '',
+  payment_date: props.data?.payment_date ?? '',
   ...(props.mode === 'edit' ? { status: props.data?.status ?? 'pending' } : {}),
-  // status: props.data?.status ?? 'pending',
 })
 
 watch(
@@ -209,14 +198,10 @@ watch(
     initialValues.value = {
       title: normalize(v.title, { en: '', ar: '' }),
       description: normalize(v.description, { en: '', ar: '' }),
-      amount: v.amount ?? '',
+      paid_amount: v.paid_amount ?? '',
       percentage: v.percentage ?? '',
-      milestone_date: v.milestone_date ?? '',
-      submission_date: v.submission_date ?? '',
-      consultant_approval_date: v.consultant_approval_date ?? '',
-      due_date: v.due_date ?? '',
+      payment_date: v.payment_date ?? '',
       ...(props.mode === 'edit' ? { status: v.status ?? 'pending' } : {}),
-      // status: v.status ?? 'pending',
     };
   },
   { immediate: true }
@@ -229,10 +214,12 @@ async function handleSubmit(values) {
   try {
     if (props.mode === 'add') {
       const { status, ...payload } = values
+      if (invoiceFile.value) payload.invoice_file = invoiceFile.value
       const fd = buildInstallmentCreateFD(props.paymentId, payload)
       await UnitInstallmentsApi.create(fd)
     } else {
       const payload = { ...values, unit_payment_id: props.paymentId }
+      if (invoiceFile.value) payload.invoice_file = invoiceFile.value
       const fd = buildInstallmentUpdateFD(payload)
       await UnitInstallmentsApi.update(props.data.id, fd)
     }

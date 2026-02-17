@@ -42,12 +42,14 @@ export function buildInstallmentCreateFD(unit_payment_id, data = {}) {
   fd.append("data[description][ar]", data.description?.ar ?? "");
   if (data.percentage) fd.append("data[percentage]", data.percentage);
   if (data.amount) fd.append("data[amount]", data.amount);
+  if (data.paid_amount) fd.append("data[paid_amount]", data.paid_amount);
   if (data.status) fd.append("data[status]", data.status);
   if (data.milestone_date) fd.append("data[milestone_date]", data.milestone_date);
   if (data.submission_date) fd.append("data[submission_date]", data.submission_date);
   if (data.consultant_approval_date) fd.append("data[consultant_approval_date]", data.consultant_approval_date);
   if (data.due_date) fd.append("data[due_date]", data.due_date);
   if (data.payment_date) fd.append("data[payment_date]", data.payment_date);
+  if (data.invoice_file) fd.append("data[invoice_file]", data.invoice_file);
   return fd;
 }
 
@@ -60,11 +62,13 @@ export function buildInstallmentUpdateFD(data = {}) {
   fd.append("data[description][ar]", data.description?.ar ?? "");
   if (data.percentage) fd.append("data[percentage]", data.percentage);
   if (data.amount) fd.append("data[amount]", data.amount);
+  if (data.paid_amount) fd.append("data[paid_amount]", data.paid_amount);
   if (data.status) fd.append("data[status]", data.status);
   if (data.milestone_date) fd.append("data[milestone_date]", data.milestone_date);
   if (data.submission_date) fd.append("data[submission_date]", data.submission_date);
   if (data.consultant_approval_date) fd.append("data[consultant_approval_date]", data.consultant_approval_date);
   if (data.due_date) fd.append("data[due_date]", data.due_date);
   if (data.payment_date) fd.append("data[payment_date]", data.payment_date);
+  if (data.invoice_file) fd.append("data[invoice_file]", data.invoice_file);
   return fd;
 }

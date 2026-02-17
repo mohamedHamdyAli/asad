@@ -29,12 +29,16 @@ class UnitPaymentInstallmentRequest extends FormRequest
                 'data.description.*' => 'nullable|string|max:1000',
 
                 'data.percentage' => 'nullable|numeric|min:0|max:100',
-                'data.amount' => 'required|numeric|min:0',
+                'data.amount' => 'nullable|numeric|min:0',
+                'data.paid_amount' => 'required|numeric|min:0',
 
                 'data.milestone_date' => 'nullable|date',
                 'data.submission_date' => 'nullable|date',
                 'data.consultant_approval_date' => 'nullable|date',
                 'data.due_date' => 'nullable|date',
+                'data.payment_date' => 'nullable|date',
+
+                'data.invoice_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             ];
         }
 
@@ -51,6 +55,7 @@ class UnitPaymentInstallmentRequest extends FormRequest
 
             'data.percentage' => 'nullable|numeric|min:0|max:100',
             'data.amount' => 'nullable|numeric|min:0',
+            'data.paid_amount' => 'nullable|numeric|min:0',
 
             'data.status' => 'nullable|in:pending,paid,overdue',
 
@@ -59,6 +64,8 @@ class UnitPaymentInstallmentRequest extends FormRequest
             'data.consultant_approval_date' => 'nullable|date',
             'data.due_date' => 'nullable|date',
             'data.payment_date' => 'nullable|date',
+
+            'data.invoice_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
