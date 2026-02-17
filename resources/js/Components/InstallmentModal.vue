@@ -77,17 +77,6 @@
                 </p>
               </div>
 
-              <!-- Status -->
-              <div v-if="props.mode === 'edit'" class="md:col-span-2">
-                <label class="block text-xs text-gray-500 mb-1">Status</label>
-                <Field name="status" as="select" class="form-input">
-                  <option value="pending">Pending</option>
-                  <option value="paid">Paid</option>
-                  <option value="partial">Partial</option>
-                  <option value="unpaid">Unpaid</option>
-                  <option value="overdue">Overdue</option>
-                </Field>
-              </div>
             </div>
 
             <!-- Footer (sticky) -->
@@ -158,14 +147,6 @@ const schema = yup.object({
     .max(100, 'Max 100')
     .typeError('Percentage must be a number'),
   payment_date: yup.string().required('Payment date is required'),
-  status: yup
-    .string()
-    .nullable()
-    .when([], {
-      is: () => props.mode === 'edit',
-      then: (s) => s.required('Status is required'),
-      otherwise: (s) => s.notRequired(),
-    }),
 })
 
 /* ----------------------- INITIAL VALUES ----------------------- */
@@ -187,7 +168,6 @@ const initialValues = ref({
   paid_amount: props.data?.paid_amount ?? '',
   percentage: props.data?.percentage ?? '',
   payment_date: props.data?.payment_date ?? '',
-  ...(props.mode === 'edit' ? { status: props.data?.status ?? 'pending' } : {}),
 })
 
 watch(
@@ -201,7 +181,6 @@ watch(
       paid_amount: v.paid_amount ?? '',
       percentage: v.percentage ?? '',
       payment_date: v.payment_date ?? '',
-      ...(props.mode === 'edit' ? { status: v.status ?? 'pending' } : {}),
     };
   },
   { immediate: true }
@@ -212,14 +191,14 @@ watch(
 async function handleSubmit(values) {
   saving.value = true
   try {
+    const payload = { ...values }
+    if (invoiceFile.value) payload.invoice_file = invoiceFile.value
+
     if (props.mode === 'add') {
-      const { status, ...payload } = values
-      if (invoiceFile.value) payload.invoice_file = invoiceFile.value
       const fd = buildInstallmentCreateFD(props.paymentId, payload)
       await UnitInstallmentsApi.create(fd)
     } else {
-      const payload = { ...values, unit_payment_id: props.paymentId }
-      if (invoiceFile.value) payload.invoice_file = invoiceFile.value
+      payload.unit_payment_id = props.paymentId
       const fd = buildInstallmentUpdateFD(payload)
       await UnitInstallmentsApi.update(props.data.id, fd)
     }
