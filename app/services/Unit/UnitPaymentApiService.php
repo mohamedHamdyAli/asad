@@ -32,8 +32,7 @@ class UnitPaymentApiService
 
     public function allCompletedInstallments($request)
     {
-        $installments = UnitPaymentInstallment::where('status', 'paid')
-            ->whereHas('paymentPlan', fn($q) => $q->where('unit_id', $request['unit_id']))
+        $installments = UnitPaymentInstallment::whereHas('paymentPlan', fn($q) => $q->where('unit_id', $request['unit_id']))
             ->with(['paymentPlan', 'invoices'])
             ->get();
 

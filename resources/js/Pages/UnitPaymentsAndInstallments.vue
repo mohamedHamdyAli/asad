@@ -189,25 +189,24 @@
             <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
               <tr>
                 <th class="p-2 border">Title</th>
-                <th class="p-2 border">Amount</th>
+                <th class="p-2 border">Paid Amount</th>
                 <th class="p-2 border">Percentage</th>
-                <th class="p-2 border">Status</th>
-                <th class="p-2 border">Due Date</th>
-                <th class="p-2 border">Invoices</th>
+                <th class="p-2 border">Payment Date</th>
+                <th class="p-2 border">Invoice File</th>
                 <th class="p-2 border">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="i in installments" :key="i.id" class="hover:bg-gray-50 transition">
                 <td class="p-2 border">{{ i.title.en }}</td>
-                <td class="p-2 border">{{ i.amount }}</td>
-                <td class="p-2 border">{{ i.percentage }}</td>
-                <td class="p-2 border">{{ i.status }}</td>
-                <td class="p-2 border">{{ i.due_date || '-' }}</td>
+                <td class="p-2 border">{{ i.paid_amount || '-' }}</td>
+                <td class="p-2 border">{{ i.percentage ? i.percentage + '%' : '-' }}</td>
+                <td class="p-2 border">{{ i.payment_date || '-' }}</td>
                 <td class="p-2 border text-center">
-                  <button @click="openInvoicesModal(i)" class="text-blue-600 underline text-xs hover:text-blue-800">
+                  <a v-if="i.invoice_file" :href="'/storage/' + i.invoice_file" target="_blank" class="text-blue-600 underline text-xs hover:text-blue-800">
                     View
-                  </button>
+                  </a>
+                  <span v-else class="text-gray-400 text-xs">-</span>
                 </td>
                 <td class="p-2 border flex gap-2">
                   <button @click="openEditInstallmentModal(i)"

@@ -4,6 +4,7 @@ namespace App\services\Unit;
 
 use App\Models\UnitPayment;
 use App\Models\UnitPaymentInstallment;
+use App\services\FileService;
 use Illuminate\Support\Facades\DB;
 
 class UnitPaymentInstallmentCrudService
@@ -26,6 +27,10 @@ class UnitPaymentInstallmentCrudService
 
             if (isset($data['description']) && is_array($data['description'])) {
                 $data['description'] = json_encode($data['description'], JSON_UNESCAPED_UNICODE);
+            }
+
+            if (isset($data['invoice_file']) && $data['invoice_file'] instanceof \Illuminate\Http\UploadedFile) {
+                $data['invoice_file'] = FileService::upload($data['invoice_file'], 'units/invoices');
             }
 
             $installment = $unitPayment->installments()->create($data);
@@ -63,6 +68,13 @@ class UnitPaymentInstallmentCrudService
 
             if (isset($data['description']) && is_array($data['description'])) {
                 $data['description'] = json_encode($data['description'], JSON_UNESCAPED_UNICODE);
+            }
+
+            if (isset($data['invoice_file']) && $data['invoice_file'] instanceof \Illuminate\Http\UploadedFile) {
+                if ($installment->invoice_file) {
+                    FileService::delete($installment->invoice_file);
+                }
+                $data['invoice_file'] = FileService::upload($data['invoice_file'], 'units/invoices');
             }
 
             $installment->update($data);

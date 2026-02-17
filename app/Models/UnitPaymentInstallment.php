@@ -15,6 +15,8 @@ class UnitPaymentInstallment extends Model
         'description',
         'percentage',
         'amount',
+        'paid_amount',
+        'invoice_file',
         'milestone_date',
         'submission_date',
         'consultant_approval_date',

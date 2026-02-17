@@ -24,14 +24,17 @@ class UnitPaymentInstallmentResource extends JsonResource
             // "submission_date" => $this->submission_date,
             // "consultant_approval_date" => $this->consultant_approval_date,
             // "due_date" => $this->due_date,
-            "status" => $this->status,
-            "invoices" => $this->invoices?->map(fn($inv) => [
-                "id" => $inv->id,
-                "paid_amount" => $inv->paid_amount,
-                "payment_date" => $inv->payment_date,
-                "invoice_file" => $inv->invoice_file ? url('storage/' . $inv->invoice_file) : null,
-                "status" => $inv->status,
-            ]) ?? [],
+            // "status" => $this->status,
+            "paid_amount" => $this->paid_amount,
+            "payment_date" => $this->payment_date,
+            "invoice_file" => $this->invoice_file ? url('storage/' . $this->invoice_file) : null,
+            // "invoices" => $this->invoices?->map(fn($inv) => [
+            //     "id" => $inv->id,
+            //     "paid_amount" => $inv->paid_amount,
+            //     "payment_date" => $inv->payment_date,
+            //     "invoice_file" => $inv->invoice_file ? url('storage/' . $inv->invoice_file) : null,
+            //     "status" => $inv->status,
+            // ]) ?? [],
         ];
     }
 }
