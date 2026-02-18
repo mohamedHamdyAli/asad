@@ -3,6 +3,7 @@
 namespace App\services\Unit;
 
 use App\Models\Unit;
+use App\Models\Consultant;
 use App\Models\UnitIssue;
 use App\Models\UnitPhaseNote;
 use App\Http\Resources\UnitNoteResource;
@@ -16,7 +17,16 @@ class UnitApiService
 {
     public function getUserUnit($request)
     {
-        return Unit::allUserUnit($request['user_id']);
+        $userId = $request['user_id'];
+
+        $consultant = Consultant::where('user_id', $userId)->first();
+        if ($consultant) {
+            return Unit::whereHas('unitConstulant', function ($q) use ($consultant) {
+                $q->where('consultant_id', $consultant->id);
+            })->with(['homeUnitGallery', 'unitConstulant.consultant'])->get();
+        }
+
+        return Unit::allUserUnit($userId);
     }
     public function getUnitDetails($request)
     {

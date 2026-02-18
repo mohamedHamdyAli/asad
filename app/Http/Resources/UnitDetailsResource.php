@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Http\Resources\ConsultantResource;
 
 class UnitDetailsResource extends JsonResource
 {
@@ -15,7 +16,7 @@ class UnitDetailsResource extends JsonResource
      */
   public function toArray(Request $request): array
 {
-    $this->resource->loadMissing('extensionDates');
+    $this->resource->loadMissing(['extensionDates', 'unitConstulant.consultant']);
 
     return [
         "id" => $this->id,
@@ -36,6 +37,7 @@ class UnitDetailsResource extends JsonResource
                 'extended_date' => Carbon::parse($item->extended_date)->format('d M Y, h:i A'),
             ];
         })->toArray(),
+        // 'consultant' => new ConsultantResource($this->unitConstulant->pluck('consultant')->filter()->first()),
     ];
 }
 

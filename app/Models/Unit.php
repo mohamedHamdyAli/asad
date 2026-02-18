@@ -113,7 +113,7 @@ class Unit extends Model
         if ($status !== null) {
             $query->where('status', $status);
         }
-        return $query->with('homeUnitGallery')->get();
+        return $query->with(['homeUnitGallery', 'unitConstulant.consultant'])->get();
     }
     public static function allVendorUnit($vendorId, $status = null)
     {
