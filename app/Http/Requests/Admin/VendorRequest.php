@@ -16,7 +16,6 @@ class VendorRequest extends FormRequest
     {
        $request->merge([
             // 'is_enabled' => 1,
-            'role' => 'project manager',
         ]);
     }
 
@@ -38,7 +37,6 @@ public function rules(): array
             'password' => 'required|string|min:8',
             'country_code' => 'required|string|max:10',
             'country_name' => 'required|string|max:255',
-            'role' => 'required|string|in:project manager',
             'profile_image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
             'gender' => 'required|string|in:male,female,other',
             'is_enabled' => 'required|boolean',
@@ -64,7 +62,6 @@ public function rules(): array
         'password' => 'nullable|string|min:8',
         'country_code' => 'nullable|string|max:10',
         'country_name' => 'nullable|string|max:255',
-        'role' => 'nullable|string|in:project manager',
         'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         'gender' => 'nullable|string|in:male,female,other',
         'is_enabled' => 'nullable|boolean',
