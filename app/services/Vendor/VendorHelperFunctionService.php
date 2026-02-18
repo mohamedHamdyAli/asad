@@ -18,7 +18,7 @@ class VendorHelperFunctionService
     }
     public function getVendorData($id = null)
     {
-        return $id ? User::where(['id' => $id, 'role' => 'vendor'])->first() : User::where('role', 'vendor')->get();
+        return $id ? User::where(['id' => $id, 'role' => 'project manager'])->first() : User::where('role', 'project manager')->get();
     }
 
     public function createVendor(array $request): bool
@@ -29,7 +29,7 @@ class VendorHelperFunctionService
             }
 
             $vendor = User::create($request);
-            $vendor->assignRole('vendor');
+            $vendor->assignRole('project manager');
 
             return true;
         });
@@ -38,7 +38,7 @@ class VendorHelperFunctionService
     public function updateVendorData(array $request, int $id): bool
     {
         return DB::transaction(function () use ($request, $id) {
-            $vendor = User::where(['id' => $id, 'role' => 'vendor'])->first();
+            $vendor = User::where(['id' => $id, 'role' => 'project manager'])->first();
             if (!$vendor) {
                 return false;
             }
@@ -65,7 +65,7 @@ class VendorHelperFunctionService
     public function deleteVendor(int $id): bool
     {
         return DB::transaction(function () use ($id) {
-            $vendor = User::where(['id' => $id, 'role' => 'vendor'])->first();
+            $vendor = User::where(['id' => $id, 'role' => 'project manager'])->first();
             if (!$vendor) {
                 return false;
             }
