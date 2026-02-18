@@ -170,6 +170,8 @@ class RolesAndPermissionsSeeder extends Seeder
             // 'guest' => [
             //     // keep empty or very limited (admin panel usually none)
             // ],
+
+            'vendor' => [],
         ];
 
         // Create roles & sync permissions
