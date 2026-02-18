@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- MANAGEMENT (collapsible) -->
-                <div class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <div v-if="showManagement" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <button type="button" class="w-full px-3 pt-3 pb-2 flex items-center justify-between"
                         @click="toggle('management')" :aria-expanded="open.management ? 'true' : 'false'">
                         <span class="text-[11px] font-semibold tracking-widest uppercase text-black/70">
@@ -44,26 +44,26 @@
                     </button>
 
                     <div v-show="open.management" class="pb-2">
-                        <NavItem icon="mdi:responsive" label="Project Managers (PM)" :to="route('pm-management')"
+                        <NavItem v-if="can('PMS.view')" icon="mdi:responsive" label="Project Managers (PM)" :to="route('pm-management')"
                             :href="route('pm-management')" class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Projects management" :to="route('unit-management')"
+                        <NavItem v-if="can('units.view')" icon="mdi:responsive" label="Projects management" :to="route('unit-management')"
                             :href="route('unit-management')" class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Contractors management"
+                        <NavItem v-if="can('contractors.view')" icon="mdi:responsive" label="Contractors management"
                             :to="route('contractors-management')" :href="route('contractors-management')"
                             class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Consultants management"
+                        <NavItem v-if="can('consultants.view')" icon="mdi:responsive" label="Consultants management"
                             :to="route('Consultants-management')" :href="route('Consultants-management')"
                             class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Quotations management"
+                        <NavItem v-if="can('unit_quote_responses.view')" icon="mdi:responsive" label="Quotations management"
                             :to="route('unit-quotes-responses')" :href="route('unit-quotes-responses')"
                             class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:responsive" label="Price & Building Types" :to="route('unit-quote-types')"
+                        <NavItem v-if="can('type_of_buildings.view')" icon="mdi:responsive" label="Price & Building Types" :to="route('unit-quote-types')"
                             :href="route('unit-quote-types')" />
                     </div>
                 </div>
 
                 <!-- APP CONTENT (collapsible) -->
-                <div class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <div v-if="showApp" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <button type="button" class="w-full px-3 pt-3 pb-2 flex items-center justify-between"
                         @click="toggle('app')" :aria-expanded="open.app ? 'true' : 'false'">
                         <span class="text-[11px] font-semibold tracking-widest uppercase text-black/70">
@@ -78,16 +78,16 @@
                     </button>
 
                     <div v-show="open.app" class="pb-2">
-                        <NavItem icon="mdi:file-document-edit-outline" label="App Intros"
+                        <NavItem v-if="can('intro.view')" icon="mdi:file-document-edit-outline" label="App Intros"
                             :to="route('intro-management')" :href="route('intro-management')"
                             class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:file-document-edit-outline" label="App Banners"
+                        <NavItem v-if="can('banners.view')" icon="mdi:file-document-edit-outline" label="App Banners"
                             :to="route('banner-management')" :href="route('banner-management')" />
                     </div>
                 </div>
 
                 <!-- SYSTEM (collapsible) -->
-                <div class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <div v-if="showSystem" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <button type="button" class="w-full px-3 pt-3 pb-2 flex items-center justify-between"
                         @click="toggle('system')" :aria-expanded="open.system ? 'true' : 'false'">
                         <span class="text-[11px] font-semibold tracking-widest uppercase text-black/70">
@@ -102,19 +102,19 @@
                     </button>
 
                     <div v-show="open.system" class="pb-2">
-                        <NavItem icon="mdi:world" label="Languages" :to="route('language-management')"
+                        <NavItem v-if="can('languages.view')" icon="mdi:world" label="Languages" :to="route('language-management')"
                             :href="route('language-management')" class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:world" label="Contact Us Management" :to="route('contactus-management')"
-                            :href="route('contactus-management')"  class="border-b border-gray-300/50" />
-                        <NavItem icon="mdi:bell-outline" label="Notifications Management" class="border-b border-gray-300/50"
-                            :to="route('notifications-management')" :href="route('notifications-management')" /> 
-                            <NavItem icon="mdi:bell-outline" label="Users Management"
+                        <NavItem v-if="can('contact_infos.view')" icon="mdi:world" label="Contact Us Management" :to="route('contactus-management')"
+                            :href="route('contactus-management')" class="border-b border-gray-300/50" />
+                        <NavItem v-if="can('notifications.view')" icon="mdi:bell-outline" label="Notifications Management" class="border-b border-gray-300/50"
+                            :to="route('notifications-management')" :href="route('notifications-management')" />
+                        <NavItem v-if="can('users.view')" icon="mdi:bell-outline" label="Users Management"
                             :to="route('users-management')" :href="route('users-management')" />
                     </div>
                 </div>
 
                 <!-- SECURITY -->
-                <div class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <div v-if="showSecurity" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <div class="px-3 pt-3 pb-2 text-[11px] font-semibold tracking-widest uppercase text-black/70">
                         Security
                     </div>
@@ -126,7 +126,7 @@
                 </div>
 
                 <!-- SUPPORT -->
-                <div class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <div v-if="showSupport" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <div class="px-3 pt-3 pb-2 text-[11px] font-semibold tracking-widest uppercase text-black/70">
                         Support
                     </div>
@@ -149,10 +149,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import NavItem from '@/Components/NavItem.vue'
 import { Link } from '@inertiajs/vue3'
 import NavLogo from './NavLogo.vue'
+
+const page = usePage()
+const role = computed(() => page.props.auth?.role)
+const userPermissions = computed(() => page.props.auth?.permissions ?? [])
+
+function can(permission) {
+    if (role.value === 'admin') return true
+    return userPermissions.value.includes(permission)
+}
+
+const showManagement = computed(() =>
+    can('PMS.view') || can('units.view') || can('contractors.view') ||
+    can('consultants.view') || can('unit_quote_responses.view') || can('type_of_buildings.view')
+)
+const showApp = computed(() => can('intro.view') || can('banners.view'))
+const showSystem = computed(() =>
+    can('languages.view') || can('contact_infos.view') ||
+    can('notifications.view') || can('users.view')
+)
+const showSecurity = computed(() => can('roles.view'))
+const showSupport = computed(() => can('unit_issues.view'))
 
 const open = ref({
     management: true,
