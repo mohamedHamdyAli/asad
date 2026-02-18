@@ -72,6 +72,7 @@
               <div class="md:col-span-2">
                 <label class="block text-xs text-gray-500 mb-1">Invoice File *</label>
                 <input type="file" accept=".jpg,.jpeg,.png,.pdf" @change="onFileChange" class="form-input" />
+                <p v-if="fileError" class="text-red-600 text-xs mt-1">{{ fileError }}</p>
                 <p v-if="props.data?.invoice_file && props.mode === 'edit'" class="text-xs text-green-600 mt-1">
                   Current file: {{ props.data.invoice_file.split('/').pop() }}
                 </p>
@@ -120,9 +121,11 @@ const emit = defineEmits(['close', 'saved'])
 
 const saving = ref(false)
 const invoiceFile = ref(null)
+const fileError = ref('')
 
 function onFileChange(e) {
   invoiceFile.value = e.target.files[0] || null
+  if (invoiceFile.value) fileError.value = ''
 }
 
 /* ----------------------- SCHEMA ----------------------- */
@@ -189,6 +192,10 @@ watch(
 
 /* ----------------------- SUBMIT HANDLER ----------------------- */
 async function handleSubmit(values) {
+  if (props.mode === 'add' && !invoiceFile.value) {
+    fileError.value = 'Invoice file is required'
+    return
+  }
   saving.value = true
   try {
     const payload = { ...values }
