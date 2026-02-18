@@ -26,8 +26,10 @@
             <div>
               <label class="block text-xs font-medium text-gray-600 mb-1">Invoice File (PDF/Image) *</label>
               <input
+                ref="fileInputRef"
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
+                required
                 @change="uploadForm.invoice_file = $event.target.files[0]"
                 class="w-full text-sm border rounded-lg p-1.5 bg-white"
               />
@@ -55,7 +57,7 @@
           <div class="mt-3 text-right">
             <button
               @click="handleUpload"
-              :disabled="uploading"
+              :disabled="uploading || !uploadForm.invoice_file"
               class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
             >
               {{ uploading ? 'Uploading...' : 'Upload Invoice' }}
@@ -198,6 +200,8 @@
 import { ref, onMounted } from 'vue'
 import { UnitInvoicesApi } from '@/Services/unitInvoices'
 
+const fileInputRef = ref(null)
+
 const props = defineProps({
   installment: Object,
 })
@@ -248,6 +252,7 @@ async function handleUpload() {
       feedbackType.value = 'success'
       feedbackMessage.value = response.message || 'Invoice uploaded successfully.'
       uploadForm.value = { invoice_file: null, paid_amount: '', payment_date: '' }
+      if (fileInputRef.value) fileInputRef.value.value = ''
       invoices.value = await UnitInvoicesApi.list(props.installment.id)
     } else {
       feedbackType.value = 'error'
