@@ -35,6 +35,7 @@ class UserService
 
             $data['otp'] = $otp;
             $data['otp_expiry'] = now()->addMinutes(5);
+            $data['is_enabled'] = false;
 
             $user = User::create($data);
             $user->assignRole('guest');
@@ -73,6 +74,8 @@ class UserService
             'otp' => null,
             'otp_expiry' => null,
             'email_verified_at' => now(),
+            'is_enabled' => true,
+
         ]);
 
         $role = $user->getRoleNames()->first();

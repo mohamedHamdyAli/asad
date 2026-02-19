@@ -126,7 +126,7 @@
                 </div>
 
                 <!-- SUPPORT -->
-                <div v-if="showSupport" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+                <!-- <div v-if="showSupport" class="rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
                     <div class="px-3 pt-3 pb-2 text-[11px] font-semibold tracking-widest uppercase text-black/70">
                         Support
                     </div>
@@ -135,7 +135,7 @@
                         <NavItem icon="mdi:people" label="Unit Issues" :to="route('unit-issues')"
                             :href="route('unit-issues')" />
                     </div>
-                </div>
+                </div> -->
             </nav>
         </div>
 

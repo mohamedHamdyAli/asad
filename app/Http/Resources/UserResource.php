@@ -16,12 +16,15 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isConsultant = $this->getRoleNames()->first() === 'consultant';
+        $consultant = $isConsultant ? $this->consultant : null;
+
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $isConsultant && $consultant ? getLocalizedValue($consultant, 'title') : $this->name,
             'email' => $this->email,
-            'phone' => $this->phone,
-            'profile_image' => getImageassetUrl($this->profile_image),
+            'phone' => $isConsultant && $consultant ? $consultant->representative_phone : $this->phone,
+            'profile_image' => $isConsultant && $consultant ? getImageassetUrl($consultant->image) : getImageassetUrl($this->profile_image),
             'role' => $this->getRoleNames()->first()
         ];
     }

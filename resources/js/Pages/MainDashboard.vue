@@ -25,16 +25,16 @@
 
       <!-- ================= KPI CARDS ================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SmartCard title="Units" :value="stats.units" icon="mdi:domain" color="blue" hint="All units"
+        <SmartCard v-if="can('units.view')" title="Units" :value="stats.units" icon="mdi:domain" color="blue" hint="All units"
           :loading="loadingStats" @click="go('unit-management')" />
 
-        <SmartCard title="Users" :value="stats.users" icon="mdi:account-group-outline" color="indigo"
+        <SmartCard v-if="can('users.view')" title="Users" :value="stats.users" icon="mdi:account-group-outline" color="indigo"
           hint="Registered users" :loading="loadingStats" @click="go('roles-management')" />
 
-        <SmartCard title="Open Issues" :value="stats.openIssues" icon="mdi:alert-circle-outline" color="red"
-          hint="Requires attention" pulse :loading="loadingStats" @click="go('unit-issues')" />
+        <!-- <SmartCard v-if="can('unit_issues.view')" title="Open Issues" :value="stats.openIssues" icon="mdi:alert-circle-outline" color="red"
+          hint="Requires attention" pulse :loading="loadingStats" @click="go('unit-issues')" /> -->
 
-        <SmartCard title="Quotations" :value="stats.quotations" icon="mdi:file-document-outline" color="emerald"
+        <SmartCard v-if="can('unit_quotes.view')" title="Quotations" :value="stats.quotations" icon="mdi:file-document-outline" color="emerald"
           hint="Client requests" :loading="loadingStats" @click="go('unit-quotes-responses')" />
       </div>
 
@@ -62,7 +62,7 @@
       </div>
 
       <!-- ================= LATEST QUOTATIONS (BOTTOM) ================= -->
-      <div class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-6">
+      <div v-if="can('unit_quotes.view')" class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h3 class="text-lg font-semibold text-gray-900">Latest Quotations</h3>
@@ -126,9 +126,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-import { Head, router } from '@inertiajs/vue3'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import { Icon } from '@iconify/vue'
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
@@ -136,6 +136,16 @@ import SmartCard from '@/Components/SmartCard.vue'
 import { useServerError } from '@/composables/useServerError'
 
 const { show } = useServerError()
+
+/* ---------------- permissions ---------------- */
+const page = usePage()
+const role = computed(() => page.props.auth?.role)
+const userPermissions = computed(() => page.props.auth?.permissions ?? [])
+
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 /* ---------------- endpoints ---------------- */
 const UNITS_URL = '/api/units'
@@ -161,13 +171,15 @@ const stats = ref({
 const latestQuotations = ref([])
 
 /* ---------------- management cards ---------------- */
-const management = [
-  { icon: 'mdi:domain', title: 'Units', subtitle: 'Create & manage units', route: 'unit-management' },
-  { icon: 'mdi:account-hard-hat', title: 'Contractors', subtitle: 'Manage contractors', route: 'contractors-management' },
-  { icon: 'mdi:account-tie', title: 'Consultants', subtitle: 'Manage consultants', route: 'Consultants-management' },
-  { icon: 'mdi:file-document', title: 'Quotations', subtitle: 'View client requests', route: 'unit-quotes-responses' },
-  { icon: 'mdi:account-key', title: 'Users & Roles', subtitle: 'Roles & permissions', route: 'roles-management' },
+const allManagement = [
+  { icon: 'mdi:domain', title: 'Units', subtitle: 'Create & manage units', route: 'unit-management', permission: 'units.view' },
+  { icon: 'mdi:account-hard-hat', title: 'Contractors', subtitle: 'Manage contractors', route: 'contractors-management', permission: 'contractors.view' },
+  { icon: 'mdi:account-tie', title: 'Consultants', subtitle: 'Manage consultants', route: 'Consultants-management', permission: 'consultants.view' },
+  { icon: 'mdi:file-document', title: 'Quotations', subtitle: 'View client requests', route: 'unit-quotes-responses', permission: 'unit_quote_responses.view' },
+  { icon: 'mdi:account-key', title: 'Users & Roles', subtitle: 'Roles & permissions', route: 'roles-management', permission: 'roles.view' },
 ]
+
+const management = computed(() => allManagement.filter(m => can(m.permission)))
 
 /* ---------------- helpers ---------------- */
 function go(routeName) {
