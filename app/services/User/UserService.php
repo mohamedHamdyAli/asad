@@ -224,9 +224,8 @@ class UserService
         $user = userOrGuestAuth();
 
         return DB::transaction(function () use ($user, $data) {
-            $filteredData = array_filter($data, function ($value) {
-                return !is_null($value);
-            });
+            $filteredData = array_filter($data, fn($value) => !is_null($value));
+
             if (isset($filteredData['profile_image'])) {
                 $filteredData['profile_image'] = uploadOrUpdateImage(
                     $filteredData['profile_image'],
@@ -236,7 +235,17 @@ class UserService
             }
 
             $user->update($filteredData);
-            return successReturnData(new UserResource($user), 'Profile updated successfully');
+
+            if ($user->hasRole('consultant') && $consultant = $user->consultant) {
+                $consultant->update(array_filter([
+                    'representative_phone' => $filteredData['phone'] ?? null,
+                    'email'                => $filteredData['email'] ?? null,
+                    'image'                => $filteredData['profile_image'] ?? null,
+                    'title'                => isset($filteredData['name']) ? json_encode(['ar' => $filteredData['name'], 'en' => $filteredData['name']], JSON_UNESCAPED_UNICODE) : null,
+                ]));
+            }
+
+            return successReturnData(new UserResource($user->fresh()), 'Profile updated successfully');
         });
     }
 
