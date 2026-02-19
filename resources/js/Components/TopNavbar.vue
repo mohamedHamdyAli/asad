@@ -158,7 +158,7 @@ const navigationItems = [
   { icon: "mdi:view-dashboard", label: "Dashboard", route: "dashboard" },
   { icon: "mdi:responsive", label: "Project Managers (PMs)", route: "pm-management" },
   { icon: "mdi:responsive", label: "Project management", route: "unit-management" },
-  { icon: "mdi:responsive", label: "Contractors management", route: "contractors-management" },
+  { icon: "mdi:responsive", label: "Sub Contractors Management", route: "contractors-management" },
   { icon: "mdi:responsive", label: "Consultants management", route: "Consultants-management" },
   { icon: "mdi:responsive", label: "Quotations management", route: "unit-quotes-responses" },
   { icon: "mdi:responsive", label: "Price & Building Types", route: "unit-quote-types" },

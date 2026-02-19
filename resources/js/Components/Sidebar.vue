@@ -48,7 +48,7 @@
                             :href="route('pm-management')" class="border-b border-gray-300/50" />
                         <NavItem v-if="can('units.view')" icon="mdi:responsive" label="Projects management" :to="route('unit-management')"
                             :href="route('unit-management')" class="border-b border-gray-300/50" />
-                        <NavItem v-if="can('contractors.view')" icon="mdi:responsive" label="Contractors management"
+                        <NavItem v-if="can('contractors.view')" icon="mdi:responsive" label="Sub Contractors Management"
                             :to="route('contractors-management')" :href="route('contractors-management')"
                             class="border-b border-gray-300/50" />
                         <NavItem v-if="can('consultants.view')" icon="mdi:responsive" label="Consultants management"
