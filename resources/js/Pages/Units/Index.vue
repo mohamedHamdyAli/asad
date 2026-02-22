@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold text-dash-title">Projects</h2>
-        <button @click="openCreate" class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700">
+        <button v-if="can('units.create')" @click="openCreate" class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700">
           + Add Project
         </button>
       </div>
@@ -66,13 +66,13 @@
                     Details
                   </a>
 
-                  <button
+                  <button v-if="can('units.update')"
                     class="inline-flex items-center justify-center h-9 px-3 text-xs font-medium border rounded-md hover:bg-gray-50"
                     @click="openEdit(u)">
                     Edit
                   </button>
 
-                  <button
+                  <button v-if="can('units.delete')"
                     class="inline-flex items-center justify-center h-9 px-3 text-xs font-medium border rounded-md text-red-600 hover:bg-red-50"
                     @click="remove(u)">
                     Delete
@@ -475,10 +475,18 @@ import UnitNav from '@/Components/UnitNav.vue'
 import MapPicker from '@/Components/MapPicker.vue'
 import { ref, onMounted, computed, reactive, nextTick, watch } from 'vue'
 import { UnitsApi, buildUnitCreateFD, buildUnitUpdateFD } from '@/Services/units'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import { UsersApi } from '@/Services/users'
 import { VendorsApi } from '@/Services/vendors'
 import { useServerError } from '@/composables/useServerError'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 const { show } = useServerError()
 

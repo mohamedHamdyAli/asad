@@ -61,12 +61,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/languages', fn() => inertia('LanguageManagement'))->name('language-management');
         Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('finance-management');
         Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
-        Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
+        // Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
         Route::get('/notifications-management', fn() => inertia('Notifications/Index'))->name('notifications-management');
         Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
         Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
     });
 
+     /* ================= ADMIN + banners.view permission ================= */
+    Route::middleware('role_or_permission:admin|banners.view')->group(function () {
+        Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
+    });
     /* ================= ADMIN + project manager ================= */
     Route::middleware('role_or_permission:admin|project manager')->group(function () {
 
