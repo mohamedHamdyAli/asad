@@ -130,7 +130,12 @@ class UserService
 
             if (!$user->is_enabled) {
                 Auth::logout();
-                return failReturnMsg('Your account is disabled');
+                return response()->json([
+                    'key'   => 'fail',
+                    'msg'   => 'Your account is disabled',
+                    'email' => $user->email,
+                    'code'  => 400,
+                ]);
             }
 
             if (! $user->hasAnyRole(['user', 'guest', 'consultant'])) {
