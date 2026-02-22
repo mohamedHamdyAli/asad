@@ -8,7 +8,7 @@
       <!-- HEADER -->
       <div class="flex justify-between items-center">
         <h2 class="text-2xl font-bold">Project Managers (PM)</h2>
-        <button class="px-4 py-2 bg-black text-white rounded" @click="openCreate">
+        <button v-if="can('PMS.create')" class="px-4 py-2 bg-black text-white rounded" @click="openCreate">
           + Add PM
         </button>
       </div>
@@ -54,8 +54,8 @@
               </td>
 
               <td class="px-4 py-3 text-right space-x-2">
-                <button class="text-blue-600" @click="openEdit(v)">Edit</button>
-                <button class="text-red-600" @click="remove(v)">Delete</button>
+                <button v-if="can('PMS.update')" class="text-blue-600" @click="openEdit(v)">Edit</button>
+                <button v-if="can('PMS.delete')" class="text-red-600" @click="remove(v)">Delete</button>
               </td>
             </tr>
 
@@ -183,11 +183,19 @@
 </template>
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
-import { Head } from "@inertiajs/vue3"
+import { Head, usePage } from "@inertiajs/vue3"
 import { ref, onMounted, computed, watch } from "vue"
 import { Form, Field, ErrorMessage } from "vee-validate"
 import * as yup from "yup"
 import { VendorsApi, buildVendorCreateFD, buildVendorUpdateFD } from "@/Services/vendors"
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 const rows = ref([])
 const search = ref("")

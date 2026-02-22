@@ -59,12 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users-management', fn() => inertia('UsersManagement'))->name('users-management');
         Route::get('/roles-management', fn() => inertia('RolesManagement'))->name('roles-management');
         Route::get('/languages', fn() => inertia('LanguageManagement'))->name('language-management');
-        Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('finance-management');
-        Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
-        // Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
-        Route::get('/notifications-management', fn() => inertia('Notifications/Index'))->name('notifications-management');
-        Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
-        Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
+
     });
 
      /* ================= ADMIN + banners.view permission ================= */
@@ -81,6 +76,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/unit-quotes', fn() => inertia('UnitQuotes'))->name('unit-quotes');
         Route::get('/unit-quote-responses', fn() => inertia('UnitQuoteResponses'))->name('unit-quotes-responses');
         Route::get('/unit-issues', fn() => inertia('UnitIssues'))->name('unit-issues');
+    
+        Route::get('/finance-management', fn() => inertia('FinancialReports'))->name('finance-management');
+        Route::get('/intro-management', fn() => inertia('IntroManagement'))->name('intro-management');
+        // Route::get('/banner-management', fn() => inertia('BannerManagement'))->name('banner-management');
+        Route::get('/notifications-management', fn() => inertia('Notifications/Index'))->name('notifications-management');
+        Route::get('/contactus-management', fn() => inertia('ContactUsPage'))->name('contactus-management');
+        Route::get('/unit-quote-types', fn() => inertia('QuoteTypesPage'))->name('unit-quote-types');
     });
 
     /* ================= PROJECTS / UNITS ================= */

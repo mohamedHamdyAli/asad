@@ -20,7 +20,7 @@
       </div>
 
       <!-- Create Banner -->
-      <Form :validation-schema="createSchema" :initial-values="createInitial" @submit="createBanner"
+      <Form v-if="can('banners.create')" :validation-schema="createSchema" :initial-values="createInitial" @submit="createBanner"
         @invalid-submit="onInvalidSubmit" v-slot="{ setFieldValue, setFieldError, submitCount, errors, values }"
         class="bg-white rounded-2xl shadow-sm ring-1 ring-black/[0.05] overflow-hidden">
         <div class="p-5 border-b bg-gradient-to-r from-gray-50 to-white">
@@ -227,13 +227,13 @@
               </label>
 
               <!-- Save details -->
-              <button class="px-3 py-2 text-xs rounded-xl border bg-white hover:bg-gray-50 w-full"
+              <button v-if="can('banners.update')" class="px-3 py-2 text-xs rounded-xl border bg-white hover:bg-gray-50 w-full"
                 @click="saveBannerEdits(b.id)" :disabled="saving[b.id]">
                 {{ saving[b.id] ? 'Saving…' : 'Save Details' }}
               </button>
 
               <!-- Replace image -->
-              <div class="space-y-2">
+              <div v-if="can('banners.update')" class="space-y-2">
                 <input type="file" accept="image/*" @change="onReplaceFile(b.id, $event)"
                   class="block w-full text-xs text-gray-600" />
                 <button class="px-2 py-2 border rounded-xl text-xs hover:bg-gray-50 w-full" @click="saveReplace(b.id)"
@@ -243,7 +243,7 @@
               </div>
 
               <!-- Delete -->
-              <button
+              <button v-if="can('banners.delete')"
                 class="px-3 py-2 text-xs rounded-xl border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 w-full"
                 @click="remove(b.id)">
                 Delete
@@ -263,8 +263,16 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { Head } from '@inertiajs/vue3'
-import { ref, reactive, onMounted, defineComponent } from 'vue'
+import { Head, usePage } from '@inertiajs/vue3'
+import { ref, reactive, onMounted, defineComponent, computed } from 'vue'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 import { BannerApi, buildCreateBannerFD, buildUpdateBannerFD } from '@/Services/banner'

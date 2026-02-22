@@ -19,6 +19,7 @@
           </button> -->
 
           <button
+            v-if="can('intro.create')"
             @click="openCreate"
             class="px-3 py-2 rounded-xl bg-black text-white hover:bg-gray-800 inline-flex items-center gap-2"
           >
@@ -86,12 +87,14 @@
 
               <div class="flex gap-2 pt-2">
                 <button
+                  v-if="can('intro.update')"
                   class="px-3 py-2 text-xs rounded-xl border bg-white hover:bg-gray-50"
                   @click="openEdit(item)"
                 >
                   Edit
                 </button>
                 <button
+                  v-if="can('intro.delete')"
                   class="px-3 py-2 text-xs rounded-xl border border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
                   @click="remove(item.id)"
                 >
@@ -274,8 +277,16 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { Head } from '@inertiajs/vue3'
+import { Head, usePage } from '@inertiajs/vue3'
 import { ref, onMounted, computed } from 'vue'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 import { IntroApi, buildIntroFormData } from '@/Services/intro'

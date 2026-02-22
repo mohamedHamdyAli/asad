@@ -22,12 +22,12 @@
                 </select>
 
                 <!-- Bulk Delete -->
-                <button v-if="selected.length" @click="bulkDelete" class="px-4 py-2 bg-red-600 text-white rounded">
+                <button v-if="selected.length && can('type_of_buildings.delete')" @click="bulkDelete" class="px-4 py-2 bg-red-600 text-white rounded">
                     Delete Selected ({{ selected.length }})
                 </button>
 
                 <!-- Add Buttons -->
-                <div class="ml-auto flex gap-3">
+                <div v-if="can('type_of_buildings.create')" class="ml-auto flex gap-3">
                     <button @click="openCreate('building')" class="btn-green">+ Building</button>
                     <button @click="openCreate('price')" class="btn-blue">+ Price</button>
                 </div>
@@ -101,8 +101,8 @@
                             <!-- Actions -->
                             <td class="p-3 text-center">
                                 <div class="action-buttons">
-                                    <button @click="openEdit(item)" class="btn-edit">Edit</button>
-                                    <button @click="deleteOne(item)" class="btn-delete">Delete</button>
+                                    <button v-if="can('type_of_buildings.update')" @click="openEdit(item)" class="btn-edit">Edit</button>
+                                    <button v-if="can('type_of_buildings.delete')" @click="deleteOne(item)" class="btn-delete">Delete</button>
                                 </div>
                             </td>
 
@@ -134,7 +134,16 @@
 
 <script setup>
 import { ref, computed, onMounted , watch} from "vue"
+import { usePage } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 import { TypeOfBuildingApi } from "@/Services/typeOfBuilding"
 import { TypeOfPriceApi } from "@/Services/typeOfPrice"
 import QuoteTypeModal from "@/Components/QuoteTypeModal.vue"

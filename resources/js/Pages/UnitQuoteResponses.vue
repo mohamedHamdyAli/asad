@@ -103,27 +103,27 @@
 
 
                   <!-- Save -->
-                  <button v-if="!q.has_response"
+                  <button v-if="!q.has_response && can('unit_quote_responses.create')"
                     class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
                     @click="saveResponse(q)">
                     Save
                   </button>
 
                   <!-- Edit / Update / Delete -->
-                  <template v-else>
-                    <button v-if="!q.editing"
+                  <template v-if="q.has_response">
+                    <button v-if="!q.editing && can('unit_quote_responses.update')"
                       class="px-3 py-1 text-xs border rounded-lg text-blue-700 border-blue-200 hover:bg-blue-50"
                       @click="enableEdit(q)">
                       Edit
                     </button>
 
-                    <button v-if="q.editing"
+                    <button v-if="q.editing && can('unit_quote_responses.update')"
                       class="px-3 py-1 text-xs border rounded-lg text-green-700 border-green-200 hover:bg-green-50"
                       @click="updateResponse(q)">
                       Update
                     </button>
 
-                    <button class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
+                    <button v-if="can('unit_quote_responses.delete')" class="px-3 py-1 text-xs border rounded-lg text-red-700 border-red-200 hover:bg-red-50"
                       @click="deleteResponse(q)">
                       Delete
                     </button>
@@ -218,6 +218,15 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { ref, computed, watch, onMounted } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 import {
   UnitQuoteResponsesApi,

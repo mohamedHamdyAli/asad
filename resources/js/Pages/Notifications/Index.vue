@@ -5,7 +5,7 @@
       <!-- HEADER -->
       <div class="flex justify-between items-center">
         <h2 class="text-2xl font-bold">Notifications</h2>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded" @click="openCreate">
+        <button v-if="can('notifications.create')" class="px-4 py-2 bg-blue-600 text-white rounded" @click="openCreate">
           + Send Notification
         </button>
       </div>
@@ -50,7 +50,7 @@
                 {{ formatDate(n.created_at) }}
               </td>
               <td class="px-4 py-3 text-right space-x-2">
-                <button class="text-red-600" @click="remove(n.id)">Delete</button>
+                <button v-if="can('notifications.delete')" class="text-red-600" @click="remove(n.id)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -211,6 +211,15 @@ import * as yup from 'yup'
 import { NotificationsApi, buildNotificationPayload } from '@/Services/notifications'
 import { UsersApi } from '@/Services/users'
 import { useServerError } from '@/composables/useServerError'
+import { usePage } from '@inertiajs/vue3'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 const { show } = useServerError()
 

@@ -147,7 +147,7 @@
         </div>
 
         <!-- SAVE -->
-        <div class="flex justify-end">
+        <div v-if="can('contact_infos.update')" class="flex justify-end">
           <button
             class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
             :disabled="saving"
@@ -172,11 +172,19 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue"
-import { Head } from "@inertiajs/vue3"
+import { ref, reactive, onMounted, computed } from "vue"
+import { Head, usePage } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import axios from "axios"
 import MapPicker from "@/Components/MapPicker.vue"
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 const loading = ref(false)
 const saving = ref(false)

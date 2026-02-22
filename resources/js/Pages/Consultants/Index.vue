@@ -5,7 +5,7 @@
       <!-- HEADER -->
       <div class="flex justify-between items-center">
         <h2 class="text-2xl font-bold">Consultants</h2>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded" @click="openCreate">
+        <button v-if="can('consultants.create')" class="px-4 py-2 bg-blue-600 text-white rounded" @click="openCreate">
           + Add Consultant
         </button>
       </div>
@@ -38,8 +38,8 @@
               <td class="px-4 py-3">{{ c.email }}</td>
 
               <td class="px-4 py-3 text-right space-x-2">
-                <button class="text-blue-600" @click="openEdit(c)">Edit</button>
-                <button class="text-red-600" @click="remove(c.id)">Delete</button>
+                <button v-if="can('consultants.update')" class="text-blue-600" @click="openEdit(c)">Edit</button>
+                <button v-if="can('consultants.delete')" class="text-red-600" @click="remove(c.id)">Delete</button>
               </td>
             </tr>
 
@@ -209,6 +209,15 @@ import { ref, onMounted, computed } from 'vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 import { useServerError } from '@/composables/useServerError'
+import { usePage } from '@inertiajs/vue3'
+
+const inertiaPage = usePage()
+const role = computed(() => inertiaPage.props.auth?.role)
+const userPermissions = computed(() => inertiaPage.props.auth?.permissions ?? [])
+function can(permission) {
+  if (role.value === 'admin') return true
+  return userPermissions.value.includes(permission)
+}
 
 const { show } = useServerError()
 
