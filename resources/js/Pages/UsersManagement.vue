@@ -157,15 +157,20 @@
                   <ErrorMessage name="password" class="error" />
                 </div>
 
-                <Field name="country_code" class="form-input" placeholder="+20" />
-                <Field name="country_name" class="form-input" placeholder="Country" />
+                <Field as="select" name="country_code" class="form-input">
+                  <option value="+20">+20</option>
+                  <option value="+965">+965</option>
+                </Field>
+                <Field as="select" name="country_name" class="form-input">
+                  <option value="Egypt">Egypt</option>
+                  <option value="Kuwait">Kuwait</option>
+                </Field>
 
                 <div class="col-span-2">
                   <Field as="select" name="gender" class="form-input">
                     <option value="">Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
                   </Field>
                   <ErrorMessage name="gender" class="error" />
                 </div>
@@ -248,7 +253,9 @@ const schema = computed(() =>
     phone: yup.string().required('Phone is required'),
     password: isEdit.value
       ? yup.string().nullable()
-      : yup.string().required('Password is required').min(6).matches(/\d/, 'Must include a number'),
+      : yup.string().required('Password is required').min(6)
+          .matches(/[a-zA-Z]/, 'Must include letters')
+          .matches(/\d/, 'Must include numbers'),
     country_code: yup.string().required('Country code is required'),
     country_name: yup.string().required('Country name is required'),
     gender: yup.string().required('Gender is required'),
@@ -318,8 +325,8 @@ function openEdit(u) {
     email: u.email || '',
     phone: u.phone || '',
     password: '',
-    country_code: u.country_code || '+20',
-    country_name: u.country_name || 'Egypt',
+    country_code: ['+20', '+965'].includes(u.country_code) ? u.country_code : '+20',
+    country_name: ['Egypt', 'Kuwait'].includes(u.country_name) ? u.country_name : 'Egypt',
     gender: u.gender || 'male',
     is_enabled: !!u.is_enabled,
   }
