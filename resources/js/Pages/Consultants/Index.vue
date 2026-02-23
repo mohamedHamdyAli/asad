@@ -141,10 +141,22 @@
                 <ErrorMessage name="company_phone" class="error" />
               </div>
 
-              <!-- Representative Phone -->
+              <!-- Representative Phone + Country Code -->
               <div>
-                <Field name="representative_phone" class="form-input" placeholder="Representative Phone" />
-                <ErrorMessage name="representative_phone" class="error" />
+                <div class="grid grid-cols-[100px_1fr] gap-2">
+                  <div>
+                    <Field as="select" name="representative_country_code" class="form-input">
+                      <option value="">Code</option>
+                      <option value="+20">+20</option>
+                      <option value="+965">+965</option>
+                    </Field>
+                    <ErrorMessage name="representative_country_code" class="error" />
+                  </div>
+                  <div>
+                    <Field name="representative_phone" class="form-input" placeholder="Representative Phone" />
+                    <ErrorMessage name="representative_phone" class="error" />
+                  </div>
+                </div>
               </div>
 
               <!-- Company Address EN -->
@@ -277,6 +289,8 @@ const schema = computed(() =>
       ar: yup.string().required('AR representative name is required'),
     }),
 
+    representative_country_code: yup.string().nullable(),
+
     image: editing.value
       ? yup.mixed().nullable()
       : yup
@@ -331,6 +345,7 @@ function openCreate() {
     representative_phone: '',
     company_address: { en: '', ar: '' },
     representative_name: { en: '', ar: '' },
+    representative_country_code: '',
     image: null,
   }
 
@@ -355,6 +370,7 @@ function openEdit(c) {
     representative_phone: c.representative_phone || '',
     company_address: c.company_address || { en: '', ar: '' },
     representative_name: c.representative_name || { en: '', ar: '' },
+    representative_country_code: c.representative_country_code || '',
     image: null,
   }
 
@@ -367,10 +383,6 @@ function openEdit(c) {
 
 function closeModal() {
   modalOpen.value = false
-}
-
-function onFile(e) {
-  imageFile.value = e.target.files?.[0] || null
 }
 
 function onFileChange(e, setFieldValue) {
@@ -395,6 +407,7 @@ async function submit(values) {
     representative_phone: values.representative_phone || '',
     company_address: values.company_address || { en: '', ar: '' },
     representative_name: values.representative_name || { en: '', ar: '' },
+    representative_country_code: values.representative_country_code || '',
     image: imageFile.value,
   }
   try {

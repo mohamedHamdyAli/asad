@@ -19,7 +19,9 @@ class ConsultantService
 
     public function getConsultantData($id = null)
     {
-        return $id ? Consultant::where('id', $id)->first() : Consultant::all();
+        return $id
+            ? Consultant::with('user')->where('id', $id)->first()
+            : Consultant::with('user')->get();
     }
 
     public function createConsultant($request): bool
@@ -37,6 +39,7 @@ class ConsultantService
                     'name' => $item['title']['en'] ?? $item['title']['ar'] ?? $item['representative_phone'],
                     'email' => $item['email'],
                     'phone' => $item['representative_phone'],
+                    'country_code' => $item['representative_country_code'] ?? null,
                     'password' => Hash::make($item['password']),
                     'is_enabled' => true,
                     'email_verified_at' => now(),
@@ -130,6 +133,11 @@ class ConsultantService
                     // Update phone if representative_phone changed
                     if (!empty($request['representative_phone'])) {
                         $updateData['phone'] = $request['representative_phone'];
+                    }
+
+                    // Update country_code if provided
+                    if (isset($request['representative_country_code'])) {
+                        $updateData['country_code'] = $request['representative_country_code'];
                     }
 
                     if (!empty($updateData)) {

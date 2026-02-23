@@ -31,6 +31,7 @@ class ConsultantRequest extends FormRequest
                 'data.*.company_address.*' => 'nullable|string|max:255',
                 'data.*.representative_name' => 'nullable|array',
                 'data.*.representative_name.*' => 'nullable|string|max:255',
+                'data.*.representative_country_code' => 'nullable|string|max:10',
 
             ];
         }
@@ -50,6 +51,7 @@ class ConsultantRequest extends FormRequest
             'data.company_address.*' => 'nullable|string|max:255',
             'data.representative_name' => 'nullable|array',
             'data.representative_name.*' => 'nullable|string|max:255',
+            'data.representative_country_code' => 'nullable|string|max:10',
         ];
     }
 

@@ -26,7 +26,7 @@ class UserHelperFunctionService
 // }
 public function getUserData($id = null)
 {
-    $query = User::query()->with('roles');
+    $query = User::query()->with('roles')->role('user');
 
     if ($id) {
         return $query->find($id);

@@ -43,6 +43,8 @@ function normalize(row = {}) {
       ar: representative_name.ar || "",
     },
 
+    representative_country_code: row.user?.country_code || "",
+
     created_at: row.created_at,
     updated_at: row.updated_at,
   }
@@ -108,6 +110,8 @@ export function buildConsultantsCreateFD(items = []) {
     fd.append(`data[${i}][representative_name][en]`, it?.representative_name?.en ?? "");
     fd.append(`data[${i}][representative_name][ar]`, it?.representative_name?.ar ?? "");
 
+    fd.append(`data[${i}][representative_country_code]`, it?.representative_country_code ?? "");
+
     if (it?.image instanceof File) {
       fd.append(`data[${i}][image]`, it.image);
     }
@@ -160,6 +164,10 @@ export function buildConsultantsUpdateFD(data = {}) {
       fd.append(`data[representative_name][en]`, data.representative_name.en);
     if (data.representative_name.ar !== undefined)
       fd.append(`data[representative_name][ar]`, data.representative_name.ar);
+  }
+
+  if (data?.representative_country_code !== undefined) {
+    fd.append(`data[representative_country_code]`, data.representative_country_code ?? "");
   }
 
   if (data?.image instanceof File) {
