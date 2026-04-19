@@ -10,7 +10,7 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => view('home.home'));
+Route::get('/', fn() => redirect()->route('login'));
 Route::get('/about', fn() => view('about.about'));
 Route::get('/contact', fn() => view('contact.contact'));
 Route::get('/project', fn() => view('portfolio.portfolio'));
