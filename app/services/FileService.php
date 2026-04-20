@@ -155,16 +155,16 @@ class FileService
             return $path;
         }
 
-        // 🔹 Create image
+        // 🔹 Create image (suppress libpng iCCP sRGB profile warnings)
         if ($mime === 'image/png') {
-            $img = imagecreatefrompng($fullPath);
+            $img = @imagecreatefrompng($fullPath);
+            if (!$img) return $path;
             imagealphablending($img, true);
             imagesavealpha($img, true);
         } else {
-            $img = imagecreatefromjpeg($fullPath);
+            $img = @imagecreatefromjpeg($fullPath);
+            if (!$img) return $path;
         }
-
-        if (!$img) return $path;
 
         $imgW = imagesx($img);
         $imgH = imagesy($img);
@@ -176,7 +176,11 @@ class FileService
             return $path;
         }
 
-        $watermark = imagecreatefrompng($watermarkPath);
+        $watermark = @imagecreatefrompng($watermarkPath);
+        if (!$watermark) {
+            imagedestroy($img);
+            return $path;
+        }
         imagesavealpha($watermark, true);
 
         $wmW = imagesx($watermark);
