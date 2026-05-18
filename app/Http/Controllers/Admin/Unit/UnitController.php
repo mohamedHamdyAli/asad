@@ -49,7 +49,7 @@ class UnitController extends Controller
 
     public function store(UnitRequest $request)
     {
-        $data = $this->unitService->createUnit($request->validated());
+        $data = $this->unitService->createUnit($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit created successfully',
@@ -76,7 +76,7 @@ class UnitController extends Controller
 
     public function update(UnitRequest $request, $id)
     {
-        $updated = $this->unitService->updateUnitData($request->validated(), $id);
+        $updated = $this->unitService->updateUnitData($request->validated(), $id, $request->user());
         if (!$updated) {
             return response()->json([
                 'status' => 'error',

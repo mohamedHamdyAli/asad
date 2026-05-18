@@ -27,7 +27,7 @@ class DrawingsController extends Controller
 
     public function store(UnitDrawingRequest $request)
     {
-        $this->unitDrawingService->createUnitDrawings($request->validated());
+        $this->unitDrawingService->createUnitDrawings($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit Drawings created successfully',

@@ -28,7 +28,7 @@ class GalleryController extends Controller
 
     public function store(UnitGalleryRequest $request)
     {
-        $this->unitGalleryService->createUnitGallery($request->validated());
+        $this->unitGalleryService->createUnitGallery($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit Gallery created successfully',

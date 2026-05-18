@@ -2,12 +2,17 @@
 
 namespace App\services\Unit;
 
+use App\Models\Unit;
 use App\Models\UnitGallery;
+use App\Models\User;
 use App\services\FileService;
+use App\Trait\notifications\NotifiesUnitOwnerTrait;
 use Illuminate\Support\Facades\DB;
 
 class UnitGalleryCrudService
 {
+    use NotifiesUnitOwnerTrait;
+
     private string $uploadFolder;
 
     public function __construct()
@@ -20,9 +25,10 @@ class UnitGalleryCrudService
         return UnitGallery::where('unit_id', $unitId)->get();
     }
 
-    public function createUnitGallery($request)
+    public function createUnitGallery($request, ?User $actor = null)
     {
-        return DB::transaction(function () use ($request) {
+        $count = DB::transaction(function () use ($request) {
+            $created = 0;
             foreach ($request['data'] as $item) {
                 $uploaded = FileService::upload($item['image'], $this->uploadFolder . '/' . getFolderName($item['folder_id']));
                 $title = !empty($item['title'])
@@ -35,9 +41,20 @@ class UnitGalleryCrudService
                     'title' => $title,
                     'date' => $item['date'],
                 ]);
+                $created++;
             }
-
+            return $created;
         });
+
+        if ($count > 0) {
+            $unit = Unit::find($request['unit_id']);
+            if ($unit) {
+                $body = $count === 1
+                    ? 'A new image was added to your project "{unit}".'
+                    : "{$count} new images were added to your project \"{unit}\".";
+                $this->notifyUnitOwner($unit, 'New gallery image', $body, $actor);
+            }
+        }
     }
 
     public function updateUnitGalleryData($request)
@@ -74,11 +91,6 @@ class UnitGalleryCrudService
             return true;
         });
     }
-
-
-
-
-
 
     public function deleteUnitGallery($id)
     {

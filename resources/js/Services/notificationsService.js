@@ -13,8 +13,8 @@ const NotificationsService = {
     })
   },
 
-  async markAllAsSeen(ids) {
-    return Promise.all(ids.map(id => this.markAsSeen(id)))
+  async markAllAsSeen() {
+    return axios.post("/api/notifications/seen-all")
   },
 
   async deleteNotification(id) {

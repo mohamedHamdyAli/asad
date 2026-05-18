@@ -4,11 +4,15 @@ namespace App\services\Unit;
 
 use App\Models\Unit;
 use App\Models\UnitDocument;
+use App\Models\User;
 use App\services\FileService;
+use App\Trait\notifications\NotifiesUnitOwnerTrait;
 use Illuminate\Support\Facades\DB;
 
 class UnitDocsCrudService
 {
+    use NotifiesUnitOwnerTrait;
+
     private string $uploadFolder;
 
     public function __construct()
@@ -21,9 +25,10 @@ class UnitDocsCrudService
         return UnitDocument::where('unit_id', $unitId)->get();
     }
 
-    public function createUnitDocs($request)
+    public function createUnitDocs($request, ?User $actor = null)
     {
-        return DB::transaction(function () use ($request) {
+        $count = DB::transaction(function () use ($request) {
+            $created = 0;
             foreach ($request['data'] as $item) {
                 $folderName = getFolderName($item['folder_id']);
 
@@ -39,8 +44,20 @@ class UnitDocsCrudService
                     'file' => $uploaded,
                     'title' => $title,
                 ]);
+                $created++;
             }
+            return $created;
         });
+
+        if ($count > 0) {
+            $unit = Unit::find($request['unit_id']);
+            if ($unit) {
+                $body = $count === 1
+                    ? 'A new document was added to your project "{unit}".'
+                    : "{$count} new documents were added to your project \"{unit}\".";
+                $this->notifyUnitOwner($unit, 'New document', $body, $actor);
+            }
+        }
     }
 
 

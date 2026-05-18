@@ -2,12 +2,17 @@
 
 namespace App\Services\Unit;
 
+use App\Models\Unit;
 use App\Models\UnitReport;
+use App\Models\User;
 use App\services\FileService;
+use App\Trait\notifications\NotifiesUnitOwnerTrait;
 use Illuminate\Support\Facades\DB;
 
 class UnitReportCrudService
 {
+    use NotifiesUnitOwnerTrait;
+
     private string $uploadFolder;
 
     public function __construct()
@@ -20,9 +25,10 @@ class UnitReportCrudService
         return UnitReport::where('unit_id', $unitId)->get();
     }
 
-    public function createUnitReports($request)
+    public function createUnitReports($request, ?User $actor = null)
     {
-        return DB::transaction(function () use ($request) {
+        $count = DB::transaction(function () use ($request) {
+            $created = 0;
             foreach ($request['data'] as $item) {
                 $uploaded = FileService::upload($item['file'], $this->uploadFolder);
                 $title = !empty($item['title'])
@@ -34,8 +40,20 @@ class UnitReportCrudService
                     'file' => $uploaded,
                     'title' => $title,
                 ]);
+                $created++;
             }
+            return $created;
         });
+
+        if ($count > 0) {
+            $unit = Unit::find($request['unit_id']);
+            if ($unit) {
+                $body = $count === 1
+                    ? 'A new report was added to your project "{unit}".'
+                    : "{$count} new reports were added to your project \"{unit}\".";
+                $this->notifyUnitOwner($unit, 'New report', $body, $actor);
+            }
+        }
     }
 
     public function updateUnitReportData($request)

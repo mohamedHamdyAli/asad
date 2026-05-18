@@ -27,7 +27,7 @@ class DocsController extends Controller
 
     public function store(UnitDocsRequest $request)
     {
-        $this->unitDocsService->createUnitDocs($request->validated());
+        $this->unitDocsService->createUnitDocs($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit Doc created successfully',

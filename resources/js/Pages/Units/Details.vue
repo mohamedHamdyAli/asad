@@ -120,7 +120,7 @@
           <Link :href="phasesPath(d.id)" class="nav-btn">🧩 Phases</Link>
           <Link :href="timelinePath(d.id)" class="nav-btn">🕒 Timeline</Link>
           <Link :href="unitContractorsPath(d.id)" class="nav-btn">👷 Assignments</Link>
-          <Link :href="unitPaymentsPath(d.id)" class="nav-btn">💰 Payments & Installment</Link>
+          <Link :href="unitPaymentsPath(d.id)" class="nav-btn">💰 Project Value & Payments</Link>
         </div>
 
       </div>

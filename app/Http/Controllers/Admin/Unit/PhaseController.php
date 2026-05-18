@@ -27,7 +27,7 @@ class PhaseController extends Controller
 
     public function store(UnitPhaseRequest $request)
     {
-        $this->service->createPhases($request->validated());
+        $this->service->createPhases($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit phases created successfully',
