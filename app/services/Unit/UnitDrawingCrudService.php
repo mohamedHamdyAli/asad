@@ -2,12 +2,17 @@
 
 namespace App\services\Unit;
 
+use App\Models\Unit;
 use App\Models\UnitDrawing;
+use App\Models\User;
 use App\services\FileService;
+use App\Trait\notifications\NotifiesUnitOwnerTrait;
 use Illuminate\Support\Facades\DB;
 
 class UnitDrawingCrudService
 {
+    use NotifiesUnitOwnerTrait;
+
     private string $uploadFolder;
 
     public function __construct()
@@ -20,9 +25,10 @@ class UnitDrawingCrudService
         return UnitDrawing::where('unit_id', $unitId)->get();
     }
 
-    public function createUnitDrawings($request)
+    public function createUnitDrawings($request, ?User $actor = null)
     {
-        return DB::transaction(function () use ($request) {
+        $count = DB::transaction(function () use ($request) {
+            $created = 0;
             foreach ($request['data'] as $item) {
                 $uploaded = FileService::upload($item['image'], $this->uploadFolder . '/' . getFolderName($item['folder_id']));
                 $title = !empty($item['title'])
@@ -35,8 +41,20 @@ class UnitDrawingCrudService
                     'title' => $title,
                     'date' => $item['date'],
                 ]);
+                $created++;
             }
+            return $created;
         });
+
+        if ($count > 0) {
+            $unit = Unit::find($request['unit_id']);
+            if ($unit) {
+                $body = $count === 1
+                    ? 'A new drawing was added to your project "{unit}".'
+                    : "{$count} new drawings were added to your project \"{unit}\".";
+                $this->notifyUnitOwner($unit, 'New drawing', $body, $actor);
+            }
+        }
     }
 
     public function updateUnitDrawingsData($request)

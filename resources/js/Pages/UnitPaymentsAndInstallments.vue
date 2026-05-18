@@ -7,11 +7,11 @@
       <div class="flex border-b mb-6 mt-6 items-center">
         <button :class="tab === 'payments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
           class="px-4 py-2 font-medium" @click="tab = 'payments'">
-          Payments
+          Project Value
         </button>
         <button :class="tab === 'installments' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'"
           class="px-4 py-2 font-medium" @click="tab = 'installments'">
-          Installments
+          Payments
         </button>
       </div>
 

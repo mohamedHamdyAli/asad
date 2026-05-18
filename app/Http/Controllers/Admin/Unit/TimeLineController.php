@@ -27,7 +27,7 @@ class TimeLineController extends Controller
 
     public function store(UnitTimeLineRequest $request)
     {
-        $this->unitTimeLineService->createUnitTimelines($request->validated());
+        $this->unitTimeLineService->createUnitTimelines($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit Timelines created successfully',

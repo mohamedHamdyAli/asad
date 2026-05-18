@@ -166,7 +166,7 @@ Route::group(['prefix' => 'vendors'], static function () {
 });
 
 
-Route::group(['prefix' => 'units'], static function () {
+Route::group(['prefix' => 'units', 'middleware' => 'web'], static function () {
     Route::get('/', [AdminUnitController::class, 'index'])->name('units.index');
     Route::get('/user/{userId}', [AdminUnitController::class, 'userUnits'])->name('units.user');
     Route::get('/vendor/{vendorId}', [AdminUnitController::class, 'vendorUnits'])->name('units.vendor');
@@ -185,14 +185,14 @@ Route::group(['prefix' => 'folder'], static function () {
     Route::delete('/delete/{id}', [AdminFolderController::class, 'destroy'])->name('folder.delete');
 });
 
-Route::group(['prefix' => 'unit-docs'], static function () {
+Route::group(['prefix' => 'unit-docs', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminDocsController::class, 'index'])->name('docs.index');
     Route::post('/create', [AdminDocsController::class, 'store'])->name('docs.store');
     Route::post('/update', [AdminDocsController::class, 'update'])->name('docs.update');
     Route::delete('/delete/{id}', [AdminDocsController::class, 'destroy'])->name('docs.delete');
 });
 
-Route::group(['prefix' => 'unit-gallery'], static function () {
+Route::group(['prefix' => 'unit-gallery', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminGalleryController::class, 'index'])->name('gallery.index');
     Route::post('/create', [AdminGalleryController::class, 'store'])->name('gallery.store');
     Route::post('/update', [AdminGalleryController::class, 'update'])->name('gallery.update');
@@ -200,7 +200,7 @@ Route::group(['prefix' => 'unit-gallery'], static function () {
 });
 
 
-Route::group(['prefix' => 'unit-drawing'], static function () {
+Route::group(['prefix' => 'unit-drawing', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminDrawingsController::class, 'index'])->name('drawing.index');
     Route::post('/create', [AdminDrawingsController::class, 'store'])->name('drawing.store');
     Route::post('/update', [AdminDrawingsController::class, 'update'])->name('drawing.update');
@@ -208,7 +208,7 @@ Route::group(['prefix' => 'unit-drawing'], static function () {
 });
 
 
-Route::group(['prefix' => 'unit-report'], static function () {
+Route::group(['prefix' => 'unit-report', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminReportController::class, 'index'])->name('report.index');
     Route::post('/create', [AdminReportController::class, 'store'])->name('report.store');
     Route::post('/update', [AdminReportController::class, 'update'])->name('report.update');
@@ -217,14 +217,14 @@ Route::group(['prefix' => 'unit-report'], static function () {
 
 
 
-Route::group(['prefix' => 'unit-timeline'], static function () {
+Route::group(['prefix' => 'unit-timeline', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminTimeLineController::class, 'index'])->name('timeline.index');
     Route::post('/create', [AdminTimeLineController::class, 'store'])->name('timeline.store');
     Route::post('/update', [AdminTimeLineController::class, 'update'])->name('timeline.update');
     Route::delete('/delete/{id}', [AdminTimeLineController::class, 'destroy'])->name('timeline.delete');
 });
 
-Route::group(['prefix' => 'unit-phase'], static function () {
+Route::group(['prefix' => 'unit-phase', 'middleware' => 'web'], static function () {
     Route::get('/{unitId}', [AdminPhaseController::class, 'index'])->name('phases.index');
     Route::post('/create', [AdminPhaseController::class, 'store'])->name('phases.store');
     Route::post('/update', [AdminPhaseController::class, 'update'])->name('phases.update');
@@ -382,10 +382,12 @@ Route::prefix('unit-payments')->group(function () {
         ->name('unit-payment.logs.installment');
 });
 
-Route::group(['prefix' => 'notifications'], static function () {
+Route::group(['prefix' => 'notifications', 'middleware' => 'web'], static function () {
     Route::get('/', [AdminNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/create', [AdminNotificationController::class, 'store'])->name('notifications.store');
     Route::get('/show/{id}', [AdminNotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/seen', [AdminNotificationController::class, 'seen'])->name('notifications.seen');
+    Route::post('/seen-all', [AdminNotificationController::class, 'seenAll'])->name('notifications.seenAll');
     Route::delete('/delete/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.delete');
 });
 

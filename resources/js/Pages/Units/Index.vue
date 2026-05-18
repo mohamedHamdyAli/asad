@@ -223,7 +223,7 @@
                   👷 Assignments
                 </Link>
                 <Link :href="unitPaymentsPath(d.id)" class="nav-btn">
-                  💰 Payments & Installment
+                  💰 Project Value & Payments
                 </Link>
               </div>
 
@@ -238,6 +238,200 @@
         </div>
       </div>
 
+
+      <!-- Owner Create Modal -->
+      <div v-if="showOwnerModal" class="fixed inset-0 z-[60]" @keydown.esc="closeOwnerCreate">
+        <div class="absolute inset-0 bg-black/50" @click="closeOwnerCreate" aria-hidden="true"></div>
+
+        <div class="relative mx-auto w-full max-w-xl p-4 sm:p-6 h-full flex items-center justify-center">
+          <div class="bg-white rounded-2xl shadow-lg w-full max-h-[min(88vh,800px)] overflow-y-auto focus:outline-none">
+            <div class="sticky top-0 z-10 bg-white border-b rounded-t-2xl">
+              <div class="flex items-center justify-between px-5 py-3">
+                <h3 class="text-lg font-bold">Add Owner</h3>
+                <button @click="closeOwnerCreate" class="text-gray-400 hover:text-gray-600" aria-label="Close">✕</button>
+              </div>
+            </div>
+
+            <div class="px-5 py-4 space-y-4">
+              <form @submit.prevent="submitOwnerCreate" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Name*</label>
+                    <input :class="ownerInputClass('name')" v-model="ownerForm.name" type="text" />
+                    <p v-if="ownerErr('name')" class="mt-1 text-xs text-red-600">{{ ownerErr('name') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Email*</label>
+                    <input :class="ownerInputClass('email')" v-model="ownerForm.email" type="email" />
+                    <p v-if="ownerErr('email')" class="mt-1 text-xs text-red-600">{{ ownerErr('email') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Phone*</label>
+                    <input :class="ownerInputClass('phone')" v-model="ownerForm.phone" type="text" />
+                    <p v-if="ownerErr('phone')" class="mt-1 text-xs text-red-600">{{ ownerErr('phone') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Password*</label>
+                    <input :class="ownerInputClass('password')" v-model="ownerForm.password" type="password" />
+                    <p v-if="ownerErr('password')" class="mt-1 text-xs text-red-600">{{ ownerErr('password') }}</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Country Code*</label>
+                    <select :class="ownerInputClass('country_code')" v-model="ownerForm.country_code">
+                      <option value="+20">+20</option>
+                      <option value="+965">+965</option>
+                    </select>
+                    <p v-if="ownerErr('country_code')" class="mt-1 text-xs text-red-600">{{ ownerErr('country_code') }}</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Country Name*</label>
+                    <select :class="ownerInputClass('country_name')" v-model="ownerForm.country_name">
+                      <option value="Egypt">Egypt</option>
+                      <option value="Kuwait">Kuwait</option>
+                    </select>
+                    <p v-if="ownerErr('country_name')" class="mt-1 text-xs text-red-600">{{ ownerErr('country_name') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Gender*</label>
+                    <select :class="ownerInputClass('gender')" v-model="ownerForm.gender">
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                    <p v-if="ownerErr('gender')" class="mt-1 text-xs text-red-600">{{ ownerErr('gender') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Profile Image*</label>
+                    <input :class="ownerInputClass('profile_image')" type="file" accept="image/*" @change="onOwnerImage" />
+                    <p v-if="ownerErr('profile_image')" class="mt-1 text-xs text-red-600">{{ ownerErr('profile_image') }}</p>
+
+                    <div v-if="ownerImagePreview" class="mt-2 inline-block">
+                      <img :src="ownerImagePreview" class="w-24 h-24 object-cover rounded-full border" />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="ownerErrorMsg" class="rounded border border-red-200 bg-red-50 text-red-700 px-3 py-2">
+                  {{ ownerErrorMsg }}
+                </div>
+              </form>
+            </div>
+
+            <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
+              <div class="px-5 py-3 flex items-center gap-3">
+                <button :disabled="savingOwner" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
+                  @click="submitOwnerCreate">
+                  {{ savingOwner ? 'Saving…' : 'Create' }}
+                </button>
+                <button type="button" class="px-3 py-2 border rounded" @click="closeOwnerCreate">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Manager Create Modal -->
+      <div v-if="showPmModal" class="fixed inset-0 z-[60]" @keydown.esc="closePmCreate">
+        <div class="absolute inset-0 bg-black/50" @click="closePmCreate" aria-hidden="true"></div>
+
+        <div class="relative mx-auto w-full max-w-xl p-4 sm:p-6 h-full flex items-center justify-center">
+          <div class="bg-white rounded-2xl shadow-lg w-full max-h-[min(88vh,800px)] overflow-y-auto focus:outline-none">
+            <div class="sticky top-0 z-10 bg-white border-b rounded-t-2xl">
+              <div class="flex items-center justify-between px-5 py-3">
+                <h3 class="text-lg font-bold">Add Project Manager</h3>
+                <button @click="closePmCreate" class="text-gray-400 hover:text-gray-600" aria-label="Close">✕</button>
+              </div>
+            </div>
+
+            <div class="px-5 py-4 space-y-4">
+              <form @submit.prevent="submitPmCreate" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Name*</label>
+                    <input :class="pmInputClass('name')" v-model="pmForm.name" type="text" />
+                    <p v-if="pmErr('name')" class="mt-1 text-xs text-red-600">{{ pmErr('name') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Email*</label>
+                    <input :class="pmInputClass('email')" v-model="pmForm.email" type="email" />
+                    <p v-if="pmErr('email')" class="mt-1 text-xs text-red-600">{{ pmErr('email') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Phone*</label>
+                    <input :class="pmInputClass('phone')" v-model="pmForm.phone" type="text" />
+                    <p v-if="pmErr('phone')" class="mt-1 text-xs text-red-600">{{ pmErr('phone') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Password*</label>
+                    <input :class="pmInputClass('password')" v-model="pmForm.password" type="password" />
+                    <p v-if="pmErr('password')" class="mt-1 text-xs text-red-600">{{ pmErr('password') }}</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Country Code*</label>
+                    <select :class="pmInputClass('country_code')" v-model="pmForm.country_code">
+                      <option value="+20">+20</option>
+                      <option value="+965">+965</option>
+                    </select>
+                    <p v-if="pmErr('country_code')" class="mt-1 text-xs text-red-600">{{ pmErr('country_code') }}</p>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Country Name*</label>
+                    <select :class="pmInputClass('country_name')" v-model="pmForm.country_name">
+                      <option value="Egypt">Egypt</option>
+                      <option value="Kuwait">Kuwait</option>
+                    </select>
+                    <p v-if="pmErr('country_name')" class="mt-1 text-xs text-red-600">{{ pmErr('country_name') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Gender*</label>
+                    <select :class="pmInputClass('gender')" v-model="pmForm.gender">
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                    <p v-if="pmErr('gender')" class="mt-1 text-xs text-red-600">{{ pmErr('gender') }}</p>
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Profile Image*</label>
+                    <input :class="pmInputClass('profile_image')" type="file" accept="image/*" @change="onPmImage" />
+                    <p v-if="pmErr('profile_image')" class="mt-1 text-xs text-red-600">{{ pmErr('profile_image') }}</p>
+
+                    <div v-if="pmImagePreview" class="mt-2 inline-block">
+                      <img :src="pmImagePreview" class="w-24 h-24 object-cover rounded-full border" />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="pmErrorMsg" class="rounded border border-red-200 bg-red-50 text-red-700 px-3 py-2">
+                  {{ pmErrorMsg }}
+                </div>
+              </form>
+            </div>
+
+            <div class="sticky bottom-0 z-10 bg-white border-t rounded-b-2xl">
+              <div class="px-5 py-3 flex items-center gap-3">
+                <button :disabled="savingPm" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
+                  @click="submitPmCreate">
+                  {{ savingPm ? 'Saving…' : 'Create' }}
+                </button>
+                <button type="button" class="px-3 py-2 border rounded" @click="closePmCreate">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Add/Edit Modal (restored) -->
       <div v-if="showModal" class="fixed inset-0 z-50" @keydown.esc="closeModal">
@@ -362,23 +556,37 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Owner *</label>
-                    <select :class="inputClass('user_id')" v-model.number="form.user_id" :required="!editingId">
-                      <option value="" disabled>Select an Owner</option>
-                      <option v-for="u in userOptions" :key="u.id" :value="u.id">
-                        {{ u.name }} — {{ u.email }}
-                      </option>
-                    </select>
+                    <div class="flex items-center gap-2">
+                      <select :class="inputClass('user_id')" v-model.number="form.user_id" :required="!editingId">
+                        <option value="" disabled>Select an Owner</option>
+                        <option v-for="u in userOptions" :key="u.id" :value="u.id">
+                          {{ u.name }} — {{ u.email }}
+                        </option>
+                      </select>
+                      <button type="button"
+                        class="shrink-0 h-9 px-3 text-sm border rounded-md bg-black text-white hover:bg-gray-800 whitespace-nowrap"
+                        title="Add new Owner" @click="openOwnerCreate">
+                        Add Owner
+                      </button>
+                    </div>
                     <p v-if="err('user_id')" class="mt-1 text-xs text-red-600">{{ err('user_id') }}</p>
                   </div>
 
                   <div>
                     <label class="block text-xs text-gray-500 mb-1">Project Manager *</label>
-                    <select :class="inputClass('vendor_id')" v-model.number="form.vendor_id" :required="!editingId">
-                      <option value="" disabled>Select a Project Manager</option>
-                      <option v-for="v in vendorOptions" :key="v.id" :value="v.id">
-                        {{ v.name }} — {{ v.email }}
-                      </option>
-                    </select>
+                    <div class="flex items-center gap-2">
+                      <select :class="inputClass('vendor_id')" v-model.number="form.vendor_id" :required="!editingId">
+                        <option value="" disabled>Select a Project Manager</option>
+                        <option v-for="v in vendorOptions" :key="v.id" :value="v.id">
+                          {{ v.name }} — {{ v.email }}
+                        </option>
+                      </select>
+                      <button type="button"
+                        class="shrink-0 h-9 px-3 text-sm border rounded-md bg-black text-white hover:bg-gray-800 whitespace-nowrap"
+                        title="Add new Project Manager" @click="openPmCreate">
+                        Add PM
+                      </button>
+                    </div>
                     <p v-if="err('vendor_id')" class="mt-1 text-xs text-red-600">{{ err('vendor_id') }}</p>
                   </div>
 
@@ -476,8 +684,8 @@ import MapPicker from '@/Components/MapPicker.vue'
 import { ref, onMounted, computed, reactive, nextTick, watch } from 'vue'
 import { UnitsApi, buildUnitCreateFD, buildUnitUpdateFD } from '@/Services/units'
 import { Link, usePage } from '@inertiajs/vue3'
-import { UsersApi } from '@/Services/users'
-import { VendorsApi } from '@/Services/vendors'
+import { UsersApi, buildUserCreateFD } from '@/Services/users'
+import { VendorsApi, buildVendorCreateFD } from '@/Services/vendors'
 import { useServerError } from '@/composables/useServerError'
 
 const inertiaPage = usePage()
@@ -828,6 +1036,244 @@ async function fetchOptions() {
   userOptions.value = users.map(u => ({ id: u.id, name: u.name, email: u.email }))
   const vendors = await VendorsApi.list()
   vendorOptions.value = vendors.map(v => ({ id: v.id, name: v.name, email: v.email }))
+}
+
+/* ------------------ owner-create modal ------------------ */
+const showOwnerModal = ref(false)
+const savingOwner = ref(false)
+const ownerErrors = ref({})
+const ownerErrorMsg = ref('')
+const ownerImageFile = ref(null)
+const ownerImagePreview = ref(null)
+
+const ownerForm = ref({
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  country_code: '+20',
+  country_name: 'Egypt',
+  gender: 'male',
+  profile_image: null,
+})
+
+const ownerErr = (field) => ownerErrors.value[field]?.[0] || ''
+const ownerHasErr = (field) => Boolean(ownerErrors.value[field])
+const ownerInputClass = (field) =>
+  ['form-input', ownerHasErr(field) ? 'border-red-400 focus:ring-red-500' : ''].join(' ')
+
+function resetOwnerForm() {
+  ownerForm.value = {
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    country_code: '+20',
+    country_name: 'Egypt',
+    gender: 'male',
+    profile_image: null,
+  }
+  ownerImageFile.value = null
+  ownerImagePreview.value = null
+  ownerErrors.value = {}
+  ownerErrorMsg.value = ''
+}
+
+function openOwnerCreate() {
+  resetOwnerForm()
+  showOwnerModal.value = true
+}
+
+function closeOwnerCreate() {
+  showOwnerModal.value = false
+}
+
+function onOwnerImage(e) {
+  const f = e.target.files?.[0] || null
+  ownerImageFile.value = f
+  ownerForm.value.profile_image = f
+  ownerImagePreview.value = f ? URL.createObjectURL(f) : null
+}
+
+function setOwnerFieldError(field, msgs) {
+  if (!msgs || (Array.isArray(msgs) && msgs.length === 0)) {
+    delete ownerErrors.value[field]; return
+  }
+  ownerErrors.value[field] = Array.isArray(msgs) ? msgs : [String(msgs)]
+}
+
+function validateOwner() {
+  ownerErrors.value = {}
+  ownerErrorMsg.value = ''
+  const f = ownerForm.value
+  const need = (v) => v !== null && v !== undefined && String(v).trim() !== ''
+
+  if (!need(f.name)) setOwnerFieldError('name', 'Name is required')
+  if (!need(f.email)) setOwnerFieldError('email', 'Email is required')
+  else if (!/^\S+@\S+\.\S+$/.test(f.email)) setOwnerFieldError('email', 'Invalid email')
+  if (!need(f.phone)) setOwnerFieldError('phone', 'Phone is required')
+  if (!need(f.password)) setOwnerFieldError('password', 'Password is required')
+  else if (f.password.length < 6) setOwnerFieldError('password', 'Minimum 6 characters')
+  else if (!/[a-zA-Z]/.test(f.password)) setOwnerFieldError('password', 'Must include letters')
+  else if (!/\d/.test(f.password)) setOwnerFieldError('password', 'Must include numbers')
+  if (!need(f.country_code)) setOwnerFieldError('country_code', 'Country code is required')
+  if (!need(f.country_name)) setOwnerFieldError('country_name', 'Country name is required')
+  if (!need(f.gender)) setOwnerFieldError('gender', 'Gender is required')
+  if (!f.profile_image) setOwnerFieldError('profile_image', 'Image is required')
+
+  if (Object.keys(ownerErrors.value).length) {
+    ownerErrorMsg.value = 'Please fix the highlighted fields.'
+    return false
+  }
+  return true
+}
+
+async function submitOwnerCreate() {
+  if (!validateOwner()) return
+  savingOwner.value = true
+  try {
+    const fd = buildUserCreateFD({ ...ownerForm.value, profile_image: ownerImageFile.value })
+    await UsersApi.create(fd)
+
+    const emailJustCreated = ownerForm.value.email
+    const users = await UsersApi.list()
+    userOptions.value = users.map(u => ({ id: u.id, name: u.name, email: u.email }))
+
+    const justCreated = userOptions.value.find(u => u.email === emailJustCreated)
+    if (justCreated) form.value.user_id = justCreated.id
+
+    closeOwnerCreate()
+  } catch (e) {
+    show(e)
+    const status = e?.response?.status
+    const errs = e?.response?.data?.errors
+    if (status === 422 && errs) {
+      for (const [k, arr] of Object.entries(errs)) setOwnerFieldError(k, arr)
+      ownerErrorMsg.value = e?.response?.data?.message || 'Validation failed.'
+    } else {
+      ownerErrorMsg.value = e?.response?.data?.message || e?.message || 'Request failed'
+    }
+  } finally {
+    savingOwner.value = false
+  }
+}
+
+/* ------------------ project-manager-create modal ------------------ */
+const showPmModal = ref(false)
+const savingPm = ref(false)
+const pmErrors = ref({})
+const pmErrorMsg = ref('')
+const pmImageFile = ref(null)
+const pmImagePreview = ref(null)
+
+const pmForm = ref({
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  country_code: '+20',
+  country_name: 'Egypt',
+  gender: 'male',
+  profile_image: null,
+})
+
+const pmErr = (field) => pmErrors.value[field]?.[0] || ''
+const pmHasErr = (field) => Boolean(pmErrors.value[field])
+const pmInputClass = (field) =>
+  ['form-input', pmHasErr(field) ? 'border-red-400 focus:ring-red-500' : ''].join(' ')
+
+function resetPmForm() {
+  pmForm.value = {
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    country_code: '+20',
+    country_name: 'Egypt',
+    gender: 'male',
+    profile_image: null,
+  }
+  pmImageFile.value = null
+  pmImagePreview.value = null
+  pmErrors.value = {}
+  pmErrorMsg.value = ''
+}
+
+function openPmCreate() {
+  resetPmForm()
+  showPmModal.value = true
+}
+
+function closePmCreate() {
+  showPmModal.value = false
+}
+
+function onPmImage(e) {
+  const f = e.target.files?.[0] || null
+  pmImageFile.value = f
+  pmForm.value.profile_image = f
+  pmImagePreview.value = f ? URL.createObjectURL(f) : null
+}
+
+function setPmFieldError(field, msgs) {
+  if (!msgs || (Array.isArray(msgs) && msgs.length === 0)) {
+    delete pmErrors.value[field]; return
+  }
+  pmErrors.value[field] = Array.isArray(msgs) ? msgs : [String(msgs)]
+}
+
+function validatePm() {
+  pmErrors.value = {}
+  pmErrorMsg.value = ''
+  const f = pmForm.value
+  const need = (v) => v !== null && v !== undefined && String(v).trim() !== ''
+
+  if (!need(f.name)) setPmFieldError('name', 'Name is required')
+  if (!need(f.email)) setPmFieldError('email', 'Email is required')
+  else if (!/^\S+@\S+\.\S+$/.test(f.email)) setPmFieldError('email', 'Invalid email')
+  if (!need(f.phone)) setPmFieldError('phone', 'Phone is required')
+  if (!need(f.password)) setPmFieldError('password', 'Password is required')
+  else if (f.password.length < 8) setPmFieldError('password', 'Minimum 8 characters')
+  if (!need(f.country_code)) setPmFieldError('country_code', 'Country code is required')
+  if (!need(f.country_name)) setPmFieldError('country_name', 'Country name is required')
+  if (!need(f.gender)) setPmFieldError('gender', 'Gender is required')
+  if (!f.profile_image) setPmFieldError('profile_image', 'Image is required')
+
+  if (Object.keys(pmErrors.value).length) {
+    pmErrorMsg.value = 'Please fix the highlighted fields.'
+    return false
+  }
+  return true
+}
+
+async function submitPmCreate() {
+  if (!validatePm()) return
+  savingPm.value = true
+  try {
+    const fd = buildVendorCreateFD({ ...pmForm.value, profile_image: pmImageFile.value, is_enabled: true })
+    await VendorsApi.create(fd)
+
+    const emailJustCreated = pmForm.value.email
+    const vendors = await VendorsApi.list()
+    vendorOptions.value = vendors.map(v => ({ id: v.id, name: v.name, email: v.email }))
+
+    const justCreated = vendorOptions.value.find(v => v.email === emailJustCreated)
+    if (justCreated) form.value.vendor_id = justCreated.id
+
+    closePmCreate()
+  } catch (e) {
+    show(e)
+    const status = e?.response?.status
+    const errs = e?.response?.data?.errors
+    if (status === 422 && errs) {
+      for (const [k, arr] of Object.entries(errs)) setPmFieldError(k, arr)
+      pmErrorMsg.value = e?.response?.data?.message || 'Validation failed.'
+    } else {
+      pmErrorMsg.value = e?.response?.data?.message || e?.message || 'Request failed'
+    }
+  } finally {
+    savingPm.value = false
+  }
 }
 
 onMounted(async () => {

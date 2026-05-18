@@ -217,7 +217,7 @@
                     <Link :href="phasesPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Phases</Link>
                     <Link :href="timelinePath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Timeline</Link>
                     <Link :href="unitContractorsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Assignments</Link>
-                    <Link :href="unitPaymentsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Payments & Installments</Link>
+                    <Link :href="unitPaymentsPath(d.id)" class="px-3 py-2 border rounded text-center hover:bg-gray-50">Project Value & Payments</Link>
                   </div>
                 </div>
 

@@ -2,19 +2,25 @@
 
 namespace App\services\Unit;
 
+use App\Models\Unit;
 use App\Models\UnitPhase;
+use App\Models\User;
+use App\Trait\notifications\NotifiesUnitOwnerTrait;
 use Illuminate\Support\Facades\DB;
 
 class UnitPhaseCrudService
 {
+    use NotifiesUnitOwnerTrait;
+
     public function getUnitPhases($unitId)
     {
         return UnitPhase::where('unit_id', $unitId)->get();
     }
-    public function createPhases($request)
-    {
-        return DB::transaction(function () use ($request) {
 
+    public function createPhases($request, ?User $actor = null)
+    {
+        $created = DB::transaction(function () use ($request) {
+            $names = [];
             foreach ($request['data'] as $item) {
 
                 $status = trim($item['status']);
@@ -35,10 +41,24 @@ class UnitPhaseCrudService
                         JSON_UNESCAPED_UNICODE
                     ),
                 ]);
+                $names[] = $status;
             }
 
-            return true;
+            return $names;
         });
+
+        if (!empty($created)) {
+            $unit = Unit::find($request['unit_id']);
+            if ($unit) {
+                $count = count($created);
+                $body = $count === 1
+                    ? "Phase \"{$created[0]}\" was added to your project \"{unit}\"."
+                    : "{$count} new phases were added to your project \"{unit}\": " . implode(', ', $created) . '.';
+                $this->notifyUnitOwner($unit, 'New project phase', $body, $actor);
+            }
+        }
+
+        return true;
     }
 
 

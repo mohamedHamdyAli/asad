@@ -84,7 +84,7 @@ const items = [
   { key: 'phases', label: 'Phases', href: hrefs.phases, icon: Layers },
   { key: 'timeline', label: 'Timeline', href: hrefs.timeline, icon: Clock },
   { key: 'assignments', label: 'Assignments', href: hrefs.assignments, icon: Users },
-  { key: 'payments', label: 'Payments & Installments', href: hrefs.payments, icon: CreditCard }
+  { key: 'payments', label: 'Project Value & Payments', href: hrefs.payments, icon: CreditCard }
 ]
 
 const visibleItems = computed(() => items.filter(i => props.show.includes(i.key)))

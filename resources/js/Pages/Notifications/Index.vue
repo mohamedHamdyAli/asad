@@ -254,8 +254,12 @@ async function loadUsers() {
   users.value = await UsersApi.list()
 }
 
+const broadcastRows = computed(() =>
+  rows.value.filter(r => !r.objectable_id)
+)
+
 const filteredRows = computed(() =>
-  rows.value.filter(r =>
+  broadcastRows.value.filter(r =>
     r.title?.toLowerCase().includes(search.value.toLowerCase()) ||
     r.user_name?.toLowerCase().includes(search.value.toLowerCase()) ||
     r.body?.toLowerCase().includes(search.value.toLowerCase())

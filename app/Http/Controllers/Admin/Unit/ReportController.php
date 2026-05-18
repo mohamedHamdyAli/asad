@@ -27,7 +27,7 @@ class ReportController extends Controller
 
     public function store(UnitReportRequest $request)
     {
-        $this->unitReportService->createUnitReports($request->validated());
+        $this->unitReportService->createUnitReports($request->validated(), $request->user());
         return response()->json([
             'status' => 'success',
             'message' => 'Unit Reports created successfully',

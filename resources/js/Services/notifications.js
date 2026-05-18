@@ -20,6 +20,8 @@ function normalize(row = {}) {
     body: row.body || "",
     is_seen: row.is_seen || false,
     seen_time: row.seen_time,
+    objectable_id: row.objectable_id ?? null,
+    objectable_type: row.objectable_type ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
     // For grouped notifications
