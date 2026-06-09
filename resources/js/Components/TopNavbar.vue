@@ -251,7 +251,7 @@ const navigationItems = [
   { icon: "mdi:world", label: "Languages", route: "language-management" },
   { icon: "mdi:world", label: "Contact Us Management", route: "contactus-management" },
   { icon: "mdi:people", label: "Users Roles & Permissions", route: "roles-management" },
-  { icon: "mdi:people", label: "Unit Issues", route: "unit-issues" },
+  { icon: "mdi:people", label: "Project Issues", route: "unit-issues" },
 ]
 
 

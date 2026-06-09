@@ -132,7 +132,7 @@
                     </div>
 
                     <div class="pb-2">
-                        <NavItem icon="mdi:people" label="Unit Issues" :to="route('unit-issues')"
+                        <NavItem icon="mdi:people" label="Project Issues" :to="route('unit-issues')"
                             :href="route('unit-issues')" />
                     </div>
                 </div> -->

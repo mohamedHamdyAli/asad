@@ -1,6 +1,6 @@
 <template>
 
-  <Head title="Unit Issues" />
+  <Head title="Project Issues" />
 
   <AuthenticatedLayout>
     <div class="p-6 space-y-6">

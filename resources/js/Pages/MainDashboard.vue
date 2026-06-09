@@ -25,7 +25,7 @@
 
       <!-- ================= KPI CARDS ================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SmartCard v-if="can('units.view')" title="Units" :value="stats.units" icon="mdi:domain" color="blue" hint="All units"
+        <SmartCard v-if="can('units.view')" title="Projects" :value="stats.units" icon="mdi:domain" color="blue" hint="All projects"
           :loading="loadingStats" @click="go('unit-management')" />
 
         <SmartCard v-if="can('users.view')" title="Users" :value="stats.users" icon="mdi:account-group-outline" color="indigo"
@@ -95,7 +95,7 @@
 
                 <div class="text-xs text-gray-500">
                   <span v-if="q.unit_name">{{ q.unit_name }}</span>
-                  <span v-else-if="q.unit_id">Unit #{{ q.unit_id }}</span>
+                  <span v-else-if="q.unit_id">Project #{{ q.unit_id }}</span>
                   <span v-else>—</span>
 
                   <span class="mx-2">•</span>
@@ -172,7 +172,7 @@ const latestQuotations = ref([])
 
 /* ---------------- management cards ---------------- */
 const allManagement = [
-  { icon: 'mdi:domain', title: 'Units', subtitle: 'Create & manage units', route: 'unit-management', permission: 'units.view' },
+  { icon: 'mdi:domain', title: 'Projects', subtitle: 'Create & manage projects', route: 'unit-management', permission: 'units.view' },
   { icon: 'mdi:account-hard-hat', title: 'Contractors', subtitle: 'Manage contractors', route: 'contractors-management', permission: 'contractors.view' },
   { icon: 'mdi:account-tie', title: 'Consultants', subtitle: 'Manage consultants', route: 'Consultants-management', permission: 'consultants.view' },
   { icon: 'mdi:file-document', title: 'Quotations', subtitle: 'View client requests', route: 'unit-quotes-responses', permission: 'unit_quote_responses.view' },

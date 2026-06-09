@@ -4,7 +4,7 @@
 
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Unit Quote Responses</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Quote Responses</h2>
         <button @click="fetchAll" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-50">
           Refresh
         </button>

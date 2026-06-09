@@ -215,7 +215,7 @@ async function handleSubmit(values) {
   } catch (err) {
     console.error(err)
     show(err)
-    alert('Failed to save installment')
+    alert('Failed to save payment')
   } finally {
     saving.value = false
   }
