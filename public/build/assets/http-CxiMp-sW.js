@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/http-1vLYEIRl.js
-import{m as t}from"./app-T0LQ4Oxa.js";const e=t.create({baseURL:"/",withCredentials:!0});e.defaults.headers.common["X-Requested-With"]="XMLHttpRequest";e.defaults.xsrfCookieName="XSRF-TOKEN";e.defaults.xsrfHeaderName="X-XSRF-TOKEN";export{e as h};
-========
-import{m as t}from"./app-CzdCp43o.js";const e=t.create({baseURL:"/",withCredentials:!0});e.defaults.headers.common["X-Requested-With"]="XMLHttpRequest";e.defaults.xsrfCookieName="XSRF-TOKEN";e.defaults.xsrfHeaderName="X-XSRF-TOKEN";export{e as h};
->>>>>>>> origin/main:public/build/assets/http-CxiMp-sW.js

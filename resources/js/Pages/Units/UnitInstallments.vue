@@ -3,7 +3,7 @@
         <div class="p-6 space-y-8">
             <!-- Header -->
             <div class="flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-gray-800">Unit Installments</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Project Payments</h2>
                 <a :href="route('units.payments', { unitId })"
                     class="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100">
                     ← Back to Payments
@@ -12,7 +12,7 @@
 
             <!-- Add Installment -->
             <div class="bg-white p-6 rounded-2xl shadow space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800"> Add Installment</h3>
+                <h3 class="text-lg font-semibold text-gray-800"> Add Payment</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Title EN -->
@@ -95,7 +95,7 @@
                 <div class="flex justify-end">
                     <button class="bg-black text-white px-3 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
                         :disabled="creating" @click="createInstallment">
-                        {{ creating ? 'Saving…' : 'Add Installment' }}
+                        {{ creating ? 'Saving…' : 'Add Payment' }}
                     </button>
                 </div>
             </div>
@@ -104,7 +104,7 @@
             <!-- Table View -->
             <div class="bg-white p-6 rounded-2xl shadow">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Existing Installments</h3>
+                    <h3 class="text-lg font-semibold text-gray-800">Existing Payments</h3>
                     <button @click="fetchInstallments" class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50">
                         Refresh
                     </button>
@@ -112,7 +112,7 @@
 
                 <div v-if="loading" class="text-sm text-gray-500">Loading…</div>
                 <div v-else-if="!rows.length" class="text-center text-gray-500 py-8">
-                    No installments found.
+                    No payments found.
                 </div>
 
                 <div v-else class="overflow-x-auto">
@@ -172,7 +172,7 @@
                         <!-- Header -->
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-semibold text-gray-800">
-                                Edit Installment
+                                Edit Payment
                             </h3>
                             <button class="text-gray-400 hover:text-gray-600 text-xl" @click="closeModal">
                                 ✕
@@ -362,7 +362,7 @@ async function saveEdit() {
 }
 
 async function removeInstallment(id) {
-    if (!confirm('Delete this installment?')) return
+    if (!confirm('Delete this payment?')) return
     await UnitInstallmentsApi.remove(id)
     await fetchInstallments()
 }

@@ -3,7 +3,7 @@
     <div
       class="flex flex-wrap gap-1 sm:gap-2"
       role="tablist"
-      aria-label="Unit sections navigation"
+      aria-label="Project sections navigation"
     >
       <Link
         v-for="item in visibleItems"

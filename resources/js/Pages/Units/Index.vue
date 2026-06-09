@@ -1025,7 +1025,7 @@ async function submit() {
 }
 
 async function remove(u) {
-  if (!confirm(`Delete unit #${u.id}?`)) return
+  if (!confirm(`Delete project #${u.id}?`)) return
   await UnitsApi.remove(u.id)
   await fetchUnits()
 }

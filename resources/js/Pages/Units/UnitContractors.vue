@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold text-gray-800">Assign Contractors & Consultants</h2>
-        <a :href="backToUnits" class="px-3 py-1 border rounded">← Back to Units</a>
+        <a :href="backToUnits" class="px-3 py-1 border rounded">← Back to Projects</a>
       </div>
       <UnitNav :unit-id="Number(unitId)" :cols="2" />
 

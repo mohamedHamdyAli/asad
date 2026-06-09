@@ -2,7 +2,7 @@
   <AuthenticatedLayout>
     <div class="p-6 space-y-8">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Unit Quotations</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Quotations</h2>
       </div>
 
       <!-- Create -->

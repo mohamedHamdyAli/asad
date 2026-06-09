@@ -3,18 +3,18 @@
     <div class="p-6 space-y-8">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-800">Unit Payments</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Project Payments</h2>
         <a
           :href="route('units.timeline', { unitId })"
           class="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
         >
-          ← Back to Unit Timeline
+          ← Back to Project Timeline
         </a>
       </div>
 
       <!-- Add Payment Form -->
       <div class="bg-white p-6 rounded-2xl shadow space-y-4">
-        <h3 class="text-lg font-semibold text-gray-800"> Add Unit Payment</h3>
+        <h3 class="text-lg font-semibold text-gray-800"> Add Project Payment</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
@@ -23,7 +23,7 @@
           </div>
 
           <div>
-            <label class="block text-xs text-gray-500 mb-1">Installments Count *</label>
+            <label class="block text-xs text-gray-500 mb-1">Payments Count *</label>
             <input type="number" v-model.number="newPayment.installments_count" class="form-input" />
           </div>
 
@@ -32,7 +32,7 @@
             <select v-model="newPayment.payment_type" class="form-input">
               <option value="" disabled>Select type</option>
               <option value="cash">Cash</option>
-              <option value="installments">Installments</option>
+              <option value="installments">Payments</option>
             </select>
           </div>
 
@@ -82,7 +82,7 @@
               <tr>
                 <th class="py-2 px-3 text-left"></th>
                 <th class="py-2 px-3 text-left">Total Price</th>
-                <th class="py-2 px-3 text-left">Installments</th>
+                <th class="py-2 px-3 text-left">Payments</th>
                 <th class="py-2 px-3 text-left">Type</th>
                 <th class="py-2 px-3 text-left">Status</th>
                 <th class="py-2 px-3 text-center w-[220px]">Actions</th>
@@ -127,9 +127,9 @@
                     class="form-input text-sm"
                   >
                     <option value="cash">Cash</option>
-                    <option value="installments">Installments</option>
+                    <option value="installments">Payments</option>
                   </select>
-                  <span v-else class="capitalize">{{ p.payment_type }}</span>
+                  <span v-else class="capitalize">{{ p.payment_type === 'installments' ? 'Payments' : p.payment_type }}</span>
                 </td>
 
                 <!-- Editable Status -->

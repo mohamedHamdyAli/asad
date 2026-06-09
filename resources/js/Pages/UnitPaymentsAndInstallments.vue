@@ -31,8 +31,8 @@
 
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div><strong>Total Price:</strong> {{ formatPrice(payment.total_price) }}</div>
-          <div><strong>Installments:</strong> {{ payment.installments_count }}</div>
-          <div><strong>Type:</strong> {{ payment.payment_type }}</div>
+          <div><strong>Payments:</strong> {{ payment.installments_count }}</div>
+          <div><strong>Type:</strong> {{ payment.payment_type === 'installments' ? 'Payments' : payment.payment_type }}</div>
           <div><strong>Status:</strong> {{ payment.overall_status }}</div>
         </div>
       </div>
@@ -40,7 +40,7 @@
 
       <!-- ===================== SINGLE PAYMENT ===================== -->
       <div v-if="tab === 'payments'" class="bg-white p-6 rounded shadow mt-6">
-        <h3 class="text-lg font-semibold mb-4">Unit Payment</h3>
+        <h3 class="text-lg font-semibold mb-4">Project Payment</h3>
 
         <!-- 🟢 CASE 1: No payment yet -->
      <Form
@@ -51,7 +51,7 @@
   v-slot="{ submitCount }"
 >
   <p class="text-gray-600 mb-4">
-    No payment created yet for this unit.
+    No payment created yet for this project.
   </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -67,9 +67,9 @@
       <ErrorMessage name="total_price" class="text-red-600 text-xs mt-1" />
     </div>
 
-    <!-- Installments Count -->
+    <!-- Payments Count -->
     <div>
-      <label class="block text-sm font-medium mb-1">Installments Count *</label>
+      <label class="block text-sm font-medium mb-1">Payments Count *</label>
       <Field
         name="installments_count"
         type="number"
@@ -86,7 +86,7 @@
         as="select"
         class="form-control w-full border p-2 rounded"
       >
-        <option value="installments">Installments</option>
+        <option value="installments">Payments</option>
         <option value="cash">Cash</option>
       </Field>
       <ErrorMessage name="payment_type" class="text-red-600 text-xs mt-1" />
@@ -130,14 +130,14 @@
               <input v-model.number="payment.editable.total_price" type="number" class="w-full border p-2 rounded" />
             </div>
             <div>
-              <label class="block text-gray-600 text-xs mb-1">Installments Count</label>
+              <label class="block text-gray-600 text-xs mb-1">Payments Count</label>
               <input v-model.number="payment.editable.installments_count" type="number"
                 class="w-full border p-2 rounded" />
             </div>
             <div>
               <label class="block text-gray-600 text-xs mb-1">Type</label>
               <select v-model="payment.editable.payment_type" class="w-full border p-2 rounded">
-                <option value="installments">Installments</option>
+                <option value="installments">Payments</option>
                 <option value="cash">Cash</option>
               </select>
             </div>
@@ -168,10 +168,10 @@
       <div v-if="tab === 'installments'" class="space-y-4">
         <!-- Single Payment Installments -->
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold text-gray-800">Installments</h3>
+          <h3 class="text-lg font-semibold text-gray-800">Payments</h3>
           <button :disabled="!payment" @click="openAddInstallmentModal"
             class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50">
-            + Add Installment
+            + Add Payment
           </button>
         </div>
 
@@ -179,7 +179,7 @@
         <!-- Installments Table -->
         <div v-if="selectedPaymentId" class="bg-white rounded-xl shadow-sm p-4">
           <div class="flex justify-between items-center mb-3">
-            <h3 class="font-semibold text-lg text-gray-800">Installments</h3>
+            <h3 class="font-semibold text-lg text-gray-800">Payments</h3>
             <button @click="fetchInstallments" class="px-3 py-1 text-sm border rounded-lg hover:bg-gray-50">
               Refresh
             </button>
