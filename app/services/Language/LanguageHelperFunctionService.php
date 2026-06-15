@@ -308,14 +308,21 @@ class LanguageHelperFunctionService
         return DB::transaction(function () use ($id, $type, $updatedLabels) {
             $language = Language::findOrFail($id);
 
-            $paths = [
-                'panel' => base_path("resources/lang/{$language->panel_file}"),
-                'app' => base_path("resources/lang/{$language->app_file}"),
-                'vendor' => base_path("resources/lang/{$language->vendor_file}"),
-                'web' => base_path("resources/lang/{$language->web_file}"),
+            $languageCode = $language->code ?? 'en';
+
+            $files = [
+                'panel'  => $language->panel_file ?: "{$languageCode}_panel.json",
+                'app'    => $language->app_file ?: "{$languageCode}_app.json",
+                'vendor' => $language->vendor_file ?: "{$languageCode}_vendor.json",
+                'web'    => $language->web_file ?: "{$languageCode}_web.json",
             ];
 
-            $mainPath = base_path("resources/lang/{$language->code}.json");
+            $paths = [];
+            foreach ($files as $key => $file) {
+                $paths[$key] = base_path("resources/lang/{$file}");
+            }
+
+            $mainPath = base_path("resources/lang/{$languageCode}.json");
 
             $ensureAssoc = function ($path, $vals) {
                 $arr = is_array($vals) ? $vals : [];
